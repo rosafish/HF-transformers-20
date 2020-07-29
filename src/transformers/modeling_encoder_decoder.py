@@ -261,11 +261,14 @@ class EncoderDecoderModel(PreTrainedModel):
 
         """
 
-        kwargs_encoder = {argument: value for argument, value in kwargs.items() if not argument.startswith("decoder_")}
+        kwargs_encoder = {argument: value for argument, value in kwargs.items() if not argument.startswith("encoder_")}
 
         kwargs_decoder = {
             argument[len("decoder_") :]: value for argument, value in kwargs.items() if argument.startswith("decoder_")
         }
+        
+        # avoid error msg "multiple values for keyword argument 'return_tuple'" 
+        kwargs_encoder.pop("return_tuple")
 
         if encoder_outputs is None:
             encoder_outputs = self.encoder(
