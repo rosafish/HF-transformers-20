@@ -268,7 +268,8 @@ class EncoderDecoderModel(PreTrainedModel):
         }
         
         # avoid error msg "multiple values for keyword argument 'return_tuple'" 
-        kwargs_encoder.pop("return_tuple")
+        if "return_tuple" in kwargs_encoder:
+            kwargs_encoder.pop("return_tuple")
 
         if encoder_outputs is None:
             encoder_outputs = self.encoder(
