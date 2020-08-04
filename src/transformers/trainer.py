@@ -986,8 +986,8 @@ class Trainer:
                 print('label_ids: ', label_ids.size())
             for i in range(preds_expl.size()[0]):
                 row = ["","","",""]
-                row[0] = str(preds_expl[0])
-                row[1] = str(label_ids[0])
+                row[0] = str(preds_expl[0].tolist())
+                row[1] = str(label_ids[0].tolist())
                 writer.writerow(row)
             
             torch.cuda.empty_cache()
