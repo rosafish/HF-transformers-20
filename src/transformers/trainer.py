@@ -901,3 +901,96 @@ class Trainer:
         # truncate the dummy elements added by SequentialDistributedSampler
         output = concat[:num_total_examples]
         return output
+
+    def eval_seq2seq_write_output(self, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
+        """
+        Run evaluation on a large dev/test dataset. Note that this evaluation is for seq2seq tasks.
+        And write the output expl as well as gold expl to a csv file.
+
+        Args:
+            eval_dataset (:obj:`Dataset`, `optional`):
+                Pass a dataset if you wish to override :obj:`self.eval_dataset`.
+        Returns:
+            The bleu score computed from the predictions.
+        """
+        description="Evaluation"
+        eval_dataloader = self.get_eval_dataloader(eval_dataset)
+
+        model = self.model
+        # multi-gpu eval
+        if self.args.n_gpu > 1:
+            model = torch.nn.DataParallel(model)
+        else:
+            model = self.model
+        # Note: in torch.distributed mode, there's no point in wrapping the model
+        # inside a DistributedDataParallel as we'll be under `no_grad` anyways.
+
+        batch_size = eval_dataloader.batch_size
+        logger.info("***** Running %s *****", description)
+        logger.info("  Num examples = %d", self.num_examples(eval_dataloader))
+        logger.info("  Batch size = %d", batch_size)
+        eval_losses: List[float] = []
+        preds: torch.Tensor = None
+        label_ids: torch.Tensor = None
+        model.eval()
+
+        if is_torch_tpu_available():
+            eval_dataloader = pl.ParallelLoader(eval_dataloader, [self.args.device]).per_device_loader(self.args.device)
+
+        if self.args.past_index >= 0:
+            past = None
+            
+        import time
+        import csv
+        headers = ["Pred_Expl", "Expl_1", "Expl_2", "Expl_3"]
+        expl_csv = os.path.join("/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/", time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv")
+        expl_f = open(expl_csv, "a")
+        writer = csv.writer(expl_f)
+        writer.writerow(headers)
+
+        for inputs in tqdm(eval_dataloader, desc=description):
+            has_labels = any(inputs.get(k) is not None for k in ["labels", "lm_labels", "masked_lm_labels"])
+
+            for k, v in inputs.items():
+                if isinstance(v, torch.Tensor):
+                    inputs[k] = v.to(self.args.device)
+            if self.args.past_index >= 0:
+                inputs["mems"] = past
+            # Our model outputs do not work with DataParallel, so forcing return tuple.
+            if isinstance(model, nn.DataParallel):
+                inputs["return_tuple"] = True
+
+            with torch.no_grad(): 
+                # the data parallel warning happens in this next line, 
+                # because the model outputs do not work with data parallel
+                # but this shouldn't cause the memory problem, because training worked well with the same setting
+                outputs = model(**inputs) 
+                if has_labels:
+                    step_eval_loss, logits = outputs[:2]
+                    eval_losses += [step_eval_loss.mean().item()]
+                else:
+                    logits = outputs[0]
+                if self.args.past_index >= 0:
+                    past = outputs[self.args.past_index if has_labels else self.args.past_index - 1]
+            
+            preds = logits.detach()
+            preds_expl = preds.argmax(-1)
+            if inputs.get("labels") is not None:
+                label_ids = inputs["labels"].detach()
+            
+            # write output explanations and gold explanations to a csv file
+            # assume we are only working with explanation #1 for now
+            if preds_expl.size() != label_ids.size():
+                print('wrong size')
+                print('preds_expl: ', preds_expl.size())
+                print('label_ids: ', label_ids.size())
+            for i in range(preds_expl.size()[0]):
+                row = ["","","",""]
+                row[0] = str(preds_expl[0])
+                row[1] = str(label_ids[0])
+                writer.writerow(row)
+            
+            torch.cuda.empty_cache()
+        
+        expl_f.close()
+        return None
