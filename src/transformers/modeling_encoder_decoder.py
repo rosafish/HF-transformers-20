@@ -191,6 +191,8 @@ class EncoderDecoderModel(PreTrainedModel):
         decoder_head_mask=None,
         decoder_inputs_embeds=None,
         labels=None,
+        expl2=None,
+        expl3=None,
         **kwargs,
     ):
 
