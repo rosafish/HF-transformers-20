@@ -527,6 +527,7 @@ class Trainer:
                     ):
                         logs: Dict[str, float] = {}
                         logs["loss"] = (tr_loss - logging_loss) / self.args.logging_steps
+                        print("log loss: ", logs["loss"])
                         # backward compatibility for pytorch schedulers
                         logs["learning_rate"] = (
                             scheduler.get_last_lr()[0]
@@ -567,6 +568,7 @@ class Trainer:
                     epoch_iterator.close()
                     break
             if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
+                print("close tb writer")
                 train_iterator.close()
                 break
             if self.args.tpu_metrics_debug or self.args.debug:
@@ -829,8 +831,11 @@ class Trainer:
             if isinstance(model, nn.DataParallel):
                 inputs["return_tuple"] = True
 
-            with torch.no_grad():
-                outputs = model(**inputs)
+            with torch.no_grad(): 
+                # the data parallel warning happens in this next line, 
+                # because the model outputs do not work with data parallel
+                # but this shouldn't cause the memory problem, because training worked well with the same setting
+                outputs = model(**inputs) 
                 if has_labels:
                     step_eval_loss, logits = outputs[:2]
                     eval_losses += [step_eval_loss.mean().item()]
@@ -838,7 +843,7 @@ class Trainer:
                     logits = outputs[0]
                 if self.args.past_index >= 0:
                     past = outputs[self.args.past_index if has_labels else self.args.past_index - 1]
-
+            
             if not prediction_loss_only:
                 if preds is None:
                     preds = logits.detach()
@@ -849,6 +854,8 @@ class Trainer:
                         label_ids = inputs["labels"].detach()
                     else:
                         label_ids = torch.cat((label_ids, inputs["labels"].detach()), dim=0)
+                  
+            torch.cuda.empty_cache()
 
         if self.args.local_rank != -1:
             # In distributed mode, concatenate all results from all nodes:
