@@ -905,7 +905,7 @@ class Trainer:
     def eval_esnli_write_output(self, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
         """
         Run evaluation on a large dev/test dataset. Note that this evaluation is for esnli tasks.
-        And write the output expl as well as gold expl to a csv file.
+        And write the output expl as well as three gold explanations (in dev and test datasets) to a csv file.
 
         Args:
             eval_dataset (:obj:`Dataset`, `optional`):
@@ -982,8 +982,6 @@ class Trainer:
             if inputs.get("expl3") is not None:
                 expl3_ids = inputs["expl3"].detach()
             
-            # write output explanations and gold explanations to a csv file
-            # assume we are only working with explanation #1 for now
             if preds_expl.size() != label_ids.size() or \
                label_ids.size() != expl2_ids.size() or \
                expl2_ids.size() != expl3_ids.size():
