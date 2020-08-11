@@ -929,13 +929,16 @@ class Trainer:
         eval_dataloader = self.get_eval_dataloader(eval_dataset)
 
         model = self.model
-        # multi-gpu eval
-        if self.args.n_gpu > 1:
-            model = torch.nn.DataParallel(model)
-        else:
-            model = self.model
-        # Note: in torch.distributed mode, there's no point in wrapping the model
-        # inside a DistributedDataParallel as we'll be under `no_grad` anyways.
+        max_length = model.config.max_length
+        eos_token_id = model.config.eos_token_id
+        decoder_start_token_id = model.config.decoder_start_token_id
+#         # multi-gpu eval
+#         if self.args.n_gpu > 1:
+#             model = torch.nn.DataParallel(model)
+#         else:
+#             model = self.model
+#         # Note: in torch.distributed mode, there's no point in wrapping the model
+#         # inside a DistributedDataParallel as we'll be under `no_grad` anyways.
 
         batch_size = eval_dataloader.batch_size
         logger.info("***** Running %s *****", description)
@@ -973,20 +976,31 @@ class Trainer:
                 inputs["return_tuple"] = True
 
             with torch.no_grad(): 
-                # the data parallel warning happens in this next line, 
-                # because the model outputs do not work with data parallel
-                # but this shouldn't cause the memory problem, because training worked well with the same setting
-                outputs = model(**inputs) 
-                if has_labels:
-                    step_eval_loss, logits = outputs[:2]
-                    eval_losses += [step_eval_loss.mean().item()]
+                if self.args.predict_from_generate:
+                    logits_out = model.generate(inputs["input_ids"], attention_mask=inputs["attention_mask"], 
+                                                decoder_start_token_id=decoder_start_token_id)
+                    # in case the batch is shorter then max length, the output should be padded
+                    logits = eos_token_id * torch.ones(
+                        (logits_out.shape[0], max_length), dtype=logits_out.dtype, device=logits_out.device
+                    )
+                    logits[:, : logits_out.shape[-1]] = logits_out
+
+                    if has_labels:
+                        outputs = model(**inputs)
+                        step_eval_loss = outputs[0]
+                        eval_losses += [step_eval_loss.mean().item()]
                 else:
-                    logits = outputs[0]
-                if self.args.past_index >= 0:
-                    past = outputs[self.args.past_index if has_labels else self.args.past_index - 1]
+                    outputs = model(**inputs)
+
+                    if has_labels:
+                        step_eval_loss, logits = outputs[:2]
+                        eval_losses += [step_eval_loss.mean().item()]
+                    else:
+                        logits = outputs[0]
+                    if self.args.past_index >= 0:
+                        past = outputs[self.args.past_index if has_labels else self.args.past_index - 1]
             
-            preds = logits.detach()
-            preds_expl = preds.argmax(-1)
+            preds_expl = logits.detach()
             if inputs.get("labels") is not None: # labels = expl1
                 label_ids = inputs["labels"].detach()
             if inputs.get("expl2") is not None:
