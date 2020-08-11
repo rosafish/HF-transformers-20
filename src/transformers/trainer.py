@@ -832,17 +832,29 @@ class Trainer:
                 inputs["return_tuple"] = True
 
             with torch.no_grad(): 
-                # the data parallel warning happens in this next line, 
-                # because the model outputs do not work with data parallel
-                # but this shouldn't cause the memory problem, because training worked well with the same setting
-                outputs = model(**inputs) 
-                if has_labels:
-                    step_eval_loss, logits = outputs[:2]
-                    eval_losses += [step_eval_loss.mean().item()]
+                if self.args.predict_from_generate:
+                    max_length = model.config.max_length
+                    logits_out = model.generate(inputs["input_ids"], attention_mask=inputs["attention_mask"])
+                    # in case the batch is shorter then max length, the output should be padded
+                    logits = model.config.eos_token_id * torch.ones(
+                        (logits_out.shape[0], max_length), dtype=logits_out.dtype, device=logits_out.device
+                    )
+                    logits[:, : logits_out.shape[-1]] = logits_out
+
+                    if has_labels:
+                        outputs = model(**inputs)
+                        step_eval_loss = outputs[0]
+                        eval_losses += [step_eval_loss.mean().item()]
                 else:
-                    logits = outputs[0]
-                if self.args.past_index >= 0:
-                    past = outputs[self.args.past_index if has_labels else self.args.past_index - 1]
+                    outputs = model(**inputs)
+
+                    if has_labels:
+                        step_eval_loss, logits = outputs[:2]
+                        eval_losses += [step_eval_loss.mean().item()]
+                    else:
+                        logits = outputs[0]
+                    if self.args.past_index >= 0:
+                        past = outputs[self.args.past_index if has_labels else self.args.past_index - 1]
             
             if not prediction_loss_only:
                 if preds is None:
