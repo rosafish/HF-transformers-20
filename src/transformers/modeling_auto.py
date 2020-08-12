@@ -34,6 +34,7 @@ from .configuration_auto import (
     LongformerConfig,
     MobileBertConfig,
     OpenAIGPTConfig,
+    PegasusConfig,
     ReformerConfig,
     RetriBertConfig,
     RobertaConfig,
@@ -98,6 +99,7 @@ from .modeling_electra import (
 )
 from .modeling_encoder_decoder import EncoderDecoderModel
 from .modeling_flaubert import (
+    FlaubertForMultipleChoice,
     FlaubertForQuestionAnsweringSimple,
     FlaubertForSequenceClassification,
     FlaubertForTokenClassification,
@@ -124,6 +126,7 @@ from .modeling_mobilebert import (
     MobileBertModel,
 )
 from .modeling_openai import OpenAIGPTLMHeadModel, OpenAIGPTModel
+from .modeling_pegasus import PegasusForConditionalGeneration
 from .modeling_reformer import (
     ReformerForMaskedLM,
     ReformerForQuestionAnswering,
@@ -132,6 +135,7 @@ from .modeling_reformer import (
 )
 from .modeling_retribert import RetriBertModel
 from .modeling_roberta import (
+    RobertaForCausalLM,
     RobertaForMaskedLM,
     RobertaForMultipleChoice,
     RobertaForQuestionAnswering,
@@ -142,6 +146,7 @@ from .modeling_roberta import (
 from .modeling_t5 import T5ForConditionalGeneration, T5Model
 from .modeling_transfo_xl import TransfoXLLMHeadModel, TransfoXLModel
 from .modeling_xlm import (
+    XLMForMultipleChoice,
     XLMForQuestionAnsweringSimple,
     XLMForSequenceClassification,
     XLMForTokenClassification,
@@ -246,6 +251,7 @@ MODEL_WITH_LM_HEAD_MAPPING = OrderedDict(
 
 MODEL_FOR_CAUSAL_LM_MAPPING = OrderedDict(
     [
+        (RobertaConfig, RobertaForCausalLM),
         (BertConfig, BertLMHeadModel),
         (OpenAIGPTConfig, OpenAIGPTLMHeadModel),
         (GPT2Config, GPT2LMHeadModel),
@@ -264,6 +270,7 @@ MODEL_FOR_MASKED_LM_MAPPING = OrderedDict(
     [
         (DistilBertConfig, DistilBertForMaskedLM),
         (AlbertConfig, AlbertForMaskedLM),
+        (BartConfig, BartForConditionalGeneration),
         (CamembertConfig, CamembertForMaskedLM),
         (XLMRobertaConfig, XLMRobertaForMaskedLM),
         (LongformerConfig, LongformerForMaskedLM),
@@ -280,6 +287,7 @@ MODEL_FOR_MASKED_LM_MAPPING = OrderedDict(
 MODEL_FOR_SEQ_TO_SEQ_CAUSAL_LM_MAPPING = OrderedDict(
     [
         (T5Config, T5ForConditionalGeneration),
+        (PegasusConfig, PegasusForConditionalGeneration),
         (MarianConfig, MarianMTModel),
         (BartConfig, BartForConditionalGeneration),
         (EncoderDecoderConfig, EncoderDecoderModel),
@@ -337,6 +345,7 @@ MODEL_FOR_TOKEN_CLASSIFICATION_MAPPING = OrderedDict(
         (XLNetConfig, XLNetForTokenClassification),
         (AlbertConfig, AlbertForTokenClassification),
         (ElectraConfig, ElectraForTokenClassification),
+        (FlaubertConfig, FlaubertForTokenClassification),
     ]
 )
 
@@ -352,6 +361,8 @@ MODEL_FOR_MULTIPLE_CHOICE_MAPPING = OrderedDict(
         (MobileBertConfig, MobileBertForMultipleChoice),
         (XLNetConfig, XLNetForMultipleChoice),
         (AlbertConfig, AlbertForMultipleChoice),
+        (XLMConfig, XLMForMultipleChoice),
+        (FlaubertConfig, FlaubertForMultipleChoice),
     ]
 )
 

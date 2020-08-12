@@ -2,7 +2,7 @@ import unittest
 from typing import Iterable, List, Optional
 
 from transformers import pipeline
-from transformers.pipelines import SUPPORTED_TASKS, DefaultArgumentHandler, Pipeline
+from transformers.pipelines import SUPPORTED_TASKS, Conversation, DefaultArgumentHandler, Pipeline
 from transformers.testing_utils import require_tf, require_torch, slow, torch_device
 
 
@@ -28,6 +28,8 @@ TRANSLATION_FINETUNED_MODELS = [
 ]
 TF_TRANSLATION_FINETUNED_MODELS = [("patrickvonplaten/t5-tiny-random", "translation_en_to_fr")]
 
+DIALOGUE_FINETUNED_MODELS = ["microsoft/DialoGPT-medium"]
+
 expected_fill_mask_result = [
     [
         {"sequence": "<s>My name is John</s>", "score": 0.00782308354973793, "token": 610, "token_str": "ĠJohn"},
@@ -37,6 +39,23 @@ expected_fill_mask_result = [
         {"sequence": "<s>The largest city in France is Paris</s>", "score": 0.3185044229030609, "token": 2201},
         {"sequence": "<s>The largest city in France is Lyon</s>", "score": 0.21112334728240967, "token": 12790},
     ],
+]
+
+expected_fill_mask_target_result = [
+    [
+        {
+            "sequence": "<s>My name is Patrick</s>",
+            "score": 0.004992353264242411,
+            "token": 3499,
+            "token_str": "ĠPatrick",
+        },
+        {
+            "sequence": "<s>My name is Clara</s>",
+            "score": 0.00019297805556561798,
+            "token": 13606,
+            "token_str": "ĠClara",
+        },
+    ]
 ]
 
 SUMMARIZATION_KWARGS = dict(num_beams=2, min_length=2, max_length=5)
@@ -137,7 +156,7 @@ class MonoColumnInputTestCase(unittest.TestCase):
         for key in output_keys:
             self.assertIn(key, mono_result[0])
 
-        multi_result = [nlp(input) for input in valid_inputs]
+        multi_result = [nlp(input, **kwargs) for input in valid_inputs]
         self.assertIsInstance(multi_result, list)
         self.assertIsInstance(multi_result[0], (dict, list))
 
@@ -218,6 +237,34 @@ class MonoColumnInputTestCase(unittest.TestCase):
             )
 
     @require_torch
+    def test_torch_fill_mask_with_targets(self):
+        valid_inputs = ["My name is <mask>"]
+        valid_targets = [[" Teven", " Patrick", " Clara"], [" Sam"]]
+        invalid_targets = [[], [""], ""]
+        for model_name in FILL_MASK_FINETUNED_MODELS:
+            nlp = pipeline(task="fill-mask", model=model_name, tokenizer=model_name, framework="pt")
+            for targets in valid_targets:
+                outputs = nlp(valid_inputs, targets=targets)
+                self.assertIsInstance(outputs, list)
+                self.assertEqual(len(outputs), len(targets))
+            for targets in invalid_targets:
+                self.assertRaises(ValueError, nlp, valid_inputs, targets=targets)
+
+    @require_tf
+    def test_tf_fill_mask_with_targets(self):
+        valid_inputs = ["My name is <mask>"]
+        valid_targets = [[" Teven", " Patrick", " Clara"], [" Sam"]]
+        invalid_targets = [[], [""], ""]
+        for model_name in FILL_MASK_FINETUNED_MODELS:
+            nlp = pipeline(task="fill-mask", model=model_name, tokenizer=model_name, framework="tf")
+            for targets in valid_targets:
+                outputs = nlp(valid_inputs, targets=targets)
+                self.assertIsInstance(outputs, list)
+                self.assertEqual(len(outputs), len(targets))
+            for targets in invalid_targets:
+                self.assertRaises(ValueError, nlp, valid_inputs, targets=targets)
+
+    @require_torch
     @slow
     def test_torch_fill_mask_results(self):
         mandatory_keys = {"sequence", "score", "token"}
@@ -225,6 +272,7 @@ class MonoColumnInputTestCase(unittest.TestCase):
             "My name is <mask>",
             "The largest city in France is <mask>",
         ]
+        valid_targets = [" Patrick", " Clara"]
         for model_name in LARGE_FILL_MASK_FINETUNED_MODELS:
             nlp = pipeline(task="fill-mask", model=model_name, tokenizer=model_name, framework="pt", topk=2,)
             self._test_mono_column_pipeline(
@@ -233,6 +281,14 @@ class MonoColumnInputTestCase(unittest.TestCase):
                 mandatory_keys,
                 expected_multi_result=expected_fill_mask_result,
                 expected_check_keys=["sequence"],
+            )
+            self._test_mono_column_pipeline(
+                nlp,
+                valid_inputs[:1],
+                mandatory_keys,
+                expected_multi_result=expected_fill_mask_target_result,
+                expected_check_keys=["sequence"],
+                targets=valid_targets,
             )
 
     @require_tf
@@ -243,6 +299,7 @@ class MonoColumnInputTestCase(unittest.TestCase):
             "My name is <mask>",
             "The largest city in France is <mask>",
         ]
+        valid_targets = [" Patrick", " Clara"]
         for model_name in LARGE_FILL_MASK_FINETUNED_MODELS:
             nlp = pipeline(task="fill-mask", model=model_name, tokenizer=model_name, framework="tf", topk=2)
             self._test_mono_column_pipeline(
@@ -251,6 +308,14 @@ class MonoColumnInputTestCase(unittest.TestCase):
                 mandatory_keys,
                 expected_multi_result=expected_fill_mask_result,
                 expected_check_keys=["sequence"],
+            )
+            self._test_mono_column_pipeline(
+                nlp,
+                valid_inputs[:1],
+                mandatory_keys,
+                expected_multi_result=expected_fill_mask_target_result,
+                expected_check_keys=["sequence"],
+                targets=valid_targets,
             )
 
     @require_torch
@@ -313,6 +378,64 @@ class MonoColumnInputTestCase(unittest.TestCase):
         for model_name in TEXT_GENERATION_FINETUNED_MODELS:
             nlp = pipeline(task="text-generation", model=model_name, tokenizer=model_name, framework="tf")
             self._test_mono_column_pipeline(nlp, VALID_INPUTS, {})
+
+    @slow
+    @require_torch
+    def test_integration_torch_conversation(self):
+        # When
+        nlp = pipeline(task="conversational", device=DEFAULT_DEVICE_NUM)
+        conversation_1 = Conversation("Going to the movies tonight - any suggestions?")
+        conversation_2 = Conversation("What's the last book you have read?")
+        # Then
+        self.assertEqual(len(conversation_1.past_user_inputs), 0)
+        self.assertEqual(len(conversation_2.past_user_inputs), 0)
+        # When
+        result = nlp([conversation_1, conversation_2], do_sample=False, max_length=1000)
+        # Then
+        self.assertEqual(result, [conversation_1, conversation_2])
+        self.assertEqual(len(result[0].past_user_inputs), 1)
+        self.assertEqual(len(result[1].past_user_inputs), 1)
+        self.assertEqual(len(result[0].generated_responses), 1)
+        self.assertEqual(len(result[1].generated_responses), 1)
+        self.assertEqual(result[0].past_user_inputs[0], "Going to the movies tonight - any suggestions?")
+        self.assertEqual(result[0].generated_responses[0], "The Big Lebowski")
+        self.assertEqual(result[1].past_user_inputs[0], "What's the last book you have read?")
+        self.assertEqual(result[1].generated_responses[0], "The Last Question")
+        # When
+        conversation_2.add_user_input("Why do you recommend it?")
+        result = nlp(conversation_2, do_sample=False, max_length=1000)
+        # Then
+        self.assertEqual(result, conversation_2)
+        self.assertEqual(len(result.past_user_inputs), 2)
+        self.assertEqual(len(result.generated_responses), 2)
+        self.assertEqual(result.past_user_inputs[1], "Why do you recommend it?")
+        self.assertEqual(result.generated_responses[1], "It's a good book.")
+
+    @slow
+    @require_torch
+    def test_integration_torch_conversation_truncated_history(self):
+        # When
+        nlp = pipeline(task="conversational", min_length_for_response=24, device=DEFAULT_DEVICE_NUM)
+        conversation_1 = Conversation("Going to the movies tonight - any suggestions?")
+        # Then
+        self.assertEqual(len(conversation_1.past_user_inputs), 0)
+        # When
+        result = nlp(conversation_1, do_sample=False, max_length=36)
+        # Then
+        self.assertEqual(result, conversation_1)
+        self.assertEqual(len(result.past_user_inputs), 1)
+        self.assertEqual(len(result.generated_responses), 1)
+        self.assertEqual(result.past_user_inputs[0], "Going to the movies tonight - any suggestions?")
+        self.assertEqual(result.generated_responses[0], "The Big Lebowski")
+        # When
+        conversation_1.add_user_input("Is it an action movie?")
+        result = nlp(conversation_1, do_sample=False, max_length=36)
+        # Then
+        self.assertEqual(result, conversation_1)
+        self.assertEqual(len(result.past_user_inputs), 2)
+        self.assertEqual(len(result.generated_responses), 2)
+        self.assertEqual(result.past_user_inputs[1], "Is it an action movie?")
+        self.assertEqual(result.generated_responses[1], "It's a comedy.")
 
 
 QA_FINETUNED_MODELS = ["sshleifer/tiny-distilbert-base-cased-distilled-squad"]
@@ -448,6 +571,38 @@ class ZeroShotClassificationPipelineTests(unittest.TestCase):
     def test_tf_zero_shot_outputs(self):
         nlp = pipeline(task="zero-shot-classification", model="roberta-large-mnli", framework="tf")
         self._test_zero_shot_pipeline_outputs(nlp)
+
+
+class DialoguePipelineTests(unittest.TestCase):
+    def _test_conversation_pipeline(self, nlp):
+        valid_inputs = [Conversation("Hi there!"), [Conversation("Hi there!"), Conversation("How are you?")]]
+        invalid_inputs = ["Hi there!", Conversation()]
+        self.assertIsNotNone(nlp)
+
+        mono_result = nlp(valid_inputs[0])
+        self.assertIsInstance(mono_result, Conversation)
+
+        multi_result = nlp(valid_inputs[1])
+        self.assertIsInstance(multi_result, list)
+        self.assertIsInstance(multi_result[0], Conversation)
+        # Inactive conversations passed to the pipeline raise a ValueError
+        self.assertRaises(ValueError, nlp, valid_inputs[1])
+
+        for bad_input in invalid_inputs:
+            self.assertRaises(Exception, nlp, bad_input)
+        self.assertRaises(Exception, nlp, invalid_inputs)
+
+    @require_torch
+    def test_torch_conversation(self):
+        for model_name in DIALOGUE_FINETUNED_MODELS:
+            nlp = pipeline(task="conversational", model=model_name, tokenizer=model_name)
+            self._test_conversation_pipeline(nlp)
+
+    @require_tf
+    def test_tf_conversation(self):
+        for model_name in DIALOGUE_FINETUNED_MODELS:
+            nlp = pipeline(task="conversational", model=model_name, tokenizer=model_name, framework="tf")
+            self._test_conversation_pipeline(nlp)
 
 
 class QAPipelineTests(unittest.TestCase):
@@ -593,7 +748,6 @@ class NerPipelineTests(unittest.TestCase):
 
 
 class PipelineCommonTests(unittest.TestCase):
-
     pipelines = SUPPORTED_TASKS.keys()
 
     @slow
