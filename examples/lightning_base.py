@@ -288,6 +288,10 @@ def generic_train(
         train_params["precision"] = 16
         train_params["amp_level"] = args.fp16_opt_level
 
+    # args.gpus is a <function Trainer._arg_default at 0x7fc4ec675400>
+    # therefore, this comparison cannot be made
+    # I am going to assume args.gpus = 4 for ego here
+    args.gpus = 4
     if args.gpus > 1:
         train_params["distributed_backend"] = "ddp"
 
