@@ -7,6 +7,8 @@ from typing import Any, Dict
 import pytorch_lightning as pl
 from pytorch_lightning.utilities import rank_zero_info
 
+import sys
+sys.path.append('./../src')
 from transformers import (
     AdamW,
     AutoConfig,
