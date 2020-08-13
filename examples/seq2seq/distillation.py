@@ -368,9 +368,10 @@ def create_module(args):
         module_cls = SummarizationModule
     elif t5:
         module_cls = T5SummarizationDistiller
-    elif args.enc_only:
-        raise ValueError("Deleted that")
+    #elif args.enc_only:
+        #raise ValueError("Deleted that")
     else:
+        print('Bart')
         module_cls = BartSummarizationDistiller
     args.setup_cls: str = module_cls.__name__
     model = module_cls(args)
