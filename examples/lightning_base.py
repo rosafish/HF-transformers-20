@@ -126,6 +126,10 @@ class BaseTransformer(pl.LightningModule):
         train_batch_size = self.hparams.train_batch_size
         dataloader = self.get_dataloader("train", train_batch_size)
         self.train_loader = dataloader
+        
+        # assume working with ego
+        self.hparams.gpus = 4
+        
         self.total_steps = (
             (len(dataloader.dataset) // (train_batch_size * max(1, self.hparams.gpus)))
             // self.hparams.accumulate_grad_batches
