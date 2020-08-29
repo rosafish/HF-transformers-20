@@ -45,7 +45,6 @@ class InputExample:
     guid: str
     text_a: str
     text_b: Optional[str] = None
-    text_c: Optional[str] = None
     label: Optional[str] = None
 
     def to_json_string(self):

@@ -590,12 +590,12 @@ class EsnliProcessor(DataProcessor):
                 label = line[1]
                 premise = line[2]
                 hypothesis = line[3]
-                expl = line[4] #expl 1
-                text_a = premise 
-                text_b = hypothesis
-                text_c = expl
-                assert isinstance(text_a, str) and isinstance(text_b, str) and isinstance(text_c, str) and isinstance(label, str)
-                examples.append(InputExample(guid=guid, text_a=text_a, text_b=text_b, text_c=text_c, label=label))
+                expl = line[4] # gold expl 1
+                text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
+                # try p+h, without expl first
+                #text_b = expl 
+                assert isinstance(text_a, str) and isinstance(text_b, str) and isinstance(label, str)
+                examples.append(InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
 
 
