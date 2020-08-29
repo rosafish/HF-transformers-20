@@ -551,6 +551,52 @@ class WnliProcessor(DataProcessor):
             label = None if set_type == "test" else line[-1]
             examples.append(InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
         return examples
+    
+    
+class EsnliProcessor(DataProcessor):
+    """Processor for the WNLI data set (GLUE version)."""
+
+    def get_example_from_tensor_dict(self, tensor_dict):
+        """See base class."""
+        print("not implemented")
+        pass
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(os.path.join(data_dir, "esnli_train.csv"))
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(os.path.join(data_dir, "esnli_dev.csv"))
+
+    def get_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(os.path.join(data_dir, "esnli_test.csv"))
+
+    def get_labels(self):
+        """See base class."""
+        return ["contradiction", "entailment", "neutral"]
+
+    def _create_examples(self, data_path):
+        """Creates examples for the training, dev and test sets."""
+        examples = []
+        with open(data_path, newline='') as f:
+            import csv
+            reader = csv.reader(f)
+            for (i, line) in enumerate(reader):
+                if i == 0:
+                    continue
+                guid = "%s-%s" % ("train", i)
+                label = line[1]
+                premise = line[2]
+                hypothesis = line[3]
+                expl = line[4] #expl 1
+                text_a = premise 
+                text_b = hypothesis
+                text_c = expl
+                assert isinstance(text_a, str) and isinstance(text_b, str) and isinstance(text_c, str) and isinstance(label, str)
+                examples.append(InputExample(guid=guid, text_a=text_a, text_b=text_b, text_c=text_c, label=label))
+        return examples
 
 
 glue_tasks_num_labels = {
@@ -563,6 +609,7 @@ glue_tasks_num_labels = {
     "qnli": 2,
     "rte": 2,
     "wnli": 2,
+    "esnli": 3,
 }
 
 glue_processors = {
@@ -576,6 +623,7 @@ glue_processors = {
     "qnli": QnliProcessor,
     "rte": RteProcessor,
     "wnli": WnliProcessor,
+    "esnli": EsnliProcessor,
 }
 
 glue_output_modes = {
@@ -589,4 +637,5 @@ glue_output_modes = {
     "qnli": "classification",
     "rte": "classification",
     "wnli": "classification",
+    "esnli": "classification",
 }
