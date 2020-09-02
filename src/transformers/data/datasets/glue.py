@@ -44,6 +44,10 @@ class GlueDataTrainingArguments:
     overwrite_cache: bool = field(
         default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
     )
+    esnli_input_type: str = field(
+        default="",
+        metadata={"help": "The input type of esnli seqclas task. Choose from ['p+h:a','p:a,h:b','expl1:a', 'p+h:a,expl1:b']"},
+    )
 
     def __post_init__(self):
         self.task_name = self.task_name.lower()
@@ -113,7 +117,8 @@ class GlueDataset(Dataset):
                 )
             else:
                 logger.info(f"Creating features from dataset file at {args.data_dir}")
-
+                
+                self.processor.esnli_input_type = args.esnli_input_type
                 if mode == Split.dev:
                     examples = self.processor.get_dev_examples(args.data_dir)
                 elif mode == Split.test:

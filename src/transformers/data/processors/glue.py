@@ -17,6 +17,7 @@
 
 import logging
 import os
+import sys
 from dataclasses import asdict
 from enum import Enum
 from typing import List, Optional, Union
@@ -555,11 +556,13 @@ class WnliProcessor(DataProcessor):
     
 class EsnliProcessor(DataProcessor):
     """Processor for the WNLI data set (GLUE version)."""
-
+    
+    def __init__(self):
+        self.esnli_input_type=None
+        
     def get_example_from_tensor_dict(self, tensor_dict):
         """See base class."""
-        print("not implemented")
-        pass
+        sys.exit("not implemented")
 
     def get_train_examples(self, data_dir):
         """See base class."""
@@ -579,6 +582,7 @@ class EsnliProcessor(DataProcessor):
 
     def _create_examples(self, data_path):
         """Creates examples for the training, dev and test sets."""
+        print('esnli input type: ', self.esnli_input_type)
         examples = []
         with open(data_path, newline='') as f:
             import csv
@@ -591,11 +595,31 @@ class EsnliProcessor(DataProcessor):
                 premise = line[2]
                 hypothesis = line[3]
                 expl = line[4] # gold expl 1
-                text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
-                # try p+h, without expl first
-                #text_b = expl 
-                assert isinstance(text_a, str) and isinstance(text_b, str) and isinstance(label, str)
-                examples.append(InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label))
+                assert isinstance(premise, str) and isinstance(hypothesis, str) and \
+                isinstance(expl, str) and isinstance(label, str)
+                
+                text_b = None
+                if self.esnli_input_type == 'p+h:a':
+                    text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
+                elif self.esnli_input_type == 'p:a,h:b':
+                    text_a = premise  
+                    text_b = hypothesis
+                elif self.esnli_input_type == 'expl1:a':
+                    text_a = expl
+                elif self.esnli_input_type == 'p+h:a,expl1:b':
+                    text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
+                    text_b = expl # see if add gold expl 1 helps the classification
+                elif self.esnli_input_type == None:
+                    sys.exit("esnli input type cannot be None for esnli seqclas task")
+                else:
+                    sys.exit("invalid esnli input type")
+
+                if text_b != None:
+                    example = InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label)
+                else:
+                    example = InputExample(guid=guid, text_a=text_a, label=label)
+                
+                examples.append(example)
         return examples
 
 
