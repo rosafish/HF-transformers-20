@@ -10,4 +10,5 @@ python run_glue.py \
 	--num_train_epochs 3.0 \
 	--output_dir /data/rosa/HF-transformers-20/examples/text-classification/esnli1k_outputs/ \
 	--overwrite_output_dir \
-	--overwrite_cache 
+	--overwrite_cache \
+	--esnli_input_type expl1:a
