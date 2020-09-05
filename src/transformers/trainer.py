@@ -279,7 +279,7 @@ class Trainer:
         data_loader = DataLoader(
             eval_dataset,
             sampler=sampler,
-            batch_size=1,
+            batch_size=self.args.eval_batch_size,
             collate_fn=self.data_collator,
             drop_last=self.args.dataloader_drop_last,
         )
@@ -950,8 +950,8 @@ class Trainer:
         label_ids: torch.Tensor = None
         model.eval()
 
-#         if is_torch_tpu_available():
-#             eval_dataloader = pl.ParallelLoader(eval_dataloader, [self.args.device]).per_device_loader(self.args.device)
+        if is_torch_tpu_available():
+            eval_dataloader = pl.ParallelLoader(eval_dataloader, [self.args.device]).per_device_loader(self.args.device)
 
         if self.args.past_index >= 0:
             past = None
