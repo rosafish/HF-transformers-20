@@ -279,7 +279,7 @@ class Trainer:
         data_loader = DataLoader(
             eval_dataset,
             sampler=sampler,
-            batch_size=self.args.eval_batch_size,
+            batch_size=1,
             collate_fn=self.data_collator,
             drop_last=self.args.dataloader_drop_last,
         )
@@ -944,13 +944,14 @@ class Trainer:
         logger.info("***** Running %s *****", description)
         logger.info("  Num examples = %d", self.num_examples(eval_dataloader))
         logger.info("  Batch size = %d", batch_size)
+
         eval_losses: List[float] = []
         preds: torch.Tensor = None
         label_ids: torch.Tensor = None
         model.eval()
 
-        if is_torch_tpu_available():
-            eval_dataloader = pl.ParallelLoader(eval_dataloader, [self.args.device]).per_device_loader(self.args.device)
+#         if is_torch_tpu_available():
+#             eval_dataloader = pl.ParallelLoader(eval_dataloader, [self.args.device]).per_device_loader(self.args.device)
 
         if self.args.past_index >= 0:
             past = None

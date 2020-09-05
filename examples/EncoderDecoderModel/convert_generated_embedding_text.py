@@ -99,7 +99,7 @@ def convert_embedding2text(embedding_csv_path, text_csv_path):
     
 if __name__=='__main__':
     
-    embedding_csv_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli_train_results/eval_on_dev.csv" 
+    embedding_csv_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli_train_results/eval_on_dev_expl_embed.csv" 
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     text_csv_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli_train_results/eval_on_dev_generated_expl_text.csv" 
     
