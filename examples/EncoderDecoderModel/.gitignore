@@ -1,0 +1,5 @@
+*log*
+*cache*
+
+# Ignore the esnli model trained on esnli_train.csv
+esnli_train_trained_model/
