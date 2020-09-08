@@ -4,4 +4,6 @@ eval_on_dev_expl_embed.csv - the model output embeddings evaluated on the dev se
 
 eval_on_dev_generated_expl_text.csv - converted the embeddings to text.
 
-eval_on_dev_generated_expl_text_FULL.csv - added oana generated expl text and original esnli_dev expl, premise, hypothesis, and label to our BERT genereated expl text file.
+eval_on_dev_generated_expl_text_FULL.csv - added oana generated expl text and original esnli_dev expl, premise, hypothesis, and label to our BERT genereated expl text file. (Generated using ./combine_bert_and_gold_expl.ipynb)
+
+convert_bertgen_to_original_format.py - make bert generated explanation in format usable by run_glue.py, and the converted data is ./bertgen_for_esnli_eval/esnli_dev.csv
