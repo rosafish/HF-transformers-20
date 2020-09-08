@@ -1,5 +1,11 @@
 # Initially taken from Github's Python gitignore file
 
+# Ignore try-encoderdecodermodel branch
+examples/EncoderDecoderModel/*
+
+# Ignore try-seqclas branch
+examples/text-classification/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
