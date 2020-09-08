@@ -1,10 +1,10 @@
 # Initially taken from Github's Python gitignore file
 
 # ignore the try-EncoderDecoder branch
-./examples/EncoderDecoderModel/
+examples/EncoderDecoderModel/*
 
 # ignore the try-seq2seq branch
-./examples/seq2seq/
+examples/seq2seq/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
