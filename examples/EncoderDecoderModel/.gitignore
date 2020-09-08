@@ -3,3 +3,6 @@
 
 # Ignore the esnli model trained on esnli_train.csv
 esnli_train_trained_model/
+
+# Ignore the sanity checks
+sanity-checks/
