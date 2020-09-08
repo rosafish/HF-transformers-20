@@ -1,5 +1,11 @@
 # Initially taken from Github's Python gitignore file
 
+# Ignore try-seq2seq branch
+examples/seq2seq/*
+
+# Ignore try-seqclas branch
+examples/text-classification/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
