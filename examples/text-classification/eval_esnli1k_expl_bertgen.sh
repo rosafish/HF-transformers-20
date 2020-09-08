@@ -1,5 +1,5 @@
 python run_glue.py \
-	--model_name_or_path bert-base-cased \
+	--model_name_or_path ./esnli1k_expl1_outputs_1ksteps_copy/ \
 	--task_name ESNLI \
 	--do_eval \
 	--data_dir ./encoderdecodermodel_gen_expl_dev/ \
