@@ -1,1 +1,7 @@
 Eval results of the trained model (trained on esnli_train.csv)
+
+eval_on_dev_expl_embed.csv - the model output embeddings evaluated on the dev set.
+
+eval_on_dev_generated_expl_text.csv - converted the embeddings to text.
+
+eval_on_dev_generated_expl_text_FULL.csv - added oana generated expl text and original esnli_dev expl, premise, hypothesis, and label to our BERT genereated expl text file.
