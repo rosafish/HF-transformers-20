@@ -2,7 +2,13 @@
 ./esnli_ph_expl_outputs/ - model outputs after trained 3 epochs on esnli_train.csv, used text_a = ph, text_b = expl1.
 ./esnli_ph_texta_outputs/ - model outputs after trained 3 epochs on esnli_train.csv, only used text_a = ph.
 ./esnli_ph_texta_textb_outputs/ - model outputs after trained 3 epochs on esnli_train.csv, used text_a = p, text_b = h.
+(Accidentally deleted the above ones, but re-generated esnli_expl1_outputs dir, which is now located at ./esnli/)
+
+
 ./esnli1k_expl1_outputs_3epochs/ - model outputs after trained 3 epochs on 1k randomly sampled esnli training data (/data/rosa/data/esnli1k/), only used text_a = expl1.
 ./esnli1k_expl1_outputs_1ksteps/ - model outputs after trained 1k steps on /data/rosa/data/esnli1k/ training data, only use text_a = expl1.
 ./esnli1k_ph_expl_outputs_1ksteps/ - model outputs after trained 1k steps on /data/rosa/data/esnli1k/ training data, used text_a = ph, text_b = expl1.
 ./esnli1k_ph_texta_outputs_1ksteps/ - model outputs after trained 1k steps on /data/rosa/data/esnli1k/ training data, only used text_a = ph.
+(organized these to be at the ./esnli1k/ folder now)
+
+./encoderdecodermodel_gen_expl_dev/ - Apply the e-SNLI BERT seqclas explanation-only classifier to BERT generated explanations. So the encoderdecodermodel generated explanations serve as the dev set here.
