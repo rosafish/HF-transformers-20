@@ -555,7 +555,7 @@ class WnliProcessor(DataProcessor):
     
     
 class EsnliProcessor(DataProcessor):
-    """Processor for the WNLI data set (GLUE version)."""
+    """Processor for the ESNLI data set (GLUE version)."""
     
     def __init__(self):
         self.esnli_input_type=None
@@ -621,6 +621,42 @@ class EsnliProcessor(DataProcessor):
                 
                 examples.append(example)
         return examples
+    
+    
+class HansEsnliProcessor(EsnliProcessor):
+    """Processor for the HANS data set in ESNLI data format (GLUE version)."""
+    
+    def __init__(self):
+        super().__init__()
+    
+    def _create_examples(self, data_path):
+        """Creates examples for the training, dev and test sets."""
+        examples = []
+        with open(data_path, newline='') as f:
+            import csv
+            reader = csv.reader(f)
+            for (i, line) in enumerate(reader):
+                if i == 0:
+                    continue
+                guid = "%s-%s" % ("train", i)
+                label = line[1]
+                premise = line[2]
+                hypothesis = line[3]
+                
+                if label == "non-entailment":
+                    label = "contradiction"
+                elif label != "entailment":
+                    raise ValueError('HANS with an unexpected type of label.')
+                
+                assert isinstance(premise, str) and \
+                isinstance(hypothesis, str) and \
+                isinstance(label, str)
+                
+                text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
+                example = InputExample(guid=guid, text_a=text_a, label=label)
+                
+                examples.append(example)
+        return examples
 
 
 glue_tasks_num_labels = {
@@ -634,6 +670,7 @@ glue_tasks_num_labels = {
     "rte": 2,
     "wnli": 2,
     "esnli": 3,
+    "hans": 3,
 }
 
 glue_processors = {
@@ -648,6 +685,7 @@ glue_processors = {
     "rte": RteProcessor,
     "wnli": WnliProcessor,
     "esnli": EsnliProcessor,
+    "hans": HansEsnliProcessor,
 }
 
 glue_output_modes = {
@@ -662,4 +700,5 @@ glue_output_modes = {
     "rte": "classification",
     "wnli": "classification",
     "esnli": "classification",
+    "hans": "classification",
 }

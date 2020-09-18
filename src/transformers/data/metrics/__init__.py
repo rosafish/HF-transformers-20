@@ -31,6 +31,14 @@ if _has_sklearn:
 
     def simple_accuracy(preds, labels):
         return (preds == labels).mean()
+    
+    def hans_esnli_accuracy(preds, labels):
+        # 0: con, 1: ent, 2: neu
+        # convert neutral to contradiction / non-entailment.
+        for i in range(len(preds)):
+            if preds[i] == 2:
+                preds[i] = 0
+        return (preds == labels).mean()
 
     def acc_and_f1(preds, labels):
         acc = simple_accuracy(preds, labels)
@@ -75,7 +83,7 @@ if _has_sklearn:
         elif task_name == "esnli":
             return {"acc": simple_accuracy(preds, labels)}
         elif task_name == "hans":
-            return {"acc": simple_accuracy(preds, labels)}
+            return {"acc": hans_esnli_accuracy(preds, labels)}
         else:
             raise KeyError(task_name)
 
