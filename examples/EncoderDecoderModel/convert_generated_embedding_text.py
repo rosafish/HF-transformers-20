@@ -1,3 +1,5 @@
+# convert generated explanations from their embeddings form to texts
+
 import csv
 from transformers import BertTokenizer
 from nltk.translate.bleu_score import corpus_bleu
