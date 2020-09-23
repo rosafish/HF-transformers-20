@@ -21,9 +21,9 @@ def main():
     np.random.seed(0)
 
     # paths and params
-    train_data_path = '/data/rosa/data/esnli_1k/esnli_train.csv'
-    cached_train_features_file = './cache/cached_train_esnli1k'
-    save_trained_model_dir = "./esnli1k_train_trained_model/"
+    train_data_path = '/data/rosa/data/esnli_125k/esnli_train.csv'
+    cached_train_features_file = './cache/cached_train_esnli125k'
+    save_trained_model_dir = "./esnli125k_train_trained_model/"
     max_seq_len = 128
 
     # Get examples
@@ -52,12 +52,12 @@ def main():
         logging_dir='./train-logs',            # directory for storing logs
         do_train=True,
         # modify the following for different sample size
-        #num_train_epochs=3,              # total # of training epochs
-        max_steps = 8000, # overwrites num_train_epochs, this is here for few-sample learning specifically.
-        logging_steps=1000,
-        save_steps=1000,
+        num_train_epochs=3,              # total # of training epochs
+        #max_steps = 8000, # overwrites num_train_epochs, this is here for few-sample learning specifically.
+        logging_steps=5000,
+        save_steps=5000,
         overwrite_output_dir=True,
-        warmup_steps=100,                # number of warmup steps for learning rate scheduler
+        warmup_steps=1000,                # number of warmup steps for learning rate scheduler
     )
 
     trainer = Trainer(
