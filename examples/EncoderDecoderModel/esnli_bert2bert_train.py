@@ -21,9 +21,9 @@ def main():
     np.random.seed(0)
 
     # paths and params
-    train_data_path = '/data/rosa/data/esnli_5k/esnli_train.csv'
-    cached_train_features_file = './cache/cached_train_esnli5k'
-    save_trained_model_dir = "./esnli5k_train_trained_model/"
+    train_data_path = '/data/rosa/data/esnli_25k/esnli_train.csv'
+    cached_train_features_file = './cache/cached_train_esnli25k'
+    save_trained_model_dir = "./esnli25k_train_trained_model/"
     max_seq_len = 128
 
     # Get examples
