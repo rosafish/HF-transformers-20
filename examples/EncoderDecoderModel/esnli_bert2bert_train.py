@@ -45,18 +45,19 @@ def main():
     #initialize Bert2Bert
     model = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') 
 
-    # TODO: make it 1k steps instead of 3 epochs. try 2k steps as well.
     training_args = TrainingArguments(
         output_dir='./checkpoint-train-results',          # output directory
-        num_train_epochs=3,              # total # of training epochs
         per_device_train_batch_size=4,  # batch size per device during training
         weight_decay=0.01,               # strength of weight decay
         logging_dir='./train-logs',            # directory for storing logs
         do_train=True,
-        logging_steps=5000,
-        save_steps=5000,
+        # modify the following for different sample size
+        #num_train_epochs=3,              # total # of training epochs
+        max_steps = 8000, # overwrites num_train_epochs, this is here for few-sample learning specifically.
+        logging_steps=1000,
+        save_steps=1000,
         overwrite_output_dir=True,
-        warmup_steps=1000,                # number of warmup steps for learning rate scheduler
+        warmup_steps=100,                # number of warmup steps for learning rate scheduler
     )
 
     trainer = Trainer(
