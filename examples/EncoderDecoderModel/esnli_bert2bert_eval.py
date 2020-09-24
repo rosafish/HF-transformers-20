@@ -20,6 +20,14 @@ from esnli_processor import EsnliInputFeatures, esnli_examples_to_features, text
 
 
 def main(): 
+    # cml args
+    # $ python esnli_bert2bert_eval.py <PATH>
+    output_dir = sys.argv[1]
+    print("Directory that stores the model to evaluate:", output_dir)
+    if not os.path.isdir(output_dir):
+        print("The directory does not exist.")
+        return
+    
     # set seeds
     torch.manual_seed(0)
     torch.cuda.manual_seed_all(0)
@@ -28,9 +36,7 @@ def main():
     
     # paths and params
     dev_data_path = './sanity-checks/esnli_dev.csv'
-    save_trained_model_dir = './esnli1k_train_trained_model/'
     max_seq_len = 128
-    output_dir = save_trained_model_dir
     cuda_id = "2" # since there's something running on the other ones
     
     # get examples
