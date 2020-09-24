@@ -48,6 +48,7 @@ def main():
         dev_data_path = "/data/rosa/data/hans/in_esnli_format/esnli_dev.csv"
     else:
         dev_data_path = args.dev_data_path
+    print('Dev data path: ', dev_data_path)
     max_seq_len = 128
     cuda_id = "2" # since there's something running on the other ones
     
