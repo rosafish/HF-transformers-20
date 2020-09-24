@@ -18,11 +18,20 @@ from transformers import Trainer, TrainingArguments
 from esnli_processor import EsnliProcessor
 from esnli_processor import EsnliInputFeatures, esnli_examples_to_features, text_to_input_ids
 
+import argparse
+
 
 def main(): 
     # cml args
-    # $ python esnli_bert2bert_eval.py <PATH>
-    output_dir = sys.argv[1]
+    # $ python esnli_bert2bert_eval.py --model_dir <PATH> --dev_data_path <PATH>
+    parser = argparse.ArgumentParser(description='Path arguments')
+    parser.add_argument('-model_dir', action="store", default="./esnli_task_trained_model_and_results/esnli/esnli_train_trained_model_copy/", type=str)
+    parser.add_argument('-dev_data_path', action="store", default='./sanity-checks/esnli_dev.csv', type=str)
+    parser.add_argument('-hans', action="store_true", default=False)
+    args = parser.parse_args()
+    
+    # check if model directory exist
+    output_dir = args.model_dir
     print("Directory that stores the model to evaluate:", output_dir)
     if not os.path.isdir(output_dir):
         print("The directory does not exist.")
@@ -35,7 +44,10 @@ def main():
     np.random.seed(0)
     
     # paths and params
-    dev_data_path = './sanity-checks/esnli_dev.csv'
+    if args.hans:
+        dev_data_path = "/data/rosa/data/hans/in_esnli_format/esnli_dev.csv"
+    else:
+        dev_data_path = args.dev_data_path
     max_seq_len = 128
     cuda_id = "2" # since there's something running on the other ones
     
