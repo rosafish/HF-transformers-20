@@ -8,6 +8,8 @@ import sys
 sys.path.append('/data/rosa/my_github/misinformation/code/')
 from myTools import write_csv
 
+import argparse
+
 
 def remove_special_tokens(token_list):    
     sep_index = token_list.index(102) if 102 in token_list else -1
@@ -71,7 +73,7 @@ def compute_embedding_bleu(embedding_csv_path):
     print('bert expl with respect to gold 1,2,3: ', corpus_bleu(ref_123, cand_bert))
 
             
-def convert_embedding2text(embedding_csv_path, text_csv_path):
+def convert_embedding2text(embedding_csv_path, text_csv_path, tokenizer):
     output_csv_header = []
     output_csv_rows = []
     with open(embedding_csv_path, newline='') as f:
@@ -111,7 +113,7 @@ def main():
     compute_embedding_bleu(args.embedding_csv_path)
     
     print("converting embedding to text...")
-    convert_embedding2text(args.embedding_csv_path, args.text_csv_path)
+    convert_embedding2text(args.embedding_csv_path, args.text_csv_path, tokenizer)
 
 if __name__=='__main__':
     main()
