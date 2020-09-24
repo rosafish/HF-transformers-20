@@ -98,18 +98,20 @@ def convert_embedding2text(embedding_csv_path, text_csv_path):
             output_csv_rows.append([pred_expl, gold_expl_1, gold_expl_2, gold_expl_3])
     write_csv(text_csv_path, output_csv_rows, output_csv_header)
 
+
+def main():
+    parser = argparse.ArgumentParser(description='Path arguments')
+    parser.add_argument('-embedding_csv_path', action="store", default="", type=str)
+    parser.add_argument('-text_csv_path', action="store", default="", type=str)
+    args = parser.parse_args()
     
-if __name__=='__main__':
-    
-    embedding_csv_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli_train_results/eval_on_dev_expl_embed.csv" 
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    text_csv_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli_train_results/eval_on_dev_generated_expl_text.csv" 
     
     print("compute bleu scores on embedding first...")
-    compute_embedding_bleu(embedding_csv_path)
+    compute_embedding_bleu(args.embedding_csv_path)
     
     print("converting embedding to text...")
-    convert_embedding2text(embedding_csv_path, text_csv_path)
-    
-    
-    
+    convert_embedding2text(args.embedding_csv_path, args.text_csv_path)
+
+if __name__=='__main__':
+    main()
