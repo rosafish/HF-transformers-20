@@ -4,6 +4,7 @@ import csv
 import sys
 sys.path.append('/data/rosa/my_github/expl-discourse/')
 from sample_generated_expl import load_gold_expl, load_bert_expl
+import argparse
 
 def output_bertgen_to_original_format(output_csv_path, bert_expl_data, gold_expl_path):
     '''
@@ -36,14 +37,15 @@ def output_bertgen_to_original_format(output_csv_path, bert_expl_data, gold_expl
                 writer.writerow(line)
 
 def main():
-    gold_expl_path = '/data/rosa/data/esnli/esnli_dev.csv'
-    bert_expl_path = '/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli_train_results/eval_on_dev_generated_expl_text.csv'
-    output_csv_path = './bertgen_for_esnli_eval/esnli_dev.csv'
-
-    #gold_expl_data = load_gold_expl(gold_expl_path)
-    bert_expl_data = load_bert_expl(bert_expl_path)
+    parser = argparse.ArgumentParser(description='Path arguments')
+    parser.add_argument('-bert_expl_csv_path', action="store", default="", type=str)
+    parser.add_argument('-output_csv_path', action="store", default="", type=str)
+    args = parser.parse_args()
     
-    output_bertgen_to_original_format(output_csv_path, bert_expl_data, gold_expl_path)
+    gold_expl_path = '/data/rosa/data/esnli/esnli_dev.csv'
+    bert_expl_data = load_bert_expl(args.bert_expl_csv_path)
+    
+    output_bertgen_to_original_format(args.output_csv_path, bert_expl_data, gold_expl_path)
     
 if __name__=="__main__":
     main()
