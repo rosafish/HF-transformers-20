@@ -2,7 +2,7 @@
 
 import csv
 import sys
-sys.path.append('/data/rosa/my_github/expl-discourse/')
+sys.path.append('/data/rosa/my_github/expl-discourse/esnli/')
 from sample_generated_expl import load_gold_expl, load_bert_expl
 import argparse
 
