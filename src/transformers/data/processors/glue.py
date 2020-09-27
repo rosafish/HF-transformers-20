@@ -631,6 +631,7 @@ class HansEsnliProcessor(EsnliProcessor):
     
     def _create_examples(self, data_path):
         """Creates examples for the training, dev and test sets."""
+        print('hans input type: ', self.esnli_input_type)
         examples = []
         with open(data_path, newline='') as f:
             import csv
@@ -642,6 +643,7 @@ class HansEsnliProcessor(EsnliProcessor):
                 label = line[1]
                 premise = line[2]
                 hypothesis = line[3]
+                expl = line[4] # generated expl
                 
                 if label == "non-entailment":
                     label = "contradiction"
@@ -650,10 +652,29 @@ class HansEsnliProcessor(EsnliProcessor):
                 
                 assert isinstance(premise, str) and \
                 isinstance(hypothesis, str) and \
-                isinstance(label, str)
-                
-                text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
-                example = InputExample(guid=guid, text_a=text_a, label=label)
+                isinstance(label, str) and \
+                isinstance(expl, str)
+
+                text_b = None
+                if self.esnli_input_type == 'p+h:a':
+                    text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
+                elif self.esnli_input_type == 'p:a,h:b':
+                    text_a = premise  
+                    text_b = hypothesis
+                elif self.esnli_input_type == 'expl1:a':
+                    text_a = expl
+                elif self.esnli_input_type == 'p+h:a,expl1:b':
+                    text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
+                    text_b = expl # see if add gold expl 1 helps the classification
+                elif self.esnli_input_type == None:
+                    sys.exit("esnli input type cannot be None for esnli seqclas task")
+                else:
+                    sys.exit("invalid esnli input type")
+
+                if text_b != None:
+                    example = InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label)
+                else:
+                    example = InputExample(guid=guid, text_a=text_a, label=label)
                 
                 examples.append(example)
         return examples
