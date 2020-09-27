@@ -1,4 +1,4 @@
-python run_glue.py \
+python ../run_glue.py \
 	--model_name_or_path ../esnli/esnli_ph_expl_outputs_copy/ \
 	--task_name HANS \
 	--do_eval \
