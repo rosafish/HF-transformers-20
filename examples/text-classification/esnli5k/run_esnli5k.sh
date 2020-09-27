@@ -1,0 +1,14 @@
+python ../run_glue.py \
+	--model_name_or_path bert-base-cased \
+	--task_name ESNLI \
+	--do_train \
+	--do_eval \
+	--data_dir /data/rosa/data/esnli5k \
+	--max_seq_length 128 \
+	--per_device_train_batch_size 32 \
+	--learning_rate 2e-5 \
+	--output_dir ./esnli5k_ph_expl_outputs/ \
+	--overwrite_output_dir \
+	--overwrite_cache \
+	--esnli_input_type expl1:a \
+	--max_steps 10000 
