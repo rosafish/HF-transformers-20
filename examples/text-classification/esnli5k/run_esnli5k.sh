@@ -10,5 +10,5 @@ python ../run_glue.py \
 	--output_dir ./esnli5k_ph_expl_outputs/ \
 	--overwrite_output_dir \
 	--overwrite_cache \
-	--esnli_input_type expl1:a \
+	--esnli_input_type p+h:a,expl1:b \
 	--max_steps 10000 
