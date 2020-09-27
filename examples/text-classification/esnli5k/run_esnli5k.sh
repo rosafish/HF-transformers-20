@@ -3,7 +3,7 @@ python ../run_glue.py \
 	--task_name ESNLI \
 	--do_train \
 	--do_eval \
-	--data_dir /data/rosa/data/esnli5k \
+	--data_dir /data/rosa/data/esnli_5k \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \
