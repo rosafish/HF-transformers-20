@@ -1,4 +1,5 @@
 # Turn the bert generated expl to be usable for evaluating the esnli expl classifier with the same processor
+# Works for the e-snli data
 
 import csv
 import sys

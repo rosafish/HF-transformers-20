@@ -1,4 +1,5 @@
 # convert generated explanations from their embeddings form to texts
+# works for the e-snli data
 
 import csv
 from transformers import BertTokenizer
@@ -78,6 +79,7 @@ def compute_embedding_bleu(embedding_csv_path):
 
             
 def convert_embedding2text(embedding_csv_path, text_csv_path, tokenizer):
+    # works for e-snli data
     output_csv_header = []
     output_csv_rows = []
     with open(embedding_csv_path, newline='') as f:
