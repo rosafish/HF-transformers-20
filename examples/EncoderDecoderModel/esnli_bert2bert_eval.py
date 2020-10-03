@@ -23,11 +23,12 @@ import argparse
 
 def main(): 
     # cml args
-    # $ python esnli_bert2bert_eval.py --model_dir <PATH> --dev_data_path <PATH>
+    # $ python esnli_bert2bert_eval.py --model_dir <PATH> --eval_data_path <PATH>
     parser = argparse.ArgumentParser(description='Path arguments')
     parser.add_argument('-model_dir', action="store", default="./esnli_task_trained_model_and_results/esnli/esnli_train_trained_model_copy/", type=str)
-    parser.add_argument('-dev_data_path', action="store", default='./sanity-checks/esnli_dev.csv', type=str)
+    parser.add_argument('-eval_data_path', action="store", default='./sanity-checks/esnli_dev.csv', type=str)
     parser.add_argument('-hans', action="store_true", default=False)
+    parser.add_argument('-generate_expl_on_training_data', action="store_true", default=False)
     args = parser.parse_args()
     
     # check if model directory exist
@@ -45,20 +46,23 @@ def main():
     
     # paths and params
     if args.hans:
-        dev_data_path = "/data/rosa/data/hans/in_esnli_format/esnli_dev.csv"
+        eval_data_path = "/data/rosa/data/hans/in_esnli_format/esnli_dev.csv"
     else:
-        dev_data_path = args.dev_data_path
-    print('Dev data path: ', dev_data_path)
+        eval_data_path = args.eval_data_path
+    print('Eval data path: ', eval_data_path)
     max_seq_len = 128
     cuda_id = "2" # since there's something running on the other ones
     
     # get examples
     processor = EsnliProcessor()
-    dev_examples = processor.get_dev_examples(dev_data_path) 
+    if args.generate_expl_on_training_data:
+        eval_examples = processor.get_train_examples(eval_data_path)
+    else:
+        eval_examples = processor.get_dev_examples(eval_data_path) 
     
     # convert examples to features
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    dev_features = esnli_examples_to_features(dev_examples, max_seq_len, tokenizer)
+    eval_features = esnli_examples_to_features(eval_examples, max_seq_len, tokenizer)
     
     # Load a trained model and vocabulary that you have fine-tuned
     model = EncoderDecoderModel.from_pretrained(output_dir)
@@ -79,7 +83,7 @@ def main():
     evaluator = Trainer(
         model=model,                         # the instantiated 🤗 Transformers model to be trained
         args=eval_args,                  # eval arguments, defined above
-        eval_dataset=dev_features,            # evaluation dataset
+        eval_dataset=eval_features,            # evaluation dataset
     )
 
     # Evaluate

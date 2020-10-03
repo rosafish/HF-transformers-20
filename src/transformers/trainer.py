@@ -1002,28 +1002,42 @@ class Trainer:
                         past = outputs[self.args.past_index if has_labels else self.args.past_index - 1]
             
             preds_expl = logits.detach()
+            expl2_ids = None # initialize place holder 
+            expl3_ids = None # initialize place holder 
             if inputs.get("labels") is not None: # labels = expl1
                 label_ids = inputs["labels"].detach()
             if inputs.get("expl2") is not None:
-                expl2_ids = inputs["expl2"].detach()
+                expl2_ids = inputs["expl2"].detach() 
             if inputs.get("expl3") is not None:
                 expl3_ids = inputs["expl3"].detach()
             
-            if preds_expl.size() != label_ids.size() or \
-               label_ids.size() != expl2_ids.size() or \
-               expl2_ids.size() != expl3_ids.size():
-                print('wrong size')
-                print('preds_expl: ', preds_expl.size())
-                print('label_ids: ', label_ids.size())
-                print('expl2_ids: ', expl2_ids.size())
-                print('expl3_ids: ', expl3_ids.size())
-            for i in range(preds_expl.size()[0]):
-                row = ["","","",""]
-                row[0] = str(preds_expl[0].tolist())
-                row[1] = str(label_ids[0].tolist())
-                row[2] = str(expl2_ids[0].tolist())
-                row[3] = str(expl3_ids[0].tolist())
-                writer.writerow(row)
+            if expl2_ids != None and expl3_ids != None: 
+                # has 3 gold explanations in the evaluation dataset
+                if preds_expl.size() != label_ids.size() or \
+                label_ids.size() != expl2_ids.size() or \
+                expl2_ids.size() != expl3_ids.size():
+                    print('wrong size')
+                    print('preds_expl: ', preds_expl.size())
+                    print('label_ids: ', label_ids.size())
+                    print('expl2_ids: ', expl2_ids.size())
+                    print('expl3_ids: ', expl3_ids.size())
+                for i in range(preds_expl.size()[0]):
+                    row = ["","","",""]
+                    row[0] = str(preds_expl[0].tolist())
+                    row[1] = str(label_ids[0].tolist())
+                    row[2] = str(expl2_ids[0].tolist())
+                    row[3] = str(expl3_ids[0].tolist())
+                    writer.writerow(row)
+            else:
+                if preds_expl.size() != label_ids.size():
+                    print('wrong size')
+                    print('preds_expl: ', preds_expl.size())
+                    print('label_ids: ', label_ids.size())
+                for i in range(preds_expl.size()[0]):
+                    row = ["","","",""]
+                    row[0] = str(preds_expl[0].tolist())
+                    row[1] = str(label_ids[0].tolist())
+                    writer.writerow(row)
             
             torch.cuda.empty_cache()
         

@@ -45,14 +45,18 @@ def compute_embedding_bleu(embedding_csv_path):
                 continue
             pred_expl = eval(line[0])
             gold_expl_1 = eval(line[1])
-            gold_expl_2 = eval(line[2])
-            gold_expl_3 = eval(line[3])
+            gold_expl_2 = ""
+            gold_expl_3 = ""
+            if line[2] and line[3]:
+                gold_expl_2 = eval(line[2])
+                gold_expl_3 = eval(line[3])
             # process the explanations before passing to compute bleu scores: 
             # get rid of the CLS, SEP, can PAD tokens - tokens with id 101, 102, and 0
             pred_expl = remove_special_tokens(pred_expl)
             gold_expl_1 = remove_special_tokens(gold_expl_1)
-            gold_expl_2 = remove_special_tokens(gold_expl_2)
-            gold_expl_3 = remove_special_tokens(gold_expl_3)
+            if line[2] and line[3]:
+                gold_expl_2 = remove_special_tokens(gold_expl_2)
+                gold_expl_3 = remove_special_tokens(gold_expl_3)
             
             ref_123.append([gold_expl_1, gold_expl_2, gold_expl_3])
             ref_12.append([gold_expl_1, gold_expl_2])
@@ -84,19 +88,24 @@ def convert_embedding2text(embedding_csv_path, text_csv_path, tokenizer):
                 continue
             pred_expl = eval(line[0])
             gold_expl_1 = eval(line[1])
-            gold_expl_2 = eval(line[2])
-            gold_expl_3 = eval(line[3])
+            gold_expl_2 = ""
+            gold_expl_3 = ""
+            if line[2] and line[3]:
+                gold_expl_2 = eval(line[2])
+                gold_expl_3 = eval(line[3])
             # process the explanations before passing to compute bleu scores: 
             # get rid of the CLS, SEP, can PAD tokens - tokens with id 101, 102, and 0
             pred_expl = remove_special_tokens(pred_expl)
             gold_expl_1 = remove_special_tokens(gold_expl_1)
-            gold_expl_2 = remove_special_tokens(gold_expl_2)
-            gold_expl_3 = remove_special_tokens(gold_expl_3)
+            if line[2] and line[3]:
+                gold_expl_2 = remove_special_tokens(gold_expl_2)
+                gold_expl_3 = remove_special_tokens(gold_expl_3)
             # convert embedding to text
             pred_expl = tokenizer.decode(pred_expl)
             gold_expl_1 = tokenizer.decode(gold_expl_1)
-            gold_expl_2 = tokenizer.decode(gold_expl_2)
-            gold_expl_3 = tokenizer.decode(gold_expl_3)
+            if line[2] and line[3]:
+                gold_expl_2 = tokenizer.decode(gold_expl_2)
+                gold_expl_3 = tokenizer.decode(gold_expl_3)
             output_csv_rows.append([pred_expl, gold_expl_1, gold_expl_2, gold_expl_3])
     write_csv(text_csv_path, output_csv_rows, output_csv_header)
 
