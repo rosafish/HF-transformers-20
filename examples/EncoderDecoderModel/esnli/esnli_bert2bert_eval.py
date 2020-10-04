@@ -23,7 +23,7 @@ import argparse
 
 def main(): 
     # cml args
-    # $ python esnli_bert2bert_eval.py --model_dir <PATH> --eval_data_path <PATH>
+    # $ python esnli_bert2bert_eval.py -model_dir <PATH> -eval_data_path <PATH>
     parser = argparse.ArgumentParser(description='Path arguments')
     parser.add_argument('-model_dir', action="store", default="./esnli_task_trained_model_and_results/esnli/esnli_train_trained_model_copy/", type=str)
     parser.add_argument('-eval_data_path', action="store", default='./sanity-checks/esnli_dev.csv', type=str)
@@ -35,8 +35,7 @@ def main():
     output_dir = args.model_dir
     print("Directory that stores the model to evaluate:", output_dir)
     if not os.path.isdir(output_dir):
-        print("The directory does not exist.")
-        return
+        raise ValueError("The directory does not exist.")
     
     # set seeds
     torch.manual_seed(0)
