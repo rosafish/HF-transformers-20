@@ -923,7 +923,7 @@ class Trainer:
             eval_dataset (:obj:`Dataset`, `optional`):
                 Pass a dataset if you wish to override :obj:`self.eval_dataset`.
         Returns:
-            The bleu score computed from the predictions.
+            None
         """
         description="Evaluation"
         eval_dataloader = self.get_eval_dataloader(eval_dataset)
@@ -949,7 +949,7 @@ class Trainer:
         import time
         import csv
         headers = ["Pred_Expl", "Expl_1", "Expl_2", "Expl_3"]
-        expl_csv = os.path.join("/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/", time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv")
+        expl_csv = os.path.join("/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/", time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv")
         expl_f = open(expl_csv, "a")
         writer = csv.writer(expl_f)
         writer.writerow(headers)
@@ -1033,3 +1033,120 @@ class Trainer:
         
         expl_f.close()
         return None
+
+    def eval_cose_write_output(self, tokenizer, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
+        """
+        Run evaluation on a dev/test dataset. Note that this evaluation is for cose tasks.
+        And write the generated expl as well as the input text (which contains q, c0, c1, and c2) to a csv file.
+
+        Args:
+            eval_dataset (:obj:`Dataset`, `optional`):
+                Pass a dataset if you wish to override :obj:`self.eval_dataset`.
+        Returns:
+            None
+        """
+        description="Evaluation"
+        eval_dataloader = self.get_eval_dataloader(eval_dataset)
+
+        model = self.model
+        max_length = model.config.max_length
+        eos_token_id = model.config.eos_token_id
+        decoder_start_token_id = model.config.decoder_start_token_id
+
+        batch_size = eval_dataloader.batch_size
+        logger.info("***** Running %s *****", description)
+        logger.info("  Num examples = %d", self.num_examples(eval_dataloader))
+        logger.info("  Batch size = %d", batch_size)
+
+        eval_losses: List[float] = []
+        preds: torch.Tensor = None
+        label_ids: torch.Tensor = None
+        model.eval()
+
+        if self.args.past_index >= 0:
+            past = None
+            
+        import time
+        import csv
+        headers = ["input_text", "target_expl", "generated_expl"]
+        expl_csv = os.path.join("/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/cos-e/", time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv")
+        expl_f = open(expl_csv, "a")
+        writer = csv.writer(expl_f)
+        writer.writerow(headers)
+
+        for inputs in tqdm(eval_dataloader, desc=description):
+            has_labels = any(inputs.get(k) is not None for k in ["labels", "lm_labels", "masked_lm_labels"])
+
+            for k, v in inputs.items():
+                if isinstance(v, torch.Tensor):
+                    inputs[k] = v.to(self.args.device)
+            if self.args.past_index >= 0:
+                inputs["mems"] = past
+            # Our model outputs do not work with DataParallel, so forcing return tuple.
+            if isinstance(model, nn.DataParallel):
+                inputs["return_tuple"] = True
+
+            with torch.no_grad(): 
+                if self.args.predict_from_generate: # set to true for cose and esnli (in the eval code)
+                    logits_out = model.generate(inputs["input_ids"], attention_mask=inputs["attention_mask"], 
+                                                decoder_start_token_id=decoder_start_token_id)
+                    # in case the batch is shorter then max length, the output should be padded
+                    logits = eos_token_id * torch.ones(
+                        (logits_out.shape[0], max_length), dtype=logits_out.dtype, device=logits_out.device
+                    )
+                    logits[:, : logits_out.shape[-1]] = logits_out
+
+                    if has_labels:
+                        outputs = model(**inputs)
+                        step_eval_loss = outputs[0]
+                        eval_losses += [step_eval_loss.mean().item()]
+                else:
+                    outputs = model(**inputs)
+
+                    if has_labels:
+                        step_eval_loss, logits = outputs[:2]
+                        eval_losses += [step_eval_loss.mean().item()]
+                    else:
+                        logits = outputs[0]
+                    if self.args.past_index >= 0:
+                        past = outputs[self.args.past_index if has_labels else self.args.past_index - 1]
+            
+            preds_expl = logits.detach() # preds_expl -> generated expl
+            label_ids = None # placeholder
+            input_ids = None # placeholder
+            if inputs.get("labels") is not None: # labels -> target expl
+                label_ids = inputs["labels"].detach()     
+            if inputs.get("input_ids") is not None: 
+                input_ids = inputs["input_ids"].detach()         
+            
+            if preds_expl.size() != label_ids.size():
+                print('preds_expl: ', preds_expl.size())
+                print('label_ids: ', label_ids.size())
+                raise ValueError('Wrong size')
+
+            for i in range(preds_expl.size()[0]):
+                row = ["","",""]
+                row[0] = self.embedding2text(input_ids, tokenizer)
+                row[1] = self.embedding2text(label_ids, tokenizer)
+                row[2] = self.embedding2text(preds_expl, tokenizer)
+                writer.writerow(row)
+            
+            torch.cuda.empty_cache()
+        
+        expl_f.close()
+        return None
+    
+    def embedding2text(self, embedding, tokenizer):
+        """
+        embedding: torch.Size([1, 128])
+        bert tokenizer
+        """
+        import sys
+        sys.path.append('/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/')
+        from convert_generated_embedding_text import remove_special_tokens
+
+        embedding = embedding[0].tolist()
+        embedding_processed = remove_special_tokens(embedding)
+        text = tokenizer.decode(embedding_processed)
+
+        return text
