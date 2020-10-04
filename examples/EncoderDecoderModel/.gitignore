@@ -5,5 +5,8 @@
 # Ignore the esnli model trained on esnli_train.csv
 *_train_trained_model*
 
+# Ignore the cose model
+*cose_trained_model*
+
 # Ignore the sanity checks
 sanity-checks/
