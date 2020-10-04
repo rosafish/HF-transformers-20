@@ -932,13 +932,6 @@ class Trainer:
         max_length = model.config.max_length
         eos_token_id = model.config.eos_token_id
         decoder_start_token_id = model.config.decoder_start_token_id
-#         # multi-gpu eval
-#         if self.args.n_gpu > 1:
-#             model = torch.nn.DataParallel(model)
-#         else:
-#             model = self.model
-#         # Note: in torch.distributed mode, there's no point in wrapping the model
-#         # inside a DistributedDataParallel as we'll be under `no_grad` anyways.
 
         batch_size = eval_dataloader.batch_size
         logger.info("***** Running %s *****", description)
@@ -949,9 +942,6 @@ class Trainer:
         preds: torch.Tensor = None
         label_ids: torch.Tensor = None
         model.eval()
-
-#         if is_torch_tpu_available():
-#             eval_dataloader = pl.ParallelLoader(eval_dataloader, [self.args.device]).per_device_loader(self.args.device)
 
         if self.args.past_index >= 0:
             past = None
