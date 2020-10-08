@@ -41,7 +41,9 @@ def main():
     parser.add_argument('-hans', action="store_true", default=False)
     args = parser.parse_args()
     
+    # hans
     gold_expl_path = args.gold_expl_csv_path if not args.hans else '/data/rosa/data/hans/in_esnli_format/esnli_dev.csv'
+    
     print('gold expl path: ', gold_expl_path)
     
     bert_expl_data = load_bert_expl(args.bert_expl_csv_path)
