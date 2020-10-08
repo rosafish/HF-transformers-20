@@ -10,3 +10,7 @@
 
 # Ignore the sanity checks
 sanity-checks/
+
+# Ignore files that are too large
+*eval_on_train_expl_text_in_esnli_train_format.csv
+*eval_on_train_expl_embed.csv
