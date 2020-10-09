@@ -655,25 +655,23 @@ class HansEsnliProcessor(EsnliProcessor):
                 isinstance(label, str) and \
                 isinstance(expl, str)
 
-                use_text_b = False
+                text_b = None
                 if self.esnli_input_type == 'p+h:a':
                     text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
                 elif self.esnli_input_type == 'p:a,h:b':
                     text_a = premise  
                     text_b = hypothesis
-                    use_text_b = True
                 elif self.esnli_input_type == 'expl1:a':
                     text_a = expl
                 elif self.esnli_input_type == 'p+h:a,expl1:b':
                     text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
                     text_b = expl # see if add gold expl 1 helps the classification
-                    use_text_b = True
                 elif self.esnli_input_type == None:
                     sys.exit("esnli input type cannot be None for esnli seqclas task")
                 else:
                     sys.exit("invalid esnli input type")
-
-                if use_text_b:
+                
+                if text_b != None:
                     example = InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label)
                 else:
                     example = InputExample(guid=guid, text_a=text_a, label=label)
