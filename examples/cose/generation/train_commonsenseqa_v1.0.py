@@ -499,7 +499,7 @@ def run_model():
                 logger.info("  %s = %s", key, str(result[key]))
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
-        output_preds_file = os.path.join(args.output_dir, f"{args.eval_preds_prefix}_{args.setting}.txt")
+        output_preds_file = os.path.join(args.output_dir, f"{args.num_train_epochs}epochs_{args.setting}.txt")
         with open(output_preds_file, 'w') as writer:
             logger.info("Writing predictions")
             for p in prediction_strs:
