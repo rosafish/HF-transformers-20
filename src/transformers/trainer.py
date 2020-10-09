@@ -817,6 +817,8 @@ class Trainer:
         if self.args.past_index >= 0:
             past = None
 
+        error_file_header = ['true_label', 'predicted_label', 'input_embeddings']
+        error_file_rows = []
         for inputs in tqdm(dataloader, desc=description):
             has_labels = any(inputs.get(k) is not None for k in ["labels", "lm_labels", "masked_lm_labels"])
 
@@ -838,6 +840,20 @@ class Trainer:
                     logits = outputs[0]
                 if self.args.past_index >= 0:
                     past = outputs[self.args.past_index if has_labels else self.args.past_index - 1]
+
+            # if true label and predicted label are not the same, 
+            # record the input_ids, true label, and predicted label
+            record_true_labels = inputs["labels"]
+            record_pred_labels = logits
+            record_input_embeddings = inputs["input_ids"]
+            assert len(record_true_labels) == len(record_pred_labels) and \
+                   len(record_pred_labels) == len(record_input_embeddings)
+            for i in range(len(record_true_label)):
+                if record_true_labels[0][i] != record_pred_labels[0][i]:
+                    error_file_rows.append([record_true_labels[0][i], record_pred_labels[0][i], record_input_embeddings[i]])
+                    # TODO: this only works for p+h+e, but not expl-only
+                    # because we need premise and hypothesis information (or id) to be in the input 
+                    # in order to record them
 
             if not prediction_loss_only:
                 if preds is None:
@@ -881,6 +897,8 @@ class Trainer:
             if not key.startswith("eval_"):
                 metrics[f"eval_{key}"] = metrics.pop(key)
 
+        write_error_file(error_file_header, error_file_rows)
+
         return PredictionOutput(predictions=preds, label_ids=label_ids, metrics=metrics)
 
     def distributed_concat(self, tensor: torch.Tensor, num_total_examples: int) -> torch.Tensor:
@@ -894,3 +912,9 @@ class Trainer:
         # truncate the dummy elements added by SequentialDistributedSampler
         output = concat[:num_total_examples]
         return output
+
+    def write_error_file(error_file_header, error_file_rows):
+        # TODO: convert embedding to text (include [sep] tokens)
+
+        # TODO: write csv file
+        raise ValueError("Not implemented")
