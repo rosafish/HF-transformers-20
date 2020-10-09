@@ -167,7 +167,7 @@ def download_cqa(explanation_path):
     return split_data
 
 def parse_cqa(root_path, explain_predict):
-    splits = ['train.csv', 'dev.csv', 'test.csv']
+    splits = ['train.csv', 'dev.csv']
     split_data = []
     for split in splits:
         path = os.path.join(root_path, split) 
@@ -289,8 +289,8 @@ def run_model():
         train_tensor_dataset = tensor_datasets[0]
         train_data = TensorDataset(*train_tensor_dataset)
         train_sampler = RandomSampler(train_data)
-        if args.do_test_train:
-            train_sampler = SequentialSampler(train_data)
+        # if args.do_test_train:
+        #     train_sampler = SequentialSampler(train_data)
         train_dataloader = DataLoader(train_data, sampler=train_sampler, batch_size=args.train_batch_size)
     
     if args.do_eval:
