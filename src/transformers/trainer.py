@@ -734,7 +734,7 @@ class Trainer:
             logger.info("Deleting older checkpoint [{}] due to args.save_total_limit".format(checkpoint))
             shutil.rmtree(checkpoint)
 
-    def evaluate(self, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
+    def evaluate(self, eval_dataset: Optional[Dataset] = None, tokenizer=None) -> Dict[str, float]:
         """
         Run evaluation and returns metrics.
 
@@ -749,7 +749,7 @@ class Trainer:
         """
         eval_dataloader = self.get_eval_dataloader(eval_dataset)
 
-        output = self._prediction_loop(eval_dataloader, description="Evaluation")
+        output = self._prediction_loop(eval_dataloader, description="Evaluation", tokenizer=tokenizer)
 
         self._log(output.metrics)
 
@@ -783,7 +783,8 @@ class Trainer:
         return self._prediction_loop(test_dataloader, description="Prediction")
 
     def _prediction_loop(
-        self, dataloader: DataLoader, description: str, prediction_loss_only: Optional[bool] = None
+        self, dataloader: DataLoader, description: str, prediction_loss_only: Optional[bool] = None,
+        tokenizer = None
     ) -> PredictionOutput:
         """
         Prediction/evaluation loop, shared by `evaluate()` and `predict()`.
@@ -841,19 +842,27 @@ class Trainer:
                 if self.args.past_index >= 0:
                     past = outputs[self.args.past_index if has_labels else self.args.past_index - 1]
 
-            # if true label and predicted label are not the same, 
-            # record the input_ids, true label, and predicted label
-            record_true_labels = inputs["labels"]
-            record_pred_labels = logits
-            record_input_embeddings = inputs["input_ids"]
-            assert len(record_true_labels) == len(record_pred_labels) and \
-                   len(record_pred_labels) == len(record_input_embeddings)
-            for i in range(len(record_true_label)):
-                if record_true_labels[0][i] != record_pred_labels[0][i]:
-                    error_file_rows.append([record_true_labels[0][i], record_pred_labels[0][i], record_input_embeddings[i]])
-                    # TODO: this only works for p+h+e, but not expl-only
-                    # because we need premise and hypothesis information (or id) to be in the input 
-                    # in order to record them
+            if self.args.output_error_file:
+                # if true label and predicted label are not the same, 
+                # record the input_ids, true label, and predicted label
+                record_true_labels = inputs["labels"]
+                record_input_embeddings = inputs["input_ids"]
+
+                #TODO: convert logits to record_pred_labels 
+                record_pred_labels = None
+
+                assert len(record_true_labels) == len(record_pred_labels) and \
+                    len(record_pred_labels) == len(record_input_embeddings)
+                for i in range(len(record_true_labels)):
+                    print('record_true_labels: ', record_true_labels)
+                    print('record_true_labels size: ', record_true_labels.size())
+                    print('record_pred_labels: ', record_pred_labels)
+                    print('record_pred_labels size: ', record_pred_labels.size())
+                    if record_true_labels[i] != record_pred_labels[i]:
+                        error_file_rows.append([record_true_labels[i], record_pred_labels[i], record_input_embeddings[i]])
+                        # TODO: this only works for p+h+e, but not expl-only
+                        # because we need premise and hypothesis information (or id) to be in the input 
+                        # in order to record them
 
             if not prediction_loss_only:
                 if preds is None:
@@ -897,7 +906,8 @@ class Trainer:
             if not key.startswith("eval_"):
                 metrics[f"eval_{key}"] = metrics.pop(key)
 
-        write_error_file(error_file_header, error_file_rows)
+        if self.args.output_error_file: 
+            write_error_file(error_file_header, error_file_rows, tokenizer=tokenizer)
 
         return PredictionOutput(predictions=preds, label_ids=label_ids, metrics=metrics)
 
@@ -913,8 +923,16 @@ class Trainer:
         output = concat[:num_total_examples]
         return output
 
-    def write_error_file(error_file_header, error_file_rows):
-        # TODO: convert embedding to text (include [sep] tokens)
+    def write_error_file(error_file_header, error_file_rows, tokenizer=None):
+        import time
+        import sys
+        sys.path.append('/data/rosa/my_github/misinformation/code/')
+        from myTools import write_csv
 
-        # TODO: write csv file
-        raise ValueError("Not implemented")
+        # convert embedding to text (include [sep] tokens)
+        for row in error_file_rows:
+            row[2] = tokenizer.decode(row[2])
+        error_file_name = os.path.join("/data/rosa/HF-transformers-20/examples/text-classification/", 
+                                        "error_file"+ time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv")
+        # write csv file
+        write_csv(error_file_name, error_file_rows, error_file_header)

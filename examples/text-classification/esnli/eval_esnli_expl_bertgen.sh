@@ -7,4 +7,5 @@ python ../run_glue.py \
 	--output_dir ./esnli_ph_expl_outputs_copy/ \
 	--overwrite_output_dir \
 	--overwrite_cache \
-	--esnli_input_type p+h:a,expl1:b 
+	--esnli_input_type p+h:a,expl1:b \
+	--output_error_file 

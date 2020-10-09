@@ -220,6 +220,8 @@ class TrainingArguments:
         metadata={"help": "If >=0, uses the corresponding part of the output as the past state for next step."},
     )
 
+    output_error_file: bool = field(default=False)
+
     @property
     def train_batch_size(self) -> int:
         """
