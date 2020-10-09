@@ -10,7 +10,7 @@ with open(sys.argv[2], 'rb') as f:
 with open(sys.argv[1], 'rb') as f:
     with open(sys.argv[3],'w') as wf:
         wfw = csv.writer(wf,delimiter=',',quotechar='"')
-        wfw.writerow(['id','question','choice_0','choice_1','choice_2','choice_3','choice_4','label','human_expl_open-ended'])
+        wfw.writerow(['id','question','choice_0','choice_1','choice_2','label','human_expl_open-ended'])
         for item in jsonlines.Reader(f):
             label = -1
             if(item['answerKey'] == 'A'):
@@ -20,7 +20,5 @@ with open(sys.argv[1], 'rb') as f:
             elif(item['answerKey'] == 'C'):
                 label = 2
             elif(item['answerKey'] == 'D'):
-                label = 3
-            else:
-                label = 4
-            wfw.writerow([item['id'],item['question']['stem'],item['question']['choices'][0]['text'],item['question']['choices'][1]['text'],item['question']['choices'][2]['text'],item['question']['choices'][3]['text'],item['question']['choices'][4]['text'],label,expl[item['id']]])
+                raise ValueError("There are only three answer choices.")
+            wfw.writerow([item['id'],item['question']['stem'],item['question']['choices'][0]['text'],item['question']['choices'][1]['text'],item['question']['choices'][2]['text'],label,expl[item['id']]])
