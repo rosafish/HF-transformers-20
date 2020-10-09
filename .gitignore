@@ -1,3 +1,8 @@
+# Ignore my other branches
+examples/EncoderDecoderModel/*
+examples/text-classification/*
+examples/seq2seq/*
+
 # Initially taken from Github's Python gitignore file
 
 # Byte-compiled / optimized / DLL files
