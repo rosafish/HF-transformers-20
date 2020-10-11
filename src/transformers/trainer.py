@@ -820,6 +820,7 @@ class Trainer:
 
         error_file_header = ['true_label', 'predicted_label', 'input_embeddings']
         error_file_rows = []
+        idx2text = ["contradiction", "entailment", "neutral"]
         for inputs in tqdm(dataloader, desc=description):
             has_labels = any(inputs.get(k) is not None for k in ["labels", "lm_labels", "masked_lm_labels"])
 
@@ -845,21 +846,17 @@ class Trainer:
             if self.args.output_error_file:
                 # if true label and predicted label are not the same, 
                 # record the input_ids, true label, and predicted label
-                record_true_labels = inputs["labels"]
-                record_input_embeddings = inputs["input_ids"]
+                record_true_labels = inputs["labels"].detach()
+                record_input_embeddings = inputs["input_ids"].detach()
 
-                #TODO: convert logits to record_pred_labels 
-                record_pred_labels = None
+                #convert logits to record_pred_labels 
+                record_pred_labels = logits.max(1)[1].detach()
 
-                assert len(record_true_labels) == len(record_pred_labels) and \
+                assert record_true_labels.size() == record_pred_labels.size() and \
                     len(record_pred_labels) == len(record_input_embeddings)
                 for i in range(len(record_true_labels)):
-                    print('record_true_labels: ', record_true_labels)
-                    print('record_true_labels size: ', record_true_labels.size())
-                    print('record_pred_labels: ', record_pred_labels)
-                    print('record_pred_labels size: ', record_pred_labels.size())
                     if record_true_labels[i] != record_pred_labels[i]:
-                        error_file_rows.append([record_true_labels[i], record_pred_labels[i], record_input_embeddings[i]])
+                        error_file_rows.append([idx2text[record_true_labels[i]], idx2text[record_pred_labels[i]], record_input_embeddings[i]])
                         # TODO: this only works for p+h+e, but not expl-only
                         # because we need premise and hypothesis information (or id) to be in the input 
                         # in order to record them
@@ -907,7 +904,7 @@ class Trainer:
                 metrics[f"eval_{key}"] = metrics.pop(key)
 
         if self.args.output_error_file: 
-            write_error_file(error_file_header, error_file_rows, tokenizer=tokenizer)
+            self.write_error_file(error_file_header, error_file_rows, tokenizer=tokenizer)
 
         return PredictionOutput(predictions=preds, label_ids=label_ids, metrics=metrics)
 
@@ -923,7 +920,7 @@ class Trainer:
         output = concat[:num_total_examples]
         return output
 
-    def write_error_file(error_file_header, error_file_rows, tokenizer=None):
+    def write_error_file(self, error_file_header, error_file_rows, tokenizer=None):
         import time
         import sys
         sys.path.append('/data/rosa/my_github/misinformation/code/')
