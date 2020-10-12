@@ -3,7 +3,7 @@ python ../run_glue.py \
 	--task_name ESNLI \
 	--do_train \
 	--do_eval \
-	--data_dir ./esnli25k_train_on_gen_expl/pretrain_train_dev_empty_expl/ \
+	--data_dir ./esnli25k_train_on_gen_expl/pretrain_train_dev_emptyexpl/ \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \
