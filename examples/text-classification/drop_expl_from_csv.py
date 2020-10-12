@@ -6,9 +6,9 @@ import csv
 
 
 def main():
-    input_csv_path = "/data/rosa/data/esnli_25k/esnli_train.csv" 
+    input_csv_path = "/data/rosa/data/esnli_125k/esnli_train.csv" 
 
-    output_csv_path = './esnli25k/esnli25k_train_on_gen_expl/pretrain_train_dev_emptyexpl/esnli_train.csv'
+    output_csv_path = './esnli125k/esnli125k_train_on_gen_expl/pretrain_train_dev_emptyexpl/esnli_train.csv'
 
     with open(output_csv_path, mode='w') as output_file:
         writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
