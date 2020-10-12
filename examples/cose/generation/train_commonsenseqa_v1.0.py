@@ -82,14 +82,6 @@ class CommonsenseExample:
         self.explanation = explanation
 
     @classmethod
-    def from_json(cls, d):
-        self.question = d['question']
-        self.choices = d['choices']
-        self.answer_key = d['answerKey'] if 'answerKey' in d else None
-        self.answer_text = {choice['label']: choice['text'] for choice in self.choices}[answer_key] if answer_key is not None else None
-        self.explanation = d['explanation'] if 'explanation' in d else None
-
-    @classmethod
     def from_list(cls, o, train=True, explain_predict=True):
         ex, ak, at = None, None, None
         q, c0, c1, c2 = o[1:5]
@@ -135,36 +127,6 @@ class CommonsenseExample:
     def __repr__(self):
         return f'question: {self.question}\nchoices: {[self.choice0, self.choice1, self.choice2]}\nanswer: {self.answer_text}\nexplanation: {self.explanation}'
 
-urls = {'train': 'https://s3.amazonaws.com/commensenseqa/train_rand_split.jsonl', 
-        'dev': 'https://s3.amazonaws.com/commensenseqa/dev_rand_split.jsonl',
-        'test': 'https://s3.amazonaws.com/commensenseqa/test_rand_split_no_answers.jsonl'}
-
-def download(url, path, basename):
-    if not os.path.isfile(path):
-        if not os.path.exists(os.path.dirname(path)):
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-        print('downloading {}'.format(basename))
-        download_from_url(url, path)
-    return path
-
-def download_cqa(explanation_path):
-    splits = ['dev.csv']
-    dirname = 'commonsenseqa'
-    version = 'explain-lm'
-    os.makedirs(dirname, exist_ok=True)
-    split_data = []
-    for split in splits:
-        url = urls[split]
-        basename = os.path.basename(url)
-        in_path = os.path.join(os.getcwd(), dirname, basename)
-        download(url, in_path, basename)
-        examples = []
-        with io.open(in_path, encoding='utf8') as f:
-            next(f)
-            for ex_id, line in enumerate(f):
-                examples.append(CommonsenseExample.from_json(json.loads(line)))
-        split_data.append(examples)
-    return split_data
 
 def parse_cqa(root_path, explain_predict):
     splits = ['train.csv', 'dev.csv']
@@ -180,12 +142,14 @@ def parse_cqa(root_path, explain_predict):
         split_data.append(examples)
     return split_data
 
+
 def top_k_logits(logits, k):
     if k == 0:
         return logits
     values, _ = torch.topk(logits, k)
     min_values = values[:, -1]
     return torch.where(logits < min_values, torch.ones_like(logits, dtype=logits.dtype) * -1e10, logits)
+
 
 def sample(model, prompts, length, device):
     prev = prompts
@@ -224,6 +188,7 @@ def sample_sequence(model, length, start_token=None, batch_size=None, context=No
                 _, prev = torch.topk(log_probs, k=1, dim=-1)
             output = torch.cat((output, prev), dim=1)
     return output
+
 
 def run_model():
     parser = argparse.ArgumentParser()
