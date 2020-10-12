@@ -1,9 +1,9 @@
 python ../run_glue.py \
-	--model_name_or_path bert-base-cased \
+	--model_name_or_path ./esnli_phe_1empty_outputs_copy/ \
 	--task_name ESNLI \
 	--do_train \
 	--do_eval \
-	--data_dir ./esnli_train_on_gen_expl/pretrain_train_emptyexpl_dev_bertexpl \
+	--data_dir ./EDM_esnli_expl/ \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \
