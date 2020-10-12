@@ -1,0 +1,14 @@
+python ../run_glue.py \
+	--model_name_or_path bert-base-cased \
+	--task_name ESNLI \
+	--do_train \
+	--do_eval \
+	--data_dir ./esnli125k_train_on_gen_expl/pretrain_train_dev_emptyexpl/ \
+	--max_seq_length 128 \
+	--per_device_train_batch_size 32 \
+	--learning_rate 2e-5 \
+	--output_dir ./esnli125k_phe_1empty_outputs/ \
+	--overwrite_output_dir \
+	--overwrite_cache \
+	--esnli_input_type p+h:a,expl1:b \
+	--num_train_epochs 3.0 
