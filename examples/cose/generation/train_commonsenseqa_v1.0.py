@@ -203,6 +203,7 @@ def run_model():
     parser.add_argument("--do_train", action='store_true', help="Whether to run training.")
     parser.add_argument("--do_eval", action='store_true', help="Whether to run eval on the dev set.")
     parser.add_argument("--do_test", action='store_true', help="Whether to run eval on the test set.")
+    parser.add_argument("--overwrite_output_dir", action='store_true', help="Whether to overwrite the output directory.")
     parser.add_argument("--output_dir", default=None, type=str, required=True,
                         help="The output directory where the model predictions and checkpoints will be written.")
     parser.add_argument('--seed', type=int, default=42)
@@ -232,6 +233,11 @@ def run_model():
 
     if not args.do_train and not args.do_eval and not args.do_test:
         raise ValueError("At least one of `do_train` or `do_eval`  or do_test must be True.")
+
+    if args.overwrite_output_dir and os.path.exists(args.output_dir):
+        import shutil
+        shutil.rmtree(args.output_dir)           # Removes all the subdirectories!
+        os.makedirs(args.output_dir)
 
     if not os.path.exists(args.output_dir):
         os.makedirs(args.output_dir)
@@ -374,11 +380,12 @@ def run_model():
                     prediction_strs.extend(pred_str)
                     input_str = detok_batch(inputs)
                     eval_em += sum([x == y for x, y in zip(pred_str, label_str)]) 
-                    # for print_idx in range(min(inputs.size(0), args.num_eval_print)):
-                    #     print('INPT: ', input_str[print_idx])
-                    #     print('GOLD: ', label_str[print_idx])
-                    #     print('PRED: ', pred_str[print_idx])
-                    #     print()
+                    for print_idx in range(min(inputs.size(0), args.num_eval_print)):
+                        print('EVAL during TRAINING:')
+                        print('INPT: ', input_str[print_idx])
+                        print('GOLD: ', label_str[print_idx])
+                        print('PRED: ', pred_str[print_idx])
+                        print()
 
                 eval_bleu = computeBLEU(prediction_strs, [[x] for x in label_strs])
                 eval_ppl = math.exp(eval_ppl / nb_eval_examples) 
@@ -443,11 +450,12 @@ def run_model():
             input_strs.extend(input_str)
 
             eval_em += sum([x == y for x, y in zip(pred_str, label_str)]) 
-            # for print_idx in range(min(inputs.size(0), args.num_eval_print)):
-            #     print('INPT: ', input_str[print_idx])
-            #     print('GOLD: ', label_str[print_idx])
-            #     print('PRED: ', pred_str[print_idx])
-            #     print()
+            for print_idx in range(min(inputs.size(0), args.num_eval_print)):
+                print("EVAL")
+                print('INPT: ', input_str[print_idx])
+                print('GOLD: ', label_str[print_idx])
+                print('PRED: ', pred_str[print_idx])
+                print()
 
         eval_bleu = computeBLEU(prediction_strs, [[x] for x in label_strs])
         eval_ppl = math.exp(eval_ppl / nb_eval_examples) 
@@ -469,7 +477,9 @@ def run_model():
 
         output_preds_file = os.path.join(args.output_dir, f"{args.num_train_epochs}epochs_{args.setting}.csv")
         import csv
+        print('going to open csv file')
         with open(output_preds_file, 'w') as csvfile:
+            print('writing csv file')
             writer = csv.writer(csvfile)
             writer.writerow(["inputs", "labels", "predictions"])
             for i in range(len(input_strs)):
