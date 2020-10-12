@@ -152,7 +152,6 @@ def top_k_logits(logits, k):
 
 
 def sample(model, prompts, length, device):
-    prev = prompts
     preds = []
     with torch.no_grad():
         for prompt_idx, prompt in enumerate(prompts.tolist()):
@@ -340,6 +339,7 @@ def run_model():
                     train_pred_strs.extend(pred_str)
                     input_str = detok_batch(inputs)
                     for print_idx in range(min(args.n_train_print, inputs.size(0))):
+                        print('TRAINING:')
                         print('INPT: ', input_str[print_idx])
                         print('GOLD: ', label_str[print_idx])
                         print('PRED: ', pred_str[print_idx])
@@ -350,7 +350,7 @@ def run_model():
                 train_bleu = computeBLEU(train_pred_strs, [[x] for x in train_lab_strs])
                 train_ppl = math.exp(train_ppl / n_train_examples) 
 
-            if args.do_eval:
+            if args.do_eval: # eval during training
                 model.eval()
                 eval_loss, eval_em, eval_ppl = 0, 0, 0
                 nb_eval_steps, nb_eval_examples = 0, 0
@@ -374,11 +374,11 @@ def run_model():
                     prediction_strs.extend(pred_str)
                     input_str = detok_batch(inputs)
                     eval_em += sum([x == y for x, y in zip(pred_str, label_str)]) 
-                    for print_idx in range(min(inputs.size(0), args.num_eval_print)):
-                        print('INPT: ', input_str[print_idx])
-                        print('GOLD: ', label_str[print_idx])
-                        print('PRED: ', pred_str[print_idx])
-                        print()
+                    # for print_idx in range(min(inputs.size(0), args.num_eval_print)):
+                    #     print('INPT: ', input_str[print_idx])
+                    #     print('GOLD: ', label_str[print_idx])
+                    #     print('PRED: ', pred_str[print_idx])
+                    #     print()
 
                 eval_bleu = computeBLEU(prediction_strs, [[x] for x in label_strs])
                 eval_ppl = math.exp(eval_ppl / nb_eval_examples) 
@@ -420,7 +420,7 @@ def run_model():
         model.eval()
         eval_loss, eval_em, eval_ppl = 0, 0, 0
         nb_eval_steps, nb_eval_examples = 0, 0
-        label_strs, prediction_strs = [], []
+        label_strs, prediction_strs, input_strs = [], [], []
         n_words = 0
         for batch in eval_dataloader:
             inputs = batch[0].to(device)
@@ -436,15 +436,18 @@ def run_model():
             nb_eval_steps += 1
             pred_str = detok_batch(preds)
             label_str = detok_batch(labels)
+            input_str = detok_batch(inputs)
+
             label_strs.extend(label_str)
             prediction_strs.extend(pred_str)
-            input_str = detok_batch(inputs)
+            input_strs.extend(input_str)
+
             eval_em += sum([x == y for x, y in zip(pred_str, label_str)]) 
-            for print_idx in range(min(inputs.size(0), args.num_eval_print)):
-                print('INPT: ', input_str[print_idx])
-                print('GOLD: ', label_str[print_idx])
-                print('PRED: ', pred_str[print_idx])
-                print()
+            # for print_idx in range(min(inputs.size(0), args.num_eval_print)):
+            #     print('INPT: ', input_str[print_idx])
+            #     print('GOLD: ', label_str[print_idx])
+            #     print('PRED: ', pred_str[print_idx])
+            #     print()
 
         eval_bleu = computeBLEU(prediction_strs, [[x] for x in label_strs])
         eval_ppl = math.exp(eval_ppl / nb_eval_examples) 
@@ -464,12 +467,13 @@ def run_model():
                 logger.info("  %s = %s", key, str(result[key]))
                 writer.write("%s = %s\n" % (key, str(result[key])))
 
-        output_preds_file = os.path.join(args.output_dir, f"{args.num_train_epochs}epochs_{args.setting}.txt")
-        with open(output_preds_file, 'w') as writer:
-            logger.info("Writing predictions")
-            for p in prediction_strs:
-                writer.write(p + '\n')
-
+        output_preds_file = os.path.join(args.output_dir, f"{args.num_train_epochs}epochs_{args.setting}.csv")
+        import csv
+        with open(output_preds_file, 'w') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["inputs", "labels", "predictions"])
+            for i in range(len(input_strs)):
+                writer.writerow([input_strs[i], label_strs[i], prediction_strs[i]])
 
     if args.do_test:
         # Load a trained model that you have fine-tuned
