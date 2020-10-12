@@ -6,11 +6,9 @@ import csv
 
 
 def main():
-    input_csv_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel" \
-                     "/esnli/esnli_task_trained_model_and_results/esnli/esnli_train_results/" \
-                     "eval_on_train_expl_text_in_esnli_train_format.csv"
+    input_csv_path = "./pretrain_train_emptyexpl_dev_bertexpl/esnli_dev.csv" 
 
-    output_csv_path = './pretrain_on_phe_empty_expl.csv'
+    output_csv_path = './eval_dev_emptyexpl/esnli_dev.csv'
 
     with open(output_csv_path, mode='w') as output_file:
         writer = csv.writer(output_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
