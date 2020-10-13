@@ -1,13 +1,13 @@
 python ../run_glue.py \
-	--model_name_or_path bert-base-cased \
+	--model_name_or_path ./esnli25k_phe_1empty_outputs_copy/ \
 	--task_name ESNLI \
 	--do_train \
 	--do_eval \
-	--data_dir ./esnli25k_train_on_gen_expl/pretrain_train_dev_emptyexpl/ \
+	--data_dir /data/rosa/data/esnli_25k/ \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \
-	--output_dir ./esnli25k_phe_1empty_outputs/ \
+	--output_dir ./esnli25k_phe_1empty_2gold_outputs/ \
 	--overwrite_output_dir \
 	--overwrite_cache \
 	--esnli_input_type p+h:a,expl1:b \
