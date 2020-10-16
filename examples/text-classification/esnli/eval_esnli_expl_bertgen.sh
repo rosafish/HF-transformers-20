@@ -1,11 +1,11 @@
 python ../run_glue.py \
-	--model_name_or_path ./esnli_expl1_outputs_copy/ \
+	--model_name_or_path ./esnli_phe_1empty_2gold_outputs_copy/ \
 	--task_name ESNLI \
 	--do_eval \
-	--data_dir /data/rosa/data/esnli/ \
+	--data_dir ./EDM_esnli_expl/ \
 	--max_seq_length 128 \
-	--output_dir ./esnli_expl1_outputs_copy/ \
+	--output_dir ./esnli_phe_1empty_2gold_outputs_copy/ \
 	--overwrite_output_dir \
 	--overwrite_cache \
-	--esnli_input_type expl1:a \
+	--esnli_input_type p+h:a,expl1:b \
 	--output_error_file 
