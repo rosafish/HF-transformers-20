@@ -3,11 +3,11 @@ python ../run_glue.py \
 	--task_name ESNLI \
 	--do_train \
 	--do_eval \
-	--data_dir /data/rosa/data/esnli_125k/ \
+	--data_dir ./EDM_esnli125k_expl/ \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \
-	--output_dir ./esnli125k_phe_1empty_2gold_outputs/ \
+	--output_dir ./esnli125k_phe_1empty_2bert_outputs/ \
 	--overwrite_output_dir \
 	--overwrite_cache \
 	--esnli_input_type p+h:a,expl1:b \
