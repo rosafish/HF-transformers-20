@@ -632,6 +632,7 @@ class HansEsnliProcessor(EsnliProcessor):
     def _create_examples(self, data_path):
         """Creates examples for the training, dev and test sets."""
         print('hans input type: ', self.esnli_input_type)
+        print('hans input data path: ', data_path)
         examples = []
         with open(data_path, newline='') as f:
             import csv
@@ -639,7 +640,7 @@ class HansEsnliProcessor(EsnliProcessor):
             for (i, line) in enumerate(reader):
                 if i == 0:
                     continue
-                guid = "%s-%s" % ("train", i)
+                guid = "%s-%s" % ("train/dev", i)
                 label = line[1]
                 premise = line[2]
                 hypothesis = line[3]
