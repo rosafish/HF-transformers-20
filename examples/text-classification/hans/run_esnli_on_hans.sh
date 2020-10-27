@@ -1,0 +1,16 @@
+python ../run_glue.py \
+	--model_name_or_path ../esnli/esnli_ph_texta_outputs_copy/ \
+	--task_name HANS \
+	--do_train \
+    --do_eval \
+	--evaluation_strategy epoch \
+	--load_best_model_at_end \
+	--data_dir /data/rosa/data/hans/in_esnli_format/template_expls/train_1k/high_q_expl/ \
+	--max_seq_length 128 \
+    --per_device_train_batch_size 32 \
+	--learning_rate 2e-5 \
+	--output_dir ./esnli_ph_fthans_outputs/ \
+	--overwrite_output_dir \
+	--overwrite_cache \
+	--esnli_input_type p+h:a \
+    --max_steps 1000 # 1k steps for 1k training data
