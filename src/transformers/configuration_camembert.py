@@ -15,13 +15,11 @@
 # limitations under the License.
 """ CamemBERT configuration """
 
-
-import logging
-
 from .configuration_roberta import RobertaConfig
+from .utils import logging
 
 
-logger = logging.getLogger(__name__)
+logger = logging.get_logger(__name__)
 
 CAMEMBERT_PRETRAINED_CONFIG_ARCHIVE_MAP = {
     "camembert-base": "https://s3.amazonaws.com/models.huggingface.co/bert/camembert-base-config.json",
@@ -32,8 +30,8 @@ CAMEMBERT_PRETRAINED_CONFIG_ARCHIVE_MAP = {
 
 class CamembertConfig(RobertaConfig):
     """
-    This class overrides :class:`~transformers.RobertaConfig`. Please check the
-    superclass for the appropriate documentation alongside usage examples.
+    This class overrides :class:`~transformers.RobertaConfig`. Please check the superclass for the appropriate
+    documentation alongside usage examples.
     """
 
     model_type = "camembert"

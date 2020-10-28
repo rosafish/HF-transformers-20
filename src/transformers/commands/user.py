@@ -5,7 +5,6 @@ from getpass import getpass
 from typing import List, Union
 
 from requests.exceptions import HTTPError
-
 from transformers.commands import BaseTransformersCLICommand
 from transformers.hf_api import HfApi, HfFolder
 
@@ -41,6 +40,7 @@ class UserCommands(BaseTransformersCLICommand):
         upload_parser.add_argument(
             "--filename", type=str, default=None, help="Optional: override individual object filename on S3."
         )
+        upload_parser.add_argument("-y", "--yes", action="store_true", help="Optional: answer Yes to the prompt")
         upload_parser.set_defaults(func=lambda args: UploadCommand(args))
 
 
@@ -70,7 +70,7 @@ class BaseUserCommand:
 
 class LoginCommand(BaseUserCommand):
     def run(self):
-        print(
+        print(  # docstyle-ignore
             """
         _|    _|  _|    _|    _|_|_|    _|_|_|  _|_|_|  _|      _|    _|_|_|      _|_|_|_|    _|_|      _|_|_|  _|_|_|_|
         _|    _|  _|    _|  _|        _|          _|    _|_|    _|  _|            _|        _|    _|  _|        _|
@@ -127,8 +127,9 @@ class ListObjsCommand(BaseUserCommand):
     def tabulate(self, rows: List[List[Union[str, int]]], headers: List[str]) -> str:
         """
         Inspired by:
-        stackoverflow.com/a/8356620/593036
-        stackoverflow.com/questions/9535954/printing-lists-as-tabular-data
+
+        - stackoverflow.com/a/8356620/593036
+        - stackoverflow.com/questions/9535954/printing-lists-as-tabular-data
         """
         col_widths = [max(len(str(x)) for x in col) for col in zip(*rows, headers)]
         row_format = ("{{:{}}} " * len(headers)).format(*col_widths)
@@ -222,10 +223,11 @@ class UploadCommand(BaseUserCommand):
                 )
             )
 
-        choice = input("Proceed? [Y/n] ").lower()
-        if not (choice == "" or choice == "y" or choice == "yes"):
-            print("Abort")
-            exit()
+        if not self.args.yes:
+            choice = input("Proceed? [Y/n] ").lower()
+            if not (choice == "" or choice == "y" or choice == "yes"):
+                print("Abort")
+                exit()
         print(ANSI.bold("Uploading... This might take a while if files are large"))
         for filepath, filename in files:
             try:
