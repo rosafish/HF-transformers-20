@@ -6,8 +6,6 @@ language:
 - fr
 - it
 - es
-
-license: mit
 ---
 
 # bert-base-multilingual-uncased-sentiment

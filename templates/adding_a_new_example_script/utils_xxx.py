@@ -327,15 +327,9 @@ def convert_examples_to_features(
                 segment_ids.append(pad_token_segment_id)
                 p_mask.append(1)
 
-            assert (
-                len(input_ids) == max_seq_length
-            ), f"Input ids and sequence have mismatched lengths {len(input_ids)} and {max_seq_length}"
-            assert (
-                len(input_mask) == max_seq_length
-            ), f"Input mask and sequence have mismatched lengths {len(input_mask)} and {max_seq_length}"
-            assert (
-                len(segment_ids) == max_seq_length
-            ), f"Segment ids and sequence have mismatched lengths {len(segment_ids)} and {max_seq_length}"
+            assert len(input_ids) == max_seq_length
+            assert len(input_mask) == max_seq_length
+            assert len(segment_ids) == max_seq_length
 
             span_is_impossible = example.is_impossible
             start_position = None
@@ -632,7 +626,7 @@ def write_predictions(
         if not nbest:
             nbest.append(_NbestPrediction(text="empty", start_logit=0.0, end_logit=0.0))
 
-        assert len(nbest) >= 1, "No valid predictions"
+        assert len(nbest) >= 1
 
         total_scores = []
         best_non_null_entry = None
@@ -653,7 +647,7 @@ def write_predictions(
             output["end_logit"] = entry.end_logit
             nbest_json.append(output)
 
-        assert len(nbest_json) >= 1, "No valid predictions"
+        assert len(nbest_json) >= 1
 
         if not version_2_with_negative:
             all_predictions[example.qas_id] = nbest_json[0]["text"]
@@ -703,10 +697,10 @@ def write_predictions_extended(
     tokenizer,
     verbose_logging,
 ):
-    """XLNet write prediction logic (more complex than Bert's).
-    Write final predictions to the json file and log-odds of null if needed.
+    """ XLNet write prediction logic (more complex than Bert's).
+        Write final predictions to the json file and log-odds of null if needed.
 
-    Requires utils_squad_evaluate.py
+        Requires utils_squad_evaluate.py
     """
     _PrelimPrediction = collections.namedtuple(  # pylint: disable=invalid-name
         "PrelimPrediction", ["feature_index", "start_index", "end_index", "start_log_prob", "end_log_prob"]
@@ -849,8 +843,8 @@ def write_predictions_extended(
             output["end_log_prob"] = entry.end_log_prob
             nbest_json.append(output)
 
-        assert len(nbest_json) >= 1, "No valid predictions"
-        assert best_non_null_entry is not None, "No valid predictions"
+        assert len(nbest_json) >= 1
+        assert best_non_null_entry is not None
 
         score_diff = score_null
         scores_diff_json[example.qas_id] = score_diff

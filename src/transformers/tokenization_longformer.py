@@ -13,11 +13,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from .tokenization_roberta import RobertaTokenizer
-from .utils import logging
+import logging
+
+from .tokenization_roberta import RobertaTokenizer, RobertaTokenizerFast
 
 
-logger = logging.get_logger(__name__)
+logger = logging.getLogger(__name__)
 
 
 # vocab and merges same as roberta
@@ -42,12 +43,15 @@ PRETRAINED_POSITIONAL_EMBEDDINGS_SIZES = {
 
 
 class LongformerTokenizer(RobertaTokenizer):
-    r"""
-    Construct a Longformer tokenizer.
+    # merges and vocab same as Roberta
+    max_model_input_sizes = PRETRAINED_POSITIONAL_EMBEDDINGS_SIZES
+    pretrained_vocab_files_map = {
+        "vocab_file": {m: vocab_url for m in _all_longformer_models},
+        "merges_file": {m: merges_url for m in _all_longformer_models},
+    }
 
-    :class:`~transformers.LongformerTokenizer` is identical to :class:`~transformers.RobertaTokenizer`. Refer to the
-    superclass for usage examples and documentation concerning parameters.
-    """
+
+class LongformerTokenizerFast(RobertaTokenizerFast):
     # merges and vocab same as Roberta
     max_model_input_sizes = PRETRAINED_POSITIONAL_EMBEDDINGS_SIZES
     pretrained_vocab_files_map = {

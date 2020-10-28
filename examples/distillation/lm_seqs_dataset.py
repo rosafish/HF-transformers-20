@@ -101,7 +101,7 @@ class LmSeqsDataset(Dataset):
 
     def remove_empty_sequences(self):
         """
-        Too short sequences are simply removed. This could be tuned.
+        Too short sequences are simply removed. This could be tunedd.
         """
         init_size = len(self)
         indices = self.lengths > 11

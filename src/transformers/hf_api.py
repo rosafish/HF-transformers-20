@@ -19,9 +19,8 @@ import os
 from os.path import expanduser
 from typing import Dict, List, Optional, Tuple
 
-from tqdm import tqdm
-
 import requests
+from tqdm import tqdm
 
 
 ENDPOINT = "https://huggingface.co"
@@ -104,9 +103,11 @@ class HfApi:
         """
         Call HF API to sign in a user and get a token if credentials are valid.
 
-        Outputs: token if credentials are valid
+        Outputs:
+            token if credentials are valid
 
-        Throws: requests.exceptions.HTTPError if credentials are invalid
+        Throws:
+            requests.exceptions.HTTPError if credentials are invalid
         """
         path = "{}/api/login".format(self.endpoint)
         r = requests.post(path, json={"username": username, "password": password})
@@ -150,7 +151,8 @@ class HfApi:
         """
         Get a presigned url, then upload file to S3.
 
-        Outputs: url: Read-only url for the stored file on S3.
+        Outputs:
+            url: Read-only url for the stored file on S3.
         """
         urls = self.presign(token, filename=filename, organization=organization)
         # streaming upload:
@@ -203,10 +205,11 @@ class HfApi:
 
 class TqdmProgressFileReader:
     """
-    Wrap an io.BufferedReader `f` (such as the output of `open(…, "rb")`) and override `f.read()` so as to display a
-    tqdm progress bar.
+    Wrap an io.BufferedReader `f` (such as the output of `open(…, "rb")`)
+    and override `f.read()` so as to display a tqdm progress bar.
 
-    see github.com/huggingface/transformers/pull/2078#discussion_r354739608 for implementation details.
+    see github.com/huggingface/transformers/pull/2078#discussion_r354739608
+    for implementation details.
     """
 
     def __init__(self, f: io.BufferedReader):
@@ -250,7 +253,8 @@ class HfFolder:
     @classmethod
     def delete_token(cls):
         """
-        Delete token. Do not fail if token does not exist.
+        Delete token.
+        Do not fail if token does not exist.
         """
         try:
             os.remove(cls.path_token)

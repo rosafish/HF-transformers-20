@@ -1,6 +1,6 @@
 ---
 language: code
-thumbnail: https://cdn-media.huggingface.co/CodeBERTa/CodeBERTa.png
+thumbnail: https://hf-dinosaur.huggingface.co/CodeBERTa/CodeBERTa.png
 tags:
 - test
 datasets:
