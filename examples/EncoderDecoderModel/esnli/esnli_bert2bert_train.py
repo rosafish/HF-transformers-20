@@ -22,11 +22,11 @@ def main():
 
     # paths and params
     max_seq_len = 128
-    train_data_path = './sanity-checks/esnli_train_1000.csv'
-    cached_train_features_file = './cache/cached_sanity_checks_train_esnli1k'
-    save_trained_model_dir = "./sanity-checks/esnli1k_train_trained_model/"
+    train_data_path = '/data/rosa/data/esnli/esnli_train.csv'
+    cached_train_features_file = './cache/cached_train_esnli'
+    save_trained_model_dir = "./save_best_models/esnli_train_trained_model/"
     # load dev data, because we are using dev data to find best model / number of steps to train for
-    eval_data_path = './sanity-checks/esnli_dev_10.csv'
+    eval_data_path = '/data/rosa/data/esnli/esnli_dev.csv'
     
     # Get train examples
     processor = EsnliProcessor()
@@ -57,7 +57,7 @@ def main():
     model.config.eos_token_id = 102
 
     training_args = TrainingArguments(
-        output_dir='./checkpoint-train-results',    # output directory
+        output_dir=save_trained_model_dir,          # output directory
         per_device_train_batch_size=4,              # batch size per device during training
         weight_decay=0.01,                          # strength of weight decay
         logging_dir='./train-logs',                 # directory for storing logs
@@ -68,9 +68,9 @@ def main():
         per_device_eval_batch_size=1,
         predict_from_generate=True,
         # modify the following for different sample size
-        # num_train_epochs=3,                         # total # of training epochs
-        max_steps=1000,                          # overwrites num_train_epochs, this is here for few-sample learning specifically.
-        logging_steps=500,                         
+        num_train_epochs=3,                         # total # of training epochs
+        # max_steps=1000,                          # overwrites num_train_epochs, this is here for few-sample learning specifically.
+        logging_steps=5000,                         
         overwrite_output_dir=True,
         warmup_steps=1000,                          # number of warmup steps for learning rate scheduler
     )
@@ -79,14 +79,14 @@ def main():
         model=model,                                # the instantiated 🤗 Transformers model to be trained
         args=training_args,                         # training arguments, defined above
         train_dataset=train_features,               # training dataset
-        eval_dataset=eval_features                 # evaluation dataset
+        eval_dataset=eval_features,                 # evaluation dataset
     )
 
     trainer.train()
 
     # Save Model After Training
     cuda_id = "1" # since there's something running on 0 #TODO: is this line necessary?
-    trainer.save_model(save_trained_model_dir)
+    trainer.save_model(save_trained_model_dir+"/last_model/") # no guarantee of that the last model is the best
 
     
 if __name__=='__main__':
