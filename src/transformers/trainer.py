@@ -477,6 +477,11 @@ class Trainer:
         train_iterator = trange(
             epochs_trained, int(num_train_epochs), desc="Epoch", disable=not self.is_local_master()
         )
+
+        # initialize 0 bleu for esnli encoderdecodermodel finetuning
+        if self.args.esnli_evaluate_during_training: 
+            best_bleu = 0
+
         for epoch in train_iterator:
             if isinstance(train_dataloader, DataLoader) and isinstance(train_dataloader.sampler, DistributedSampler):
                 train_dataloader.sampler.set_epoch(epoch)
@@ -539,7 +544,10 @@ class Trainer:
                         self._log(logs)
 
                     if self.args.evaluate_during_training and self.global_step % self.args.eval_steps == 0:
-                        self.evaluate()
+                        if self.args.esnli_evaluate_during_training: #TODO: add this arg
+                            best_bleu = self.eval_esnli_write_output(best_bleu)
+                        else:
+                            self.evaluate()
 
                     if self.args.save_steps > 0 and self.global_step % self.args.save_steps == 0:
                         # In all cases (even distributed/parallel), self.model is always a reference
@@ -657,6 +665,10 @@ class Trainer:
         """
         This will be True only in one process, even in distributed mode,
         even when training on multiple machines.
+
+        This returns a boolean indicating:
+        whether or not this process is the global main process (when training in a distributed fashion on several machines, 
+        this is only going to be True for one process).
         """
         if is_torch_tpu_available():
             return xm.is_master_ordinal(local=False)
@@ -914,7 +926,7 @@ class Trainer:
         output = concat[:num_total_examples]
         return output
 
-    def eval_esnli_write_output(self, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
+    def eval_esnli_write_output(self, best_bleu=0, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
         """
         Run evaluation on a large dev/test dataset. Note that this evaluation is for esnli tasks.
         And write the output expl as well as three gold explanations (in dev and test datasets) to a csv file.
@@ -1032,6 +1044,41 @@ class Trainer:
             torch.cuda.empty_cache()
         
         expl_f.close()
+
+        #TODO: compute eval BLEU and print/log out the bleu score each time we do evaluation during training
+        # eval_bleu = compute_bleu()
+        # if eval_bleu > best_bleu:
+        #     best_bleu = eval_bleu
+        #     #TODO: save the current model with info about epoch/steps trained and bleu score achieved
+            # Save a trained model (code from cos-e)
+            # model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
+            # output_model_file = os.path.join(args.output_dir, "pytorch_model.bin")
+            # config = model.config
+            # torch.save(model_to_save.state_dict(), output_model_file)
+
+            # Save checkpoint
+            # # In all cases (even distributed/parallel), self.model is always a reference
+            # # to the model we want to save.
+            # if hasattr(model, "module"):
+            #     assert model.module is self.model
+            # else:
+            #     assert model is self.model
+            # # Save model checkpoint
+            # output_dir = os.path.join(self.args.output_dir, f"{PREFIX_CHECKPOINT_DIR}-{self.global_step}")
+
+            # self.save_model(output_dir)
+
+            # if self.is_world_master():
+            #     self._rotate_checkpoints()
+
+            # if is_torch_tpu_available():
+            #     xm.rendezvous("saving_optimizer_states")
+            #     xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+            #     xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+            # elif self.is_world_master():
+            #     torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+            #     torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+
         return None
 
     def eval_cose_write_output(self, tokenizer, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
