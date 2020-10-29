@@ -1060,7 +1060,7 @@ class Trainer:
                 assert model is self.model
             
             # Save the current model with info about epoch/steps trained and bleu score achieved
-            output_dir = os.path.join(self.args.output_dir, f"eval_bleu{round(eval_bleu,5)}_epoch{self.epoch}")
+            output_dir = os.path.join(self.args.output_dir, f"eval_bleu{round(eval_bleu,5)}_epoch{self.epoch}_step{self.global_step}")
 
             self.save_model(output_dir)
 
