@@ -961,7 +961,8 @@ class Trainer:
         import time
         import csv
         headers = ["Pred_Expl", "Expl_1", "Expl_2", "Expl_3"]
-        expl_csv = os.path.join("/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/", time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv")
+        expl_csv_file_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/", time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv"
+        expl_csv = os.path.join(expl_csv_file_path)
         expl_f = open(expl_csv, "a")
         writer = csv.writer(expl_f)
         writer.writerow(headers)
@@ -1045,10 +1046,15 @@ class Trainer:
         
         expl_f.close()
 
-        #TODO: compute eval BLEU and print/log out the bleu score each time we do evaluation during training
-        eval_bleu = compute_bleu()
+        # Compute eval BLEU and print the bleu score each time 
+        # especially when we do evaluation during training
+        eval_bleu = compute_bleu(expl_csv_file_path) # expl_csv_file_path is a file of embeddings
+        if self.evaluate_during_training:
+            print('training epoch: ',  self.epoch)
+            print('training step: ', self.global_step)
         print('eval bleu: ',  eval_bleu)
         print('best bleu: ', best_bleu)
+
         if eval_bleu > best_bleu:
             best_bleu = eval_bleu
             
@@ -1112,7 +1118,8 @@ class Trainer:
         import time
         import csv
         headers = ["input_text", "target_expl", "generated_expl"]
-        expl_csv = os.path.join("/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/cos-e/", time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv")
+        expl_csv_file_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/cos-e/", time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv"
+        expl_csv = os.path.join(expl_csv_file_path)
         expl_f = open(expl_csv, "a")
         writer = csv.writer(expl_f)
         writer.writerow(headers)
@@ -1194,5 +1201,12 @@ class Trainer:
 
         return text
 
-    def compute_bleu():
-        raise ValueError("To be implemented")
+    def compute_bleu(self.embedding_csv_path):
+        """
+        Computes bleu scores on embeddings (before converting to tokens).
+        """
+        import sys
+        sys.path.append('/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/')
+        from convert_generated_embedding_text import compute_embedding_bleu
+        bleu_score = compute_embedding_bleu(embedding_csv_path)
+        return bleu_score
