@@ -70,9 +70,7 @@ def main():
         # modify the following for different sample size
         # num_train_epochs=3,                         # total # of training epochs
         max_steps=1000,                          # overwrites num_train_epochs, this is here for few-sample learning specifically.
-        logging_steps=50,                         # I think it is good to set logging steps = saving steps = eval steps
-        save_steps=50,
-        eval_steps=50,
+        logging_steps=500,                         
         overwrite_output_dir=True,
         warmup_steps=1000,                          # number of warmup steps for learning rate scheduler
     )

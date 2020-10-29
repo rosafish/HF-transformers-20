@@ -543,15 +543,17 @@ class Trainer:
 
                         self._log(logs)
 
-                    if self.args.evaluate_during_training and self.global_step % self.args.eval_steps == 0:
-                        if self.args.esnli_evaluate_during_training: 
-                            best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler)
-                        else:
-                            self.evaluate()
-
                 if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
                     epoch_iterator.close()
                     break
+
+            # evaluate during training at the end of every epoch
+            if self.args.evaluate_during_training:
+                if self.args.esnli_evaluate_during_training: 
+                    best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler)
+                else:
+                    self.evaluate()
+
             if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
                 print("close tb writer")
                 train_iterator.close()
@@ -938,7 +940,7 @@ class Trainer:
         import time
         import csv
         headers = ["Pred_Expl", "Expl_1", "Expl_2", "Expl_3"]
-        expl_csv_file_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/epoch" + self.epoch + "_" +\
+        expl_csv_file_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/epoch" + str(self.epoch) + "_" +\
         time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv"
         expl_csv = os.path.join(expl_csv_file_path)
         expl_f = open(expl_csv, "a")
