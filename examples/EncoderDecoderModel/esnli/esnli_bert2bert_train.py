@@ -21,16 +21,18 @@ def main():
     np.random.seed(0)
 
     # paths and params
-    train_data_path = '/data/rosa/data/esnli_25k/esnli_train.csv'
-    cached_train_features_file = './cache/cached_train_esnli25k'
-    save_trained_model_dir = "./esnli25k_train_trained_model/"
     max_seq_len = 128
-
-    # Get examples
+    train_data_path = './sanity-checks/esnli_train_1000.csv'
+    cached_train_features_file = './cache/cached_sanity_checks_train_esnli1k'
+    save_trained_model_dir = "./sanity-checks/esnli1k_train_trained_model/"
+    # load dev data, because we are using dev data to find best model / number of steps to train for
+    eval_data_path = './sanity-checks/esnli_dev_100.csv'
+    
+    # Get train examples
     processor = EsnliProcessor()
     train_examples = processor.get_train_examples(train_data_path) 
 
-    # Convert examples to features
+    # Convert train examples to features
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     # Cache training dataset features
     if os.path.exists(cached_train_features_file):
@@ -40,6 +42,15 @@ def main():
         train_features = esnli_examples_to_features(train_examples, max_seq_len, tokenizer)
         logger.info("Saving training features into cached file %s", cached_train_features_file)
         torch.save(train_features, cached_train_features_file)
+
+    # get dev examples
+    if args.generate_expl_on_training_data:
+        eval_examples = processor.get_train_examples(eval_data_path)
+    else:
+        eval_examples = processor.get_dev_examples(eval_data_path) 
+    
+    # convert dev examples to features
+    eval_features = esnli_examples_to_features(eval_examples, max_seq_len, tokenizer)
     
     # Training
     #initialize Bert2Bert
@@ -57,8 +68,9 @@ def main():
         # modify the following for different sample size
         # num_train_epochs=3,                         # total # of training epochs
         max_steps = 20000,                          # overwrites num_train_epochs, this is here for few-sample learning specifically.
-        logging_steps=5000,                         # I think it is good to set logging steps to be same as saving steps 
+        logging_steps=5000,                         # I think it is good to set logging steps = saving steps = eval steps
         save_steps=5000,
+        eval_steps=5000,
         overwrite_output_dir=True,
         warmup_steps=1000,                          # number of warmup steps for learning rate scheduler
     )
@@ -67,14 +79,14 @@ def main():
         model=model,                                # the instantiated 🤗 Transformers model to be trained
         args=training_args,                         # training arguments, defined above
         train_dataset=train_features,               # training dataset
-        eval_dataset=train_features                 # evaluation dataset
+        eval_dataset=eval_features                 # evaluation dataset
     )
 
     trainer.train()
 
     # Save Model After Training
     output_dir = save_trained_model_dir
-    cuda_id = "1" # since there's something running on 0
+    cuda_id = "1" # since there's something running on 0 #TODO: is this line necessary?
 
     trainer.save_model(output_dir)
 
