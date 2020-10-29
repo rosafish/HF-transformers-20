@@ -549,29 +549,6 @@ class Trainer:
                         else:
                             self.evaluate()
 
-                    # if self.args.save_steps > 0 and self.global_step % self.args.save_steps == 0:
-                    #     # In all cases (even distributed/parallel), self.model is always a reference
-                    #     # to the model we want to save.
-                    #     if hasattr(model, "module"):
-                    #         assert model.module is self.model
-                    #     else:
-                    #         assert model is self.model
-                    #     # Save model checkpoint
-                    #     output_dir = os.path.join(self.args.output_dir, f"{PREFIX_CHECKPOINT_DIR}-{self.global_step}")
-
-                    #     self.save_model(output_dir)
-
-                    #     if self.is_world_master():
-                    #         self._rotate_checkpoints()
-
-                    #     if is_torch_tpu_available():
-                    #         xm.rendezvous("saving_optimizer_states")
-                    #         xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                    #         xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
-                    #     elif self.is_world_master():
-                    #         torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                    #         torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
-
                 if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
                     epoch_iterator.close()
                     break
