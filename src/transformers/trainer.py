@@ -1046,40 +1046,36 @@ class Trainer:
         expl_f.close()
 
         #TODO: compute eval BLEU and print/log out the bleu score each time we do evaluation during training
-        # eval_bleu = compute_bleu()
-        # if eval_bleu > best_bleu:
-        #     best_bleu = eval_bleu
-        #     #TODO: save the current model with info about epoch/steps trained and bleu score achieved
-            # Save a trained model (code from cos-e)
-            # model_to_save = model.module if hasattr(model, 'module') else model  # Only save the model it-self
-            # output_model_file = os.path.join(args.output_dir, "pytorch_model.bin")
-            # config = model.config
-            # torch.save(model_to_save.state_dict(), output_model_file)
+        eval_bleu = compute_bleu()
+        print('eval bleu: ',  eval_bleu)
+        print('best bleu: ', best_bleu)
+        if eval_bleu > best_bleu:
+            best_bleu = eval_bleu
+            
+            # In all cases (even distributed/parallel), self.model is always a reference
+            # to the model we want to save.
+            if hasattr(model, "module"):
+                assert model.module is self.model
+            else:
+                assert model is self.model
+            
+            # Save the current model with info about epoch/steps trained and bleu score achieved
+            output_dir = os.path.join(self.args.output_dir, f"eval_bleu{round(eval_bleu,5)}_epoch{self.epoch}")
 
-            # Save checkpoint
-            # # In all cases (even distributed/parallel), self.model is always a reference
-            # # to the model we want to save.
-            # if hasattr(model, "module"):
-            #     assert model.module is self.model
-            # else:
-            #     assert model is self.model
-            # # Save model checkpoint
-            # output_dir = os.path.join(self.args.output_dir, f"{PREFIX_CHECKPOINT_DIR}-{self.global_step}")
+            self.save_model(output_dir)
 
-            # self.save_model(output_dir)
+            if self.is_world_master():
+                self._rotate_checkpoints()
 
-            # if self.is_world_master():
-            #     self._rotate_checkpoints()
+            if is_torch_tpu_available():
+                xm.rendezvous("saving_optimizer_states")
+                xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+            elif self.is_world_master():
+                torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
 
-            # if is_torch_tpu_available():
-            #     xm.rendezvous("saving_optimizer_states")
-            #     xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-            #     xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
-            # elif self.is_world_master():
-            #     torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-            #     torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
-
-        return None
+        return best_bleu
 
     def eval_cose_write_output(self, tokenizer, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
         """
@@ -1197,3 +1193,6 @@ class Trainer:
         text = tokenizer.decode(embedding_processed)
 
         return text
+
+    def compute_bleu():
+        raise ValueError("To be implemented")
