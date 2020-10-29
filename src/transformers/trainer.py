@@ -1048,7 +1048,7 @@ class Trainer:
 
         # Compute eval BLEU and print the bleu score each time 
         # especially when we do evaluation during training
-        eval_bleu = compute_bleu(expl_csv_file_path) # expl_csv_file_path is a file of embeddings
+        eval_bleu = self.compute_bleu(expl_csv_file_path) # expl_csv_file_path is a file of embeddings
         if self.evaluate_during_training:
             print('training epoch: ',  self.epoch)
             print('training step: ', self.global_step)
@@ -1201,7 +1201,7 @@ class Trainer:
 
         return text
 
-    def compute_bleu(self.embedding_csv_path):
+    def compute_bleu(self, embedding_csv_path):
         """
         Computes bleu scores on embeddings (before converting to tokens).
         """

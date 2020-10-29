@@ -85,10 +85,8 @@ def main():
     trainer.train()
 
     # Save Model After Training
-    output_dir = save_trained_model_dir
     cuda_id = "1" # since there's something running on 0 #TODO: is this line necessary?
-
-    trainer.save_model(output_dir)
+    trainer.save_model(save_trained_model_dir)
 
     
 if __name__=='__main__':
