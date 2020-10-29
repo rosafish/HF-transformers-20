@@ -545,32 +545,32 @@ class Trainer:
 
                     if self.args.evaluate_during_training and self.global_step % self.args.eval_steps == 0:
                         if self.args.esnli_evaluate_during_training: 
-                            best_bleu = self.eval_esnli_write_output(best_bleu)
+                            best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler)
                         else:
                             self.evaluate()
 
-                    if self.args.save_steps > 0 and self.global_step % self.args.save_steps == 0:
-                        # In all cases (even distributed/parallel), self.model is always a reference
-                        # to the model we want to save.
-                        if hasattr(model, "module"):
-                            assert model.module is self.model
-                        else:
-                            assert model is self.model
-                        # Save model checkpoint
-                        output_dir = os.path.join(self.args.output_dir, f"{PREFIX_CHECKPOINT_DIR}-{self.global_step}")
+                    # if self.args.save_steps > 0 and self.global_step % self.args.save_steps == 0:
+                    #     # In all cases (even distributed/parallel), self.model is always a reference
+                    #     # to the model we want to save.
+                    #     if hasattr(model, "module"):
+                    #         assert model.module is self.model
+                    #     else:
+                    #         assert model is self.model
+                    #     # Save model checkpoint
+                    #     output_dir = os.path.join(self.args.output_dir, f"{PREFIX_CHECKPOINT_DIR}-{self.global_step}")
 
-                        self.save_model(output_dir)
+                    #     self.save_model(output_dir)
 
-                        if self.is_world_master():
-                            self._rotate_checkpoints()
+                    #     if self.is_world_master():
+                    #         self._rotate_checkpoints()
 
-                        if is_torch_tpu_available():
-                            xm.rendezvous("saving_optimizer_states")
-                            xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                            xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
-                        elif self.is_world_master():
-                            torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                            torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                    #     if is_torch_tpu_available():
+                    #         xm.rendezvous("saving_optimizer_states")
+                    #         xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                    #         xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                    #     elif self.is_world_master():
+                    #         torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                    #         torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
 
                 if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
                     epoch_iterator.close()
@@ -926,7 +926,7 @@ class Trainer:
         output = concat[:num_total_examples]
         return output
 
-    def eval_esnli_write_output(self, best_bleu=0, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
+    def eval_esnli_write_output(self, best_bleu=0, optimizer=None, scheduler=None, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
         """
         Run evaluation on a large dev/test dataset. Note that this evaluation is for esnli tasks.
         And write the output expl as well as three gold explanations (in dev and test datasets) to a csv file.
@@ -961,7 +961,8 @@ class Trainer:
         import time
         import csv
         headers = ["Pred_Expl", "Expl_1", "Expl_2", "Expl_3"]
-        expl_csv_file_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/", time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv"
+        expl_csv_file_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/epoch" + self.epoch + "_" +\
+        time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv"
         expl_csv = os.path.join(expl_csv_file_path)
         expl_f = open(expl_csv, "a")
         writer = csv.writer(expl_f)
@@ -1049,37 +1050,38 @@ class Trainer:
         # Compute eval BLEU and print the bleu score each time 
         # especially when we do evaluation during training
         eval_bleu = self.compute_bleu(expl_csv_file_path) # expl_csv_file_path is a file of embeddings
-        if self.evaluate_during_training:
-            print('training epoch: ',  self.epoch)
-            print('training step: ', self.global_step)
         print('eval bleu: ',  eval_bleu)
         print('best bleu: ', best_bleu)
-
-        if eval_bleu > best_bleu:
-            best_bleu = eval_bleu
+        if self.args.evaluate_during_training:
+            print('training epoch: ',  self.epoch)
+            print('training step: ', self.global_step)
             
-            # In all cases (even distributed/parallel), self.model is always a reference
-            # to the model we want to save.
-            if hasattr(model, "module"):
-                assert model.module is self.model
-            else:
-                assert model is self.model
-            
-            # Save the current model with info about epoch/steps trained and bleu score achieved
-            output_dir = os.path.join(self.args.output_dir, f"eval_bleu{round(eval_bleu,5)}_epoch{self.epoch}_step{self.global_step}")
+            if eval_bleu > best_bleu:
+                best_bleu = eval_bleu
+                
+                # In all cases (even distributed/parallel), self.model is always a reference
+                # to the model we want to save.
+                if hasattr(model, "module"):
+                    assert model.module is self.model
+                else:
+                    assert model is self.model
+                
+                # Save the current model with info about epoch/steps trained and bleu score achieved
+                output_dir = os.path.join(self.args.output_dir, f"eval_bleu{round(eval_bleu,5)}_epoch{self.epoch}_step{self.global_step}")
 
-            self.save_model(output_dir)
+                print('output_dir: ', output_dir)
+                self.save_model(output_dir)
 
-            if self.is_world_master():
-                self._rotate_checkpoints()
-
-            if is_torch_tpu_available():
-                xm.rendezvous("saving_optimizer_states")
-                xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
-            elif self.is_world_master():
-                torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                if self.is_world_master():
+                    self._rotate_checkpoints()
+                
+                if is_torch_tpu_available():
+                    xm.rendezvous("saving_optimizer_states")
+                    xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                    xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                elif self.is_world_master():
+                    torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                    torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
 
         return best_bleu
 
@@ -1118,7 +1120,8 @@ class Trainer:
         import time
         import csv
         headers = ["input_text", "target_expl", "generated_expl"]
-        expl_csv_file_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/cos-e/", time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv"
+        expl_csv_file_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/cos-e/" + \
+        time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv"
         expl_csv = os.path.join(expl_csv_file_path)
         expl_f = open(expl_csv, "a")
         writer = csv.writer(expl_f)

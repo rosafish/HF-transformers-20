@@ -75,7 +75,9 @@ def compute_embedding_bleu(embedding_csv_path):
     print('bert expl with respect to gold 1,3: ', corpus_bleu(ref_13, cand_bert))
     print('bert expl with respect to gold 1,2: ', corpus_bleu(ref_12, cand_bert))
     
-    print('bert expl with respect to gold 1,2,3: ', corpus_bleu(ref_123, cand_bert))
+    gold_1_2_3_bleu = corpus_bleu(ref_123, cand_bert)
+    print('bert expl with respect to gold 1,2,3: ', gold_1_2_3_bleu)
+    return gold_1_2_3_bleu
 
             
 def convert_embedding2text(embedding_csv_path, text_csv_path, tokenizer):

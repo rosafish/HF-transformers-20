@@ -26,7 +26,7 @@ def main():
     cached_train_features_file = './cache/cached_sanity_checks_train_esnli1k'
     save_trained_model_dir = "./sanity-checks/esnli1k_train_trained_model/"
     # load dev data, because we are using dev data to find best model / number of steps to train for
-    eval_data_path = './sanity-checks/esnli_dev_100.csv'
+    eval_data_path = './sanity-checks/esnli_dev_10.csv'
     
     # Get train examples
     processor = EsnliProcessor()
@@ -44,10 +44,7 @@ def main():
         torch.save(train_features, cached_train_features_file)
 
     # get dev examples
-    if args.generate_expl_on_training_data:
-        eval_examples = processor.get_train_examples(eval_data_path)
-    else:
-        eval_examples = processor.get_dev_examples(eval_data_path) 
+    eval_examples = processor.get_dev_examples(eval_data_path) 
     
     # convert dev examples to features
     eval_features = esnli_examples_to_features(eval_examples, max_seq_len, tokenizer)
@@ -55,6 +52,9 @@ def main():
     # Training
     #initialize Bert2Bert
     model = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') 
+    model.config.max_length=128
+    model.config.decoder_start_token_id = 101
+    model.config.eos_token_id = 102
 
     training_args = TrainingArguments(
         output_dir='./checkpoint-train-results',    # output directory
@@ -63,14 +63,16 @@ def main():
         logging_dir='./train-logs',                 # directory for storing logs
         do_train=True,
         # save best model
-        evalute_during_training=True,
+        evaluate_during_training=True,
         esnli_evaluate_during_training=True,
+        per_device_eval_batch_size=1,
+        predict_from_generate=True,
         # modify the following for different sample size
         # num_train_epochs=3,                         # total # of training epochs
-        max_steps = 20000,                          # overwrites num_train_epochs, this is here for few-sample learning specifically.
-        logging_steps=5000,                         # I think it is good to set logging steps = saving steps = eval steps
-        save_steps=5000,
-        eval_steps=5000,
+        max_steps=1000,                          # overwrites num_train_epochs, this is here for few-sample learning specifically.
+        logging_steps=50,                         # I think it is good to set logging steps = saving steps = eval steps
+        save_steps=50,
+        eval_steps=50,
         overwrite_output_dir=True,
         warmup_steps=1000,                          # number of warmup steps for learning rate scheduler
     )
