@@ -131,6 +131,10 @@ class TrainingArguments:
         default=False, metadata={"help": "Run evaluation during training at each logging step."},
     )
 
+    esnli_evaluate_during_training: bool = field(
+        default=False, metadata={"help": "Run evaluation during training at each logging step for esnli."},
+    )
+
     per_device_train_batch_size: int = field(
         default=8, metadata={"help": "Batch size per GPU/TPU core/CPU for training."}
     )

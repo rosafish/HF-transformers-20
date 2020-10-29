@@ -544,7 +544,7 @@ class Trainer:
                         self._log(logs)
 
                     if self.args.evaluate_during_training and self.global_step % self.args.eval_steps == 0:
-                        if self.args.esnli_evaluate_during_training: #TODO: add this arg
+                        if self.args.esnli_evaluate_during_training: 
                             best_bleu = self.eval_esnli_write_output(best_bleu)
                         else:
                             self.evaluate()

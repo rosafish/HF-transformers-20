@@ -46,25 +46,28 @@ def main():
     model = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') 
 
     training_args = TrainingArguments(
-        output_dir='./checkpoint-train-results',          # output directory
-        per_device_train_batch_size=4,  # batch size per device during training
-        weight_decay=0.01,               # strength of weight decay
-        logging_dir='./train-logs',            # directory for storing logs
+        output_dir='./checkpoint-train-results',    # output directory
+        per_device_train_batch_size=4,              # batch size per device during training
+        weight_decay=0.01,                          # strength of weight decay
+        logging_dir='./train-logs',                 # directory for storing logs
         do_train=True,
+        # save best model
+        evalute_during_training=True,
+        esnli_evaluate_during_training=True,
         # modify the following for different sample size
-        #num_train_epochs=3,              # total # of training epochs
-        max_steps = 20000, # overwrites num_train_epochs, this is here for few-sample learning specifically.
-        logging_steps=5000,
+        # num_train_epochs=3,                         # total # of training epochs
+        max_steps = 20000,                          # overwrites num_train_epochs, this is here for few-sample learning specifically.
+        logging_steps=5000,                         # I think it is good to set logging steps to be same as saving steps 
         save_steps=5000,
         overwrite_output_dir=True,
-        warmup_steps=1000,                # number of warmup steps for learning rate scheduler
+        warmup_steps=1000,                          # number of warmup steps for learning rate scheduler
     )
 
     trainer = Trainer(
-        model=model,                         # the instantiated 🤗 Transformers model to be trained
-        args=training_args,                  # training arguments, defined above
-        train_dataset=train_features,         # training dataset
-        eval_dataset=train_features            # evaluation dataset
+        model=model,                                # the instantiated 🤗 Transformers model to be trained
+        args=training_args,                         # training arguments, defined above
+        train_dataset=train_features,               # training dataset
+        eval_dataset=train_features                 # evaluation dataset
     )
 
     trainer.train()
