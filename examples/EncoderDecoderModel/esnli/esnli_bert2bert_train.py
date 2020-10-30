@@ -23,7 +23,7 @@ def main():
     # paths and params
     max_seq_len = 128
     train_data_path = '/data/rosa/data/esnli/esnli_train.csv'
-    cached_train_features_file = './cache/cached_train_esnli'
+    cached_train_features_file = '/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/cache/cached_train_esnli'
     save_trained_model_dir = "./save_best_models/esnli_train_trained_model/"
     # load dev data, because we are using dev data to find best model / number of steps to train for
     eval_data_path = '/data/rosa/data/esnli/esnli_dev.csv'
