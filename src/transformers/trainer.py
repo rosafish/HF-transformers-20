@@ -940,8 +940,9 @@ class Trainer:
         import time
         import csv
         headers = ["Pred_Expl", "Expl_1", "Expl_2", "Expl_3"]
+        cur_time = time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S")
         expl_csv_file_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/epoch" + str(self.epoch) + "_" +\
-        time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S") + ".csv"
+        cur_time + ".csv"
         expl_csv = os.path.join(expl_csv_file_path)
         expl_f = open(expl_csv, "a")
         writer = csv.writer(expl_f)
@@ -1046,7 +1047,7 @@ class Trainer:
                     assert model is self.model
                 
                 # Save the current model with info about epoch/steps trained and bleu score achieved
-                output_dir = os.path.join(self.args.output_dir, f"eval_bleu{round(eval_bleu,5)}_epoch{self.epoch}_step{self.global_step}")
+                output_dir = os.path.join(self.args.output_dir, f"eval_bleu{round(eval_bleu,5)}_epoch{self.epoch}_step{self.global_step}_time{cur_time}")
 
                 print('output_dir: ', output_dir)
                 self.save_model(output_dir)
