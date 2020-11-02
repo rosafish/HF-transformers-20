@@ -21,7 +21,6 @@ def main():
     parser.add_argument('-save_trained_model_dir', action="store", default="", type=str)
     parser.add_argument('-train_epochs', action="store", default=3, type=int)
     parser.add_argument('-max_steps', action="store", default=-1, type=int)
-    parser.add_argument('-hans', action="store_true", default=False) 
     args = parser.parse_args()
 
     # set seeds
