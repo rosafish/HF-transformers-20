@@ -4,6 +4,7 @@
 
 # Ignore the esnli model trained on esnli_train.csv
 *_train_trained_model*
+*save_best_models*
 
 # Ignore the cose model
 *cose_trained_model*
