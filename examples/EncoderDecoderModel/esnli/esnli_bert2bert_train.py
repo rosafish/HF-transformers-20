@@ -3,10 +3,11 @@ import os
 import sys
 sys.path.append('./../../src')
 import random
+import argparse
 import numpy as np
+import logging as logger
 
 from esnli_processor import EsnliProcessor
-import logging as logger
 from transformers import BertTokenizer
 from esnli_processor import EsnliInputFeatures, esnli_examples_to_features, text_to_input_ids
 from transformers import EncoderDecoderModel
@@ -14,6 +15,15 @@ from transformers import Trainer, TrainingArguments
 
 
 def main():
+    parser = argparse.ArgumentParser(description='Path arguments')
+    parser.add_argument('-data_dir', action="store", default="", type=str)
+    parser.add_argument('-cached_train_features_file', action="store", default="", type=str)
+    parser.add_argument('-save_trained_model_dir', action="store", default="", type=str)
+    parser.add_argument('-train_epochs', action="store", default=3, type=int)
+    parser.add_argument('-max_steps', action="store", default=-1, type=int)
+    parser.add_argument('-hans', action="store_true", default=False) 
+    args = parser.parse_args()
+
     # set seeds
     torch.manual_seed(0)
     torch.cuda.manual_seed_all(0)
@@ -22,11 +32,11 @@ def main():
 
     # paths and params
     max_seq_len = 128
-    train_data_path = '/data/rosa/data/esnli/esnli_train.csv'
-    cached_train_features_file = '/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/cache/cached_train_esnli'
-    save_trained_model_dir = "./save_best_models/esnli_train_trained_model/"
+    train_data_path = args.data_dir + 'esnli_train.csv'
+    cached_train_features_file = args.cached_train_features_file
+    save_trained_model_dir = args.save_trained_model_dir
     # load dev data, because we are using dev data to find best model / number of steps to train for
-    eval_data_path = '/data/rosa/data/esnli/esnli_dev.csv'
+    eval_data_path = args.data_dir + 'esnli_dev.csv'
     
     # Get train examples
     processor = EsnliProcessor()
@@ -68,8 +78,8 @@ def main():
         per_device_eval_batch_size=1,
         predict_from_generate=True,
         # modify the following for different sample size
-        num_train_epochs=3,                         # total # of training epochs
-        # max_steps=1000,                          # overwrites num_train_epochs, this is here for few-sample learning specifically.
+        num_train_epochs=args.train_epochs,        # total # of training epochs
+        max_steps=args.max_steps,                          # overwrites num_train_epochs, this is here for few-sample learning specifically.
         logging_steps=5000,                         
         overwrite_output_dir=True,
         warmup_steps=1000,                          # number of warmup steps for learning rate scheduler
