@@ -131,6 +131,10 @@ class TrainingArguments:
         default=False, metadata={"help": "Run evaluation during training at each logging step."},
     )
 
+    save_best_model: bool = field(
+        default=False, metadata={"help": "Save best model at the end of each epoch."},
+    )
+
     per_device_train_batch_size: int = field(
         default=8, metadata={"help": "Batch size per GPU/TPU core/CPU for training."}
     )

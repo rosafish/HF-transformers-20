@@ -477,6 +477,9 @@ class Trainer:
         train_iterator = trange(
             epochs_trained, int(num_train_epochs), desc="Epoch", disable=not self.is_local_master()
         )
+        # initialize 0 accuracy for seqclas finetuning
+        if self.args.save_best_model:
+            best_acc=0
         for epoch in train_iterator:
             if isinstance(train_dataloader, DataLoader) and isinstance(train_dataloader.sampler, DistributedSampler):
                 train_dataloader.sampler.set_epoch(epoch)
@@ -537,35 +540,66 @@ class Trainer:
 
                         self._log(logs)
 
-                    if self.args.evaluate_during_training and self.global_step % self.args.eval_steps == 0:
-                        self.evaluate()
+                    if not self.args.save_best_model:
+                        if self.args.evaluate_during_training and self.global_step % self.args.eval_steps == 0:
+                            self.evaluate()
 
-                    if self.args.save_steps > 0 and self.global_step % self.args.save_steps == 0:
-                        # In all cases (even distributed/parallel), self.model is always a reference
-                        # to the model we want to save.
-                        if hasattr(model, "module"):
-                            assert model.module is self.model
-                        else:
-                            assert model is self.model
-                        # Save model checkpoint
-                        output_dir = os.path.join(self.args.output_dir, f"{PREFIX_CHECKPOINT_DIR}-{self.global_step}")
+                        if self.args.save_steps > 0 and self.global_step % self.args.save_steps == 0:
+                            # In all cases (even distributed/parallel), self.model is always a reference
+                            # to the model we want to save.
+                            if hasattr(model, "module"):
+                                assert model.module is self.model
+                            else:
+                                assert model is self.model
+                            # Save model checkpoint
+                            output_dir = os.path.join(self.args.output_dir, f"{PREFIX_CHECKPOINT_DIR}-{self.global_step}")
 
-                        self.save_model(output_dir)
+                            self.save_model(output_dir)
 
-                        if self.is_world_master():
-                            self._rotate_checkpoints()
+                            if self.is_world_master():
+                                self._rotate_checkpoints()
 
-                        if is_torch_tpu_available():
-                            xm.rendezvous("saving_optimizer_states")
-                            xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                            xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
-                        elif self.is_world_master():
-                            torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                            torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                            if is_torch_tpu_available():
+                                xm.rendezvous("saving_optimizer_states")
+                                xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                                xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                            elif self.is_world_master():
+                                torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                                torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
 
                 if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
                     epoch_iterator.close()
                     break
+
+            if self.args.save_best_model:
+                metrics = self.evaluate()
+                eval_acc = round(metrics['eval_acc'], 5)
+                print("eval_acc: ", eval_acc)
+                print("epoch: ", metrics['epoch'])
+                if eval_acc > best_acc:
+                    best_acc = eval_acc
+
+                    # Save model 
+                    if hasattr(model, "module"):
+                        assert model.module is self.model
+                    else:
+                        assert model is self.model
+                    
+                    output_dir = os.path.join(self.args.output_dir, f"epoch{self.epoch}_eval_acc{eval_acc}")
+
+                    self.save_model(output_dir)
+
+                    if self.is_world_master():
+                        self._rotate_checkpoints()
+
+                    if is_torch_tpu_available():
+                        xm.rendezvous("saving_optimizer_states")
+                        xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                        xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                    elif self.is_world_master():
+                        torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                        torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+
             if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
                 train_iterator.close()
                 break
