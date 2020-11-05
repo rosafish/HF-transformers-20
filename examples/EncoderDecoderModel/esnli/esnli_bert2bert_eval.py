@@ -27,7 +27,7 @@ def main():
     parser = argparse.ArgumentParser(description='Path arguments')
     parser.add_argument('-model_dir', action="store", default="./esnli_task_trained_model_and_results/esnli/esnli_train_trained_model_copy/", type=str)
     parser.add_argument('-eval_data_path', action="store", default='./sanity-checks/esnli_dev.csv', type=str)
-    parser.add_argument('-hans', action="store_true", default=False)
+    parser.add_argument('-hans_original_eval_data', action="store_true", default=False)  
     parser.add_argument('-generate_expl_on_training_data', action="store_true", default=False)
     args = parser.parse_args()
     
@@ -44,7 +44,7 @@ def main():
     np.random.seed(0)
     
     # paths and params
-    if args.hans:
+    if args.hans_original_eval_data:
         eval_data_path = "/data/rosa/data/hans/in_esnli_format/esnli_dev.csv"
     else:
         eval_data_path = args.eval_data_path
