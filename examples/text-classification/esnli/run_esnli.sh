@@ -1,6 +1,6 @@
 python ../run_glue.py \
 	--model_name_or_path ./save_best_model/esnli_ph_expl_outputs/best_model/ \
-	--task_name ESNLI \
+	--task_name HANS \
 	--do_train \
 	--do_eval \
 	--data_dir /data/rosa/data/hans/in_esnli_format/template_expls/train_500/high_q_expl/ \
