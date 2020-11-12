@@ -123,8 +123,8 @@ def main():
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     
     #only makes sense for dev and test set
-    # print("compute bleu scores on embedding first...")
-    # compute_embedding_bleu(args.embedding_csv_path)
+    print("compute bleu scores on embedding first...")
+    compute_embedding_bleu(args.embedding_csv_path)
     
     print("converting embedding to text...")
     convert_embedding2text(args.embedding_csv_path, args.text_csv_path, tokenizer)
