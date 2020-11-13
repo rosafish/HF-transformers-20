@@ -1,5 +1,5 @@
 python ../run_glue.py \
-	--model_name_or_path ./save_best_model/esnli_phe_emptyexpl_ft_HANS30T300_outputs/ \
+	--model_name_or_path ./save_best_model/esnli_phe_emptyexpl_ft_HANS30T300_outputs/best_model/ \
 	--task_name ESNLI \
 	--do_eval \
 	--data_dir ./esnli_train_dev_empty_expl/ \
