@@ -21,6 +21,8 @@ def main():
     parser.add_argument('-save_trained_model_dir', action="store", default="", type=str)
     parser.add_argument('-train_epochs', action="store", default=3, type=int)
     parser.add_argument('-max_steps', action="store", default=-1, type=int)
+    parser.add_argument('-eval_method', action="store", default="epoch", type=str)
+    parser.add_argument('-eval_steps', action="store", default=-1, type=int)
     args = parser.parse_args()
 
     # set seeds
@@ -74,6 +76,8 @@ def main():
         # save best model
         evaluate_during_training=True,
         esnli_evaluate_during_training=True,
+        eval_method=args.eval_method,
+        eval_steps=args.eval_steps,
         per_device_eval_batch_size=1,
         predict_from_generate=True,
         # modify the following for different sample size
