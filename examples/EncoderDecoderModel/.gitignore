@@ -2,6 +2,9 @@
 *cache*
 *checkpoint*
 
+# Ignore the generated embedding files that were not renamed
+*epoch*_*_*.csv
+
 # Ignore the esnli model trained on esnli_train.csv
 *_train_trained_model*
 *save_best_models*
