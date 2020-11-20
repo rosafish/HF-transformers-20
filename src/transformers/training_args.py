@@ -226,6 +226,10 @@ class TrainingArguments:
     )
     eval_steps: int = field(default=1000, metadata={"help": "Run an evaluation every X steps."})
 
+    eval_method: str = field(
+        metadata={"help": "Evaluation method during training: either 'epoch' or 'step'."}
+    )
+
     past_index: int = field(
         default=-1,
         metadata={"help": "If >=0, uses the corresponding part of the output as the past state for next step."},

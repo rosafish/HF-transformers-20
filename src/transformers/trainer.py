@@ -543,12 +543,20 @@ class Trainer:
 
                         self._log(logs)
 
+                    # evaluate during training at the corresponding eval steps
+                    if self.args.evaluate_during_training and self.args.eval_method == "step" \
+                    and self.args.eval_steps > 0 and self.global_step % self.args.eval_steps == 0:
+                        if self.args.esnli_evaluate_during_training: 
+                            best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler)
+                        else:
+                            self.evaluate()
+
                 if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
                     epoch_iterator.close()
                     break
 
             # evaluate during training at the end of every epoch
-            if self.args.evaluate_during_training:
+            if self.args.evaluate_during_training and self.args.eval_method == "epoch":
                 if self.args.esnli_evaluate_during_training: 
                     best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler)
                 else:
