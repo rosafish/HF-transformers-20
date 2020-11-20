@@ -227,6 +227,7 @@ class TrainingArguments:
     eval_steps: int = field(default=1000, metadata={"help": "Run an evaluation every X steps."})
 
     eval_method: str = field(
+        default='epoch',
         metadata={"help": "Evaluation method during training: either 'epoch' or 'step'."}
     )
 
