@@ -28,7 +28,7 @@ def main():
 
     # check if model directory exist
     model_dir = args.model_dir
-    print("Directory that stores the model to evaluate:", model_dir)
+    print("Directory that stores the model to continue finetune on:", model_dir)
     if not os.path.isdir(model_dir) and model_dir != "bert-base-uncased":
         raise ValueError("The directory does not exist.")
 
@@ -51,7 +51,7 @@ def main():
     train_examples = processor.get_train_examples(train_data_path) 
 
     # Convert train examples to features
-    tokenizer = BertTokenizer.from_pretrained(model_dir)
+    tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
     # Cache training dataset features
     if os.path.exists(cached_train_features_file):
         logger.info("Loading features from cached file %s", cached_train_features_file)
@@ -68,8 +68,16 @@ def main():
     eval_features = esnli_examples_to_features(eval_examples, max_seq_len, tokenizer)
     
     # Training
-    #initialize Bert2Bert
-    model = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') 
+    if model_dir == 'bert-base-uncased':
+        #initialize Bert2Bert
+        model = EncoderDecoderModel.from_encoder_decoder_pretrained('bert-base-uncased', 'bert-base-uncased') 
+    else:
+        # Load a trained model and vocabulary that you have fine-tuned
+        model = EncoderDecoderModel.from_pretrained(model_dir)
+        cuda_id = "1" 
+        device = torch.device("cuda:"+cuda_id)
+        model.to(device)
+
     model.config.max_length=128
     model.config.decoder_start_token_id = 101
     model.config.eos_token_id = 102
@@ -105,7 +113,6 @@ def main():
     trainer.train()
 
     # Save Model After Training
-    cuda_id = "1" # since there's something running on 0 #TODO: is this line necessary?
     trainer.save_model(save_trained_model_dir+"/last_model/") # no guarantee of that the last model is the best
 
     
