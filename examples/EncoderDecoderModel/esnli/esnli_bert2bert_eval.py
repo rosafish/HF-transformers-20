@@ -50,7 +50,7 @@ def main():
         eval_data_path = args.eval_data_path
     print('Eval data path: ', eval_data_path)
     max_seq_len = 128
-    cuda_id = "2" # since there's something running on the other ones
+    cuda_id = "1" # since there's something running on the other ones
     
     # get examples
     processor = EsnliProcessor()
