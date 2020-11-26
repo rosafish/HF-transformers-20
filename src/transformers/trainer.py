@@ -567,11 +567,40 @@ class Trainer:
                                 torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
                                 torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
 
+                    elif self.eval_method == "step" and self.global_step % self.args.eval_steps == 0:
+                        metrics = self.evaluate()
+                        eval_acc = round(metrics['eval_acc'], 5)
+                        print("eval_acc: ", eval_acc)
+                        print("epoch: ", metrics['epoch'])
+                        if eval_acc > best_acc:
+                            best_acc = eval_acc
+
+                            # Save model 
+                            if hasattr(model, "module"):
+                                assert model.module is self.model
+                            else:
+                                assert model is self.model
+                            
+                            output_dir = os.path.join(self.args.output_dir, f"epoch{self.epoch}_step{self.global_step}_eval_acc{eval_acc}")
+
+                            self.save_model(output_dir)
+
+                            if self.is_world_master():
+                                self._rotate_checkpoints()
+
+                            if is_torch_tpu_available():
+                                xm.rendezvous("saving_optimizer_states")
+                                xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                                xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                            elif self.is_world_master():
+                                torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                                torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+
                 if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
                     epoch_iterator.close()
                     break
 
-            if self.args.save_best_model:
+            if self.args.save_best_model and self.eval_method == "epoch":
                 metrics = self.evaluate()
                 eval_acc = round(metrics['eval_acc'], 5)
                 print("eval_acc: ", eval_acc)
@@ -585,7 +614,7 @@ class Trainer:
                     else:
                         assert model is self.model
                     
-                    output_dir = os.path.join(self.args.output_dir, f"epoch{self.epoch}_eval_acc{eval_acc}")
+                    output_dir = os.path.join(self.args.output_dir, f"epoch{self.epoch}_step{self.global_step}_eval_acc{eval_acc}")
 
                     self.save_model(output_dir)
 
