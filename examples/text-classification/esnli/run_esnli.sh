@@ -13,5 +13,5 @@ python ../run_glue.py \
 	--esnli_input_type p+h:a,expl1:b \
 	--save_best_model \
 	--eval_method step \
-	--max_steps 2000 \
-	--eval_steps 250
+	--max_steps 1000 \
+	--eval_steps 100
