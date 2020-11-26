@@ -12,6 +12,6 @@ python ../run_glue.py \
 	--overwrite_cache \
 	--esnli_input_type p+h:a,expl1:b \
 	--save_best_model \
-	--eval_method step \
-	--max_steps 1000 \
+	--eval_method epoch \
+	--max_steps 400 \
 	--eval_steps 100
