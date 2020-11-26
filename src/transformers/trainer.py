@@ -567,7 +567,7 @@ class Trainer:
                                 torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
                                 torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
 
-                    elif self.eval_method == "step" and self.global_step % self.args.eval_steps == 0:
+                    elif self.args.eval_method == "step" and self.global_step % self.args.eval_steps == 0:
                         metrics = self.evaluate()
                         eval_acc = round(metrics['eval_acc'], 5)
                         print("eval_acc: ", eval_acc)
@@ -600,7 +600,7 @@ class Trainer:
                     epoch_iterator.close()
                     break
 
-            if self.args.save_best_model and self.eval_method == "epoch":
+            if self.args.save_best_model and self.args.eval_method == "epoch":
                 metrics = self.evaluate()
                 eval_acc = round(metrics['eval_acc'], 5)
                 print("eval_acc: ", eval_acc)
