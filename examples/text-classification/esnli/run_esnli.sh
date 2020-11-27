@@ -3,11 +3,11 @@ python ../run_glue.py \
 	--task_name ESNLI \
 	--do_train \
 	--do_eval \
-	--data_dir /data/rosa/HF-transformers-20/examples/text-classification/esnli/data/HANS_ETP_30T_unseen_300train_highqexpl/ \
+	--data_dir /data/rosa/HF-transformers-20/examples/text-classification/esnli/data/HANS_ETP_30T_unseen_240train_highqexpl/ \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \
-	--output_dir ./save_best_model/esnli_ETP_ft_HANS30T300_unseen_highqexpl_outputs/ \
+	--output_dir ./save_best_model/esnli_ETP_ft_HANS30T240_unseen_highqexpl_outputs/ \
 	--overwrite_output_dir \
 	--overwrite_cache \
 	--esnli_input_type p+h:a,expl1:b \
