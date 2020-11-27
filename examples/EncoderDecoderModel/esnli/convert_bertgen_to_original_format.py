@@ -38,12 +38,10 @@ def main():
     parser.add_argument('-gold_expl_csv_path', action="store", default='/data/rosa/data/esnli/esnli_dev.csv', type=str)
     parser.add_argument('-bert_expl_csv_path', action="store", default="", type=str)
     parser.add_argument('-output_csv_path', action="store", default="", type=str)
-    parser.add_argument('-hans', action="store_true", default=False)
     args = parser.parse_args()
     
     # hans
-    gold_expl_path = args.gold_expl_csv_path if not args.hans else '/data/rosa/data/hans/in_esnli_format/esnli_dev.csv'
-    
+    gold_expl_path = args.gold_expl_csv_path 
     print('gold expl path: ', gold_expl_path)
     
     bert_expl_data = load_bert_expl(args.bert_expl_csv_path)
