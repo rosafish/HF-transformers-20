@@ -19,3 +19,4 @@ sanity-checks/
 *eval_on_train_expl_text_in_esnli_train_format.csv
 *eval_on_train_expl_embed.csv
 *eval_on_esnli125k_train_gen_embeddings.csv
+*esnliOnMNLItrain_0shot*.csv
