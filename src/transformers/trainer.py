@@ -480,6 +480,7 @@ class Trainer:
         # initialize 0 accuracy for seqclas finetuning
         if self.args.save_best_model:
             best_acc=0
+            log_accuracy=open(self.args.output_dir+"log_accuracy.txt", "w")
         for epoch in train_iterator:
             if isinstance(train_dataloader, DataLoader) and isinstance(train_dataloader.sampler, DistributedSampler):
                 train_dataloader.sampler.set_epoch(epoch)
@@ -572,6 +573,7 @@ class Trainer:
                         eval_acc = round(metrics['eval_acc'], 5)
                         print("eval_acc: ", eval_acc)
                         print("epoch: ", metrics['epoch'])
+                        log_accuracy.write(f"step: {self.global_step}, epoch: {metrics['epoch']}, eval_acc: {eval_acc}\n")
                         if eval_acc > best_acc:
                             best_acc = eval_acc
 
@@ -580,8 +582,11 @@ class Trainer:
                                 assert model.module is self.model
                             else:
                                 assert model is self.model
-                            
-                            output_dir = os.path.join(self.args.output_dir, f"epoch{self.epoch}_step{self.global_step}_eval_acc{eval_acc}")
+
+                            output_dir = os.path.join(self.args.output_dir, f"best_model")
+                            model_info=open(output_dir+"model_info.txt", "w")
+                            model_info.write(f"step: {self.global_step}, epoch: {metrics['epoch']}, eval_acc: {eval_acc}\n")
+                            model_info.close()
 
                             self.save_model(output_dir)
 
@@ -605,6 +610,7 @@ class Trainer:
                 eval_acc = round(metrics['eval_acc'], 5)
                 print("eval_acc: ", eval_acc)
                 print("epoch: ", metrics['epoch'])
+                log_accuracy.write(f"step: {self.global_step}, epoch: {metrics['epoch']}, eval_acc: {eval_acc}\n")
                 if eval_acc > best_acc:
                     best_acc = eval_acc
 
@@ -614,7 +620,10 @@ class Trainer:
                     else:
                         assert model is self.model
                     
-                    output_dir = os.path.join(self.args.output_dir, f"epoch{self.epoch}_step{self.global_step}_eval_acc{eval_acc}")
+                    output_dir = os.path.join(self.args.output_dir, f"best_model")
+                    model_info=open(output_dir+"model_info.txt", "w")
+                    model_info.write(f"step: {self.global_step}, epoch: {metrics['epoch']}, eval_acc: {eval_acc}\n")
+                    model_info.close()
 
                     self.save_model(output_dir)
 
@@ -643,6 +652,7 @@ class Trainer:
             delattr(self, "_past")
 
         logger.info("\n\nTraining completed. Do not forget to share your model on huggingface.co/models =)\n\n")
+        log_accuracy.close()
         return TrainOutput(self.global_step, tr_loss / self.global_step)
 
     def _log(self, logs: Dict[str, float], iterator: Optional[tqdm] = None) -> None:
