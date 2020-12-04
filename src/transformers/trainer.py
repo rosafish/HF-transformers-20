@@ -4,6 +4,8 @@ import os
 import re
 import shutil
 import warnings
+import time
+import csv
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
@@ -166,6 +168,7 @@ class Trainer:
     data_collator: DataCollator
     train_dataset: Optional[Dataset]
     eval_dataset: Optional[Dataset]
+    esnli_eval_dataset: Optional[Dataset]
     compute_metrics: Optional[Callable[[EvalPrediction], Dict]] = None
     prediction_loss_only: bool
     tb_writer: Optional["SummaryWriter"] = None
@@ -180,6 +183,7 @@ class Trainer:
         data_collator: Optional[DataCollator] = None,
         train_dataset: Optional[Dataset] = None,
         eval_dataset: Optional[Dataset] = None,
+        esnli_eval_dataset: Optional[Dataset] = None,
         compute_metrics: Optional[Callable[[EvalPrediction], Dict]] = None,
         prediction_loss_only=False,
         tb_writer: Optional["SummaryWriter"] = None,
@@ -190,6 +194,7 @@ class Trainer:
         self.data_collator = data_collator if data_collator is not None else default_data_collator
         self.train_dataset = train_dataset
         self.eval_dataset = eval_dataset
+        self.esnli_eval_dataset = esnli_eval_dataset
         self.compute_metrics = compute_metrics
         self.prediction_loss_only = prediction_loss_only
         self.optimizers = optimizers
@@ -479,8 +484,10 @@ class Trainer:
         )
 
         # initialize 0 bleu for esnli encoderdecodermodel finetuning
+        print('self.args.esnli_evaluate_during_training: ', self.args.esnli_evaluate_during_training)
         if self.args.esnli_evaluate_during_training: 
             best_bleu = 0
+            log_bleu=open(self.args.output_dir+"log_bleu.txt", "w")
 
         for epoch in train_iterator:
             if isinstance(train_dataloader, DataLoader) and isinstance(train_dataloader.sampler, DistributedSampler):
@@ -547,7 +554,10 @@ class Trainer:
                     if self.args.evaluate_during_training and self.args.eval_method == "step" \
                     and self.args.eval_steps > 0 and self.global_step % self.args.eval_steps == 0:
                         if self.args.esnli_evaluate_during_training: 
-                            best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler)
+                            if self.args.eval_esnli_dev:
+                                best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler, esnli_eval_dataset=self.esnli_eval_dataset, log_bleu=log_bleu)
+                            else:
+                                best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler, log_bleu=log_bleu)
                         else:
                             self.evaluate()
 
@@ -558,7 +568,10 @@ class Trainer:
             # evaluate during training at the end of every epoch
             if self.args.evaluate_during_training and self.args.eval_method == "epoch":
                 if self.args.esnli_evaluate_during_training: 
-                    best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler)
+                    if self.args.eval_esnli_dev:
+                        best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler, esnli_eval_dataset=self.esnli_eval_dataset, log_bleu=log_bleu) 
+                    else:
+                        best_bleu = self.eval_esnli_write_output(best_bleu, optimizer=optimizer, scheduler=scheduler, log_bleu=log_bleu)
                 else:
                     self.evaluate()
 
@@ -577,6 +590,7 @@ class Trainer:
             delattr(self, "_past")
 
         logger.info("\n\nTraining completed. Do not forget to share your model on huggingface.co/models =)\n\n")
+        log_bleu.close()
         return TrainOutput(self.global_step, tr_loss / self.global_step)
 
     def _log(self, logs: Dict[str, float], iterator: Optional[tqdm] = None) -> None:
@@ -913,45 +927,13 @@ class Trainer:
         output = concat[:num_total_examples]
         return output
 
-    def eval_esnli_write_output(self, best_bleu=0, optimizer=None, scheduler=None, eval_dataset: Optional[Dataset] = None) -> Dict[str, float]:
-        """
-        Run evaluation on a large dev/test dataset. Note that this evaluation is for esnli tasks.
-        And write the output expl as well as three gold explanations (in dev and test datasets) to a csv file.
-
-        Args:
-            eval_dataset (:obj:`Dataset`, `optional`):
-                Pass a dataset if you wish to override :obj:`self.eval_dataset`.
-        Returns:
-            None
-        """
+    def _eval_bert2bert(self, eval_dataloader, model, expl_csv, headers):
         description="Evaluation"
-        eval_dataloader = self.get_eval_dataloader(eval_dataset)
 
-        model = self.model
         max_length = model.config.max_length
         eos_token_id = model.config.eos_token_id
         decoder_start_token_id = model.config.decoder_start_token_id
 
-        batch_size = eval_dataloader.batch_size
-        logger.info("***** Running %s *****", description)
-        logger.info("  Num examples = %d", self.num_examples(eval_dataloader))
-        logger.info("  Batch size = %d", batch_size)
-
-        eval_losses: List[float] = []
-        preds: torch.Tensor = None
-        label_ids: torch.Tensor = None
-        model.eval()
-
-        if self.args.past_index >= 0:
-            past = None
-            
-        import time
-        import csv
-        headers = ["Pred_Expl", "Expl_1", "Expl_2", "Expl_3"]
-        cur_time = time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S")
-        expl_csv_file_path = "/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/epoch" + str(self.epoch) + "_" +\
-        cur_time + ".csv"
-        expl_csv = os.path.join(expl_csv_file_path)
         expl_f = open(expl_csv, "a")
         writer = csv.writer(expl_f)
         writer.writerow(headers)
@@ -981,13 +963,13 @@ class Trainer:
                     if has_labels:
                         outputs = model(**inputs)
                         step_eval_loss = outputs[0]
-                        eval_losses += [step_eval_loss.mean().item()]
+                        # eval_losses += [step_eval_loss.mean().item()]
                 else:
                     outputs = model(**inputs)
 
                     if has_labels:
                         step_eval_loss, logits = outputs[:2]
-                        eval_losses += [step_eval_loss.mean().item()]
+                        # eval_losses += [step_eval_loss.mean().item()]
                     else:
                         logits = outputs[0]
                     if self.args.past_index >= 0:
@@ -1035,11 +1017,65 @@ class Trainer:
         
         expl_f.close()
 
+    def eval_esnli_write_output(self, best_bleu=0, optimizer=None, scheduler=None, eval_dataset: Optional[Dataset] = None, \
+                                esnli_eval_dataset: Optional[Dataset] = None, log_bleu=None) -> Dict[str, float]:
+        """
+        Run evaluation on a large dev/test dataset. Note that this evaluation is for esnli tasks.
+        And write the output expl as well as three gold explanations (in dev and test datasets) to a csv file.
+
+        Args:
+            eval_dataset (:obj:`Dataset`, `optional`):
+                Pass a dataset if you wish to override :obj:`self.eval_dataset`.
+        Returns:
+            None
+        """
+        description="Evaluation"
+
+        model = self.model
+        max_length = model.config.max_length
+        eos_token_id = model.config.eos_token_id
+        decoder_start_token_id = model.config.decoder_start_token_id
+
+        eval_dataloader = self.get_eval_dataloader(eval_dataset)
+        batch_size = eval_dataloader.batch_size
+        if self.args.eval_esnli_dev:
+            esnli_eval_dataloader = self.get_eval_dataloader(esnli_eval_dataset)
+            esnli_batch_size = esnli_eval_dataloader.batch_size
+
+        logger.info("***** Running %s *****", description)
+        logger.info("  Num examples = %d", self.num_examples(eval_dataloader))
+        logger.info("  Batch size = %d", batch_size)
+        if self.args.eval_esnli_dev:
+            logger.info("  Num esnli examples = %d", self.num_examples(esnli_eval_dataloader))
+            logger.info("  esnli batch size = %d", esnli_batch_size)
+
+        eval_losses: List[float] = []
+        preds: torch.Tensor = None
+        label_ids: torch.Tensor = None
+        model.eval()
+
+        if self.args.past_index >= 0:
+            past = None
+            
+        headers = ["Pred_Expl", "Expl_1", "Expl_2", "Expl_3"]
+        cur_time = time.strftime("%m:%d") + "_" + time.strftime("%H:%M:%S")
+        expl_csv_file_path = self.args.output_dir+ "/epoch" + str(self.epoch) + "_" + cur_time + ".csv"
+        expl_csv = os.path.join(expl_csv_file_path)
+        self._eval_bert2bert(eval_dataloader, model, expl_csv, headers)
+
+        if self.args.eval_esnli_dev:
+            esnli_expl_csv_file_path = self.args.output_dir+ "/esnli_dev_epoch" + str(self.epoch) + "_" + cur_time + ".csv"
+            esnli_expl_csv = os.path.join(esnli_expl_csv_file_path)
+            self._eval_bert2bert(esnli_eval_dataloader, model, esnli_expl_csv, headers)
+
         # Compute eval BLEU and print the bleu score each time 
         # especially when we do evaluation during training
         eval_bleu = self.compute_bleu(expl_csv_file_path) # expl_csv_file_path is a file of embeddings
+        esnli_eval_bleu = self.compute_bleu(esnli_expl_csv_file_path) # esnli_expl_csv_file_path is a file of embeddings
         print('eval bleu: ',  eval_bleu)
         print('best bleu: ', best_bleu)
+        print('esnli eval bleu: ',  eval_bleu)
+        log_bleu.write(f"step: {self.global_step}, epoch: {self.epoch}, dev eval bleu: {round(eval_bleu,5)}, e-snli dev eval acc: {round(esnli_eval_bleu,5)}\n")
         if self.args.evaluate_during_training:
             print('training epoch: ',  self.epoch)
             print('training step: ', self.global_step)
@@ -1055,10 +1091,14 @@ class Trainer:
                     assert model is self.model
                 
                 # Save the current model with info about epoch/steps trained and bleu score achieved
-                output_dir = os.path.join(self.args.output_dir, f"eval_bleu{round(eval_bleu,5)}_epoch{self.epoch}_step{self.global_step}_time{cur_time}")
+                output_dir = os.path.join(self.args.output_dir, f"best_model")
 
                 print('output_dir: ', output_dir)
                 self.save_model(output_dir)
+
+                model_info=open(output_dir+"model_info.txt", "w")
+                model_info.write(f"step: {self.global_step}, epoch: {self.epoch}, dev eval acc: {round(eval_bleu,5)}, e-snli dev eval acc: {round(esnli_eval_bleu,5)}\n")
+                model_info.close()
 
                 if self.is_world_master():
                     self._rotate_checkpoints()

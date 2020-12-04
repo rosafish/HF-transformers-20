@@ -24,6 +24,7 @@ def main():
     parser.add_argument('-max_steps', action="store", default=-1, type=int)
     parser.add_argument('-eval_method', action="store", default="epoch", type=str)
     parser.add_argument('-eval_steps', action="store", default=-1, type=int)
+    parser.add_argument('-eval_esnli_dev', action="store_true", default=False)
     args = parser.parse_args()
 
     # check if model directory exist
@@ -66,6 +67,14 @@ def main():
     
     # convert dev examples to features
     eval_features = esnli_examples_to_features(eval_examples, max_seq_len, tokenizer)
+
+    esnli_eval_features = None
+    if args.eval_esnli_dev:
+        # get esnli_eval_features
+        # esnli_eval_data_path = '/data/rosa/data/esnli/esnli_dev.csv'
+        esnli_eval_data_path = '/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/sanity-checks/esnli_dev_10.csv'
+        esnli_eval_examples = processor.get_dev_examples(esnli_eval_data_path) 
+        esnli_eval_features = esnli_examples_to_features(esnli_eval_examples, max_seq_len, tokenizer)
     
     # Training
     if model_dir == 'bert-base-uncased':
@@ -95,8 +104,9 @@ def main():
         eval_steps=args.eval_steps,
         per_device_eval_batch_size=1,
         predict_from_generate=True,
+        eval_esnli_dev=args.eval_esnli_dev,         # eval on esnli dev during training or not
         # modify the following for different sample size
-        num_train_epochs=args.train_epochs,        # total # of training epochs
+        num_train_epochs=args.train_epochs,         # total # of training epochs
         max_steps=args.max_steps,                          # overwrites num_train_epochs, this is here for few-sample learning specifically.
         logging_steps=5000,                         
         overwrite_output_dir=True,
@@ -108,6 +118,7 @@ def main():
         args=training_args,                         # training arguments, defined above
         train_dataset=train_features,               # training dataset
         eval_dataset=eval_features,                 # evaluation dataset
+        esnli_eval_dataset=esnli_eval_features,     # esnli dev dataset
     )
 
     trainer.train()

@@ -130,6 +130,7 @@ class TrainingArguments:
     evaluate_during_training: bool = field(
         default=False, metadata={"help": "Run evaluation during training at each logging step."},
     )
+    eval_esnli_dev: bool = field(default=False, metadata={"help": "Whether to also evaluate on esnli dev set."})
 
     esnli_evaluate_during_training: bool = field(
         default=False, metadata={"help": "Run evaluation during training at each logging step for esnli."},
