@@ -3,11 +3,11 @@ python ../run_glue.py \
 	--task_name ESNLI \
 	--do_train \
 	--do_eval \
-	--data_dir ./data/mnli_bertgen_30_matched_dev/ \
+	--data_dir ./data/mnli_bertgen_30_mismatched_dev/ \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \
-	--output_dir ./save_best_model/esnli_mnli30shot_phe_goldpretrainedftbertexpl_matched_dev_outputs/ \
+	--output_dir ./save_best_model/esnli_mnli30shot_phe_goldpretrainedftbertexpl_mismatched_dev_outputs/ \
 	--overwrite_output_dir \
 	--overwrite_cache \
 	--esnli_input_type p+h:a,expl1:b \
