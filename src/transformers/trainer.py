@@ -590,7 +590,10 @@ class Trainer:
             delattr(self, "_past")
 
         logger.info("\n\nTraining completed. Do not forget to share your model on huggingface.co/models =)\n\n")
-        log_bleu.close()
+        
+        if self.args.esnli_evaluate_during_training:
+            log_bleu.close()
+
         return TrainOutput(self.global_step, tr_loss / self.global_step)
 
     def _log(self, logs: Dict[str, float], iterator: Optional[tqdm] = None) -> None:
@@ -1071,11 +1074,14 @@ class Trainer:
         # Compute eval BLEU and print the bleu score each time 
         # especially when we do evaluation during training
         eval_bleu = self.compute_bleu(expl_csv_file_path) # expl_csv_file_path is a file of embeddings
-        esnli_eval_bleu = self.compute_bleu(esnli_expl_csv_file_path) # esnli_expl_csv_file_path is a file of embeddings
+        if self.args.eval_esnli_dev: 
+            esnli_eval_bleu = self.compute_bleu(esnli_expl_csv_file_path) # esnli_expl_csv_file_path is a file of embeddings
+        else: 
+            esnli_eval_bleu = None
         print('eval bleu: ',  eval_bleu)
         print('best bleu: ', best_bleu)
         print('esnli eval bleu: ',  eval_bleu)
-        log_bleu.write(f"step: {self.global_step}, epoch: {self.epoch}, dev eval bleu: {round(eval_bleu,5)}, e-snli dev eval acc: {round(esnli_eval_bleu,5)}\n")
+        log_bleu.write(f"step: {self.global_step}, epoch: {self.epoch}, dev eval bleu: {round(eval_bleu,5)}, e-snli dev eval acc: {None if esnli_eval_bleu==None else round(esnli_eval_bleu,5)}\n")
         if self.args.evaluate_during_training:
             print('training epoch: ',  self.epoch)
             print('training step: ', self.global_step)
@@ -1097,7 +1103,7 @@ class Trainer:
                 self.save_model(output_dir)
 
                 model_info=open(output_dir+"model_info.txt", "w")
-                model_info.write(f"step: {self.global_step}, epoch: {self.epoch}, dev eval acc: {round(eval_bleu,5)}, e-snli dev eval acc: {round(esnli_eval_bleu,5)}\n")
+                model_info.write(f"step: {self.global_step}, epoch: {self.epoch}, dev eval acc: {round(eval_bleu,5)}, e-snli dev eval acc: {None if esnli_eval_bleu==None else round(esnli_eval_bleu,5)}\n")
                 model_info.close()
 
                 if self.is_world_master():
