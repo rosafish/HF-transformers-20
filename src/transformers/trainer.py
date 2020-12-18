@@ -284,7 +284,7 @@ class Trainer:
         data_loader = DataLoader(
             eval_dataset,
             sampler=sampler,
-            batch_size=1,
+            batch_size=self.args.eval_batch_size,
             collate_fn=self.data_collator,
             drop_last=self.args.dataloader_drop_last,
         )
@@ -1000,10 +1000,10 @@ class Trainer:
                     print('expl3_ids: ', expl3_ids.size())
                 for i in range(preds_expl.size()[0]):
                     row = ["","","",""]
-                    row[0] = str(preds_expl[0].tolist())
-                    row[1] = str(label_ids[0].tolist())
-                    row[2] = str(expl2_ids[0].tolist())
-                    row[3] = str(expl3_ids[0].tolist())
+                    row[0] = str(preds_expl[i].tolist())
+                    row[1] = str(label_ids[i].tolist())
+                    row[2] = str(expl2_ids[i].tolist())
+                    row[3] = str(expl3_ids[i].tolist())
                     writer.writerow(row)
             else:
                 if preds_expl.size() != label_ids.size():
@@ -1012,8 +1012,8 @@ class Trainer:
                     print('label_ids: ', label_ids.size())
                 for i in range(preds_expl.size()[0]):
                     row = ["","","",""]
-                    row[0] = str(preds_expl[0].tolist())
-                    row[1] = str(label_ids[0].tolist())
+                    row[0] = str(preds_expl[i].tolist())
+                    row[1] = str(label_ids[i].tolist())
                     writer.writerow(row)
             
             torch.cuda.empty_cache()
@@ -1078,11 +1078,12 @@ class Trainer:
             esnli_eval_bleu = self.compute_bleu(esnli_expl_csv_file_path) # esnli_expl_csv_file_path is a file of embeddings
         else: 
             esnli_eval_bleu = None
-        print('eval bleu: ',  eval_bleu)
-        print('best bleu: ', best_bleu)
-        print('esnli eval bleu: ',  eval_bleu)
-        log_bleu.write(f"step: {self.global_step}, epoch: {self.epoch}, dev eval bleu: {round(eval_bleu,5)}, e-snli dev eval acc: {None if esnli_eval_bleu==None else round(esnli_eval_bleu,5)}\n")
         if self.args.evaluate_during_training:
+            print('eval bleu: ',  eval_bleu)
+            print('best bleu: ', best_bleu)
+            print('esnli eval bleu: ',  eval_bleu)
+            log_bleu.write(f"step: {self.global_step}, epoch: {self.epoch}, dev eval bleu: {round(eval_bleu,5)}, e-snli dev eval acc: {None if esnli_eval_bleu==None else round(esnli_eval_bleu,5)}\n")
+        
             print('training epoch: ',  self.epoch)
             print('training step: ', self.global_step)
             

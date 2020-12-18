@@ -102,7 +102,7 @@ def main():
         esnli_evaluate_during_training=True,
         eval_method=args.eval_method,
         eval_steps=args.eval_steps,
-        per_device_eval_batch_size=1,
+        per_device_eval_batch_size=4,
         predict_from_generate=True,
         eval_esnli_dev=args.eval_esnli_dev,         # eval on esnli dev during training or not
         # modify the following for different sample size

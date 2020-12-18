@@ -74,7 +74,7 @@ def main():
 
     eval_args = TrainingArguments(
         output_dir='./checkpoint-eval-results',          # output directory
-        per_device_eval_batch_size=1,   # batch size for evaluation
+        per_device_eval_batch_size=4,   # batch size for evaluation
         do_eval = True,
         predict_from_generate=True,
     )
