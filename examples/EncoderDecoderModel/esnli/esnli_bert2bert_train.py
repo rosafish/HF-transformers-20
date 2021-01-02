@@ -76,8 +76,7 @@ def main():
     esnli_eval_features = None
     if args.eval_esnli_dev:
         # get esnli_eval_features
-        # esnli_eval_data_path = '/data/rosa/data/esnli/esnli_dev.csv'
-        esnli_eval_data_path = '/data/rosa/HF-transformers-20/examples/EncoderDecoderModel/esnli/sanity-checks/esnli_dev_10.csv'
+        esnli_eval_data_path = '/data/rosa/data/esnli/esnli_dev.csv'
         esnli_eval_examples = processor.get_dev_examples(esnli_eval_data_path) 
         esnli_eval_features = esnli_examples_to_features(esnli_eval_examples, max_seq_len, tokenizer)
     
