@@ -18,6 +18,8 @@ def main():
     parser = argparse.ArgumentParser(description='Path arguments')
     parser.add_argument('-model_dir', action="store", default="bert-base-uncased", type=str)
     parser.add_argument('-data_dir', action="store", default="", type=str)
+    parser.add_argument('-train_data_path', action="store", default="", type=str)
+    parser.add_argument('-eval_data_path', action="store", default="", type=str)
     parser.add_argument('-cached_train_features_file', action="store", default="", type=str)
     parser.add_argument('-save_trained_model_dir', action="store", default="", type=str)
     parser.add_argument('-train_epochs', action="store", default=3, type=int)
@@ -41,11 +43,14 @@ def main():
 
     # paths and params
     max_seq_len = 128
-    train_data_path = args.data_dir + 'esnli_train.csv'
+    train_data_path = args.data_dir + 'esnli_train.csv' if args.data_dir != "" else args.train_data_path
     cached_train_features_file = args.cached_train_features_file
     save_trained_model_dir = args.save_trained_model_dir
     # load dev data, because we are using dev data to find best model / number of steps to train for
-    eval_data_path = args.data_dir + 'esnli_dev.csv'
+    eval_data_path = args.data_dir + 'esnli_dev.csv' if args.data_dir != "" else args.eval_data_path
+
+    print('train_data_path: ', train_data_path)
+    print('eval_data_path: ', eval_data_path)
     
     # Get train examples
     processor = EsnliProcessor()
