@@ -7,7 +7,7 @@ from nltk.translate.bleu_score import corpus_bleu
 
 import sys
 sys.path.append('/data/rosa/my_github/misinformation/code/') # ego
-sys.path.append('~/misinformation/code/') # slurm
+sys.path.append('/home/zhouy1/misinformation/code/') # slurm
 from myTools import write_csv
 
 import argparse
