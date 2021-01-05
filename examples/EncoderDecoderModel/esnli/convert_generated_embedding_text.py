@@ -6,7 +6,8 @@ from transformers import BertTokenizer
 from nltk.translate.bleu_score import corpus_bleu
 
 import sys
-sys.path.append('/data/rosa/my_github/misinformation/code/')
+sys.path.append('/data/rosa/my_github/misinformation/code/') # ego
+sys.path.append('~/misinformation/code/') # slurm
 from myTools import write_csv
 
 import argparse
