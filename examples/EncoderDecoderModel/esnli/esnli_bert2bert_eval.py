@@ -27,6 +27,7 @@ def main():
     parser = argparse.ArgumentParser(description='Path arguments')
     parser.add_argument('-model_dir', action="store", default="./esnli_task_trained_model_and_results/esnli/esnli_train_trained_model_copy/", type=str)
     parser.add_argument('-eval_data_path', action="store", default='./sanity-checks/esnli_dev.csv', type=str)
+    parser.add_argument('-eval_results_dir', action="store", default="", type=str)
     parser.add_argument('-hans_original_eval_data', action="store_true", default=False)  
     parser.add_argument('-generate_expl_on_training_data', action="store_true", default=False)
     args = parser.parse_args()
@@ -73,16 +74,16 @@ def main():
     model.config.eos_token_id = 102
 
     eval_args = TrainingArguments(
-        output_dir='./checkpoint-eval-results',          # output directory
-        per_device_eval_batch_size=4,   # batch size for evaluation
+        output_dir=args.eval_results_dir,          # output directory
+        per_device_eval_batch_size=4,              # batch size for evaluation
         do_eval = True,
         predict_from_generate=True,
     )
 
     evaluator = Trainer(
-        model=model,                         # the instantiated 🤗 Transformers model to be trained
-        args=eval_args,                  # eval arguments, defined above
-        eval_dataset=eval_features,            # evaluation dataset
+        model=model,                               # the instantiated HuggingFace Transformers model to be trained
+        args=eval_args,                            # eval arguments, defined above
+        eval_dataset=eval_features,                # evaluation dataset
     )
 
     # Evaluate
