@@ -133,11 +133,11 @@ class GlueDataset(Dataset):
                 
                 self.processor.esnli_input_type = args.esnli_input_type
                 if mode == Split.dev:
-                    examples = self.processor.get_dev_examples(args.train_data_path)
+                    examples = self.processor.get_dev_examples(args.dev_data_path)
                 elif mode == Split.test:
-                    examples = self.processor.get_test_examples(args.dev_data_path)
+                    examples = self.processor.get_test_examples(args.test_data_path)
                 else:
-                    examples = self.processor.get_train_examples(args.test_data_path)
+                    examples = self.processor.get_train_examples(args.train_data_path)
                 if limit_length is not None:
                     examples = examples[:limit_length]
                 self.features = glue_convert_examples_to_features(
