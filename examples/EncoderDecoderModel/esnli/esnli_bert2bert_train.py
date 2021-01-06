@@ -118,7 +118,7 @@ def main():
     )
 
     trainer = Trainer(
-        model=model,                                # the instantiated 🤗 Transformers model to be trained
+        model=model,                                # the instantiated HuggingFace Transformers model to be trained
         args=training_args,                         # training arguments, defined above
         train_dataset=train_features,               # training dataset
         eval_dataset=eval_features,                 # evaluation dataset
