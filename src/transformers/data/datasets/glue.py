@@ -32,6 +32,7 @@ class GlueDataTrainingArguments:
 
     task_name: str = field(metadata={"help": "The name of the task to train on: " + ", ".join(glue_processors.keys())})
     data_dir: str = field(
+        default="",
         metadata={"help": "The input data dir. Should contain the .tsv files (or other data files) for the task."}
     )
     max_seq_length: int = field(
@@ -42,11 +43,23 @@ class GlueDataTrainingArguments:
         },
     )
     overwrite_cache: bool = field(
-        default=False, metadata={"help": "Overwrite the cached training and evaluation sets"}
+        default=False, metadata={"help": "Overwrite the cached training and evaluation sets"},
     )
     esnli_input_type: str = field(
         default="",
         metadata={"help": "The input type of esnli seqclas task. Choose from ['p+h:a','p:a,h:b','expl1:a', 'p+h:a,expl1:b']"},
+    )
+    train_data_path: str = field(
+        default="",
+        metadata={"help": "path for training data"},
+    )
+    dev_data_path: str = field(
+        default="",
+        metadata={"help": "path for dev data"},
+    )
+    test_data_path: str = field(
+        default="",
+        metadata={"help": "path for test data"},
     )
 
     def __post_init__(self):
@@ -120,11 +133,11 @@ class GlueDataset(Dataset):
                 
                 self.processor.esnli_input_type = args.esnli_input_type
                 if mode == Split.dev:
-                    examples = self.processor.get_dev_examples(args.data_dir)
+                    examples = self.processor.get_dev_examples(args.train_data_path)
                 elif mode == Split.test:
-                    examples = self.processor.get_test_examples(args.data_dir)
+                    examples = self.processor.get_test_examples(args.dev_data_path)
                 else:
-                    examples = self.processor.get_train_examples(args.data_dir)
+                    examples = self.processor.get_train_examples(args.test_data_path)
                 if limit_length is not None:
                     examples = examples[:limit_length]
                 self.features = glue_convert_examples_to_features(

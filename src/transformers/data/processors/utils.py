@@ -91,15 +91,15 @@ class DataProcessor:
         """
         raise NotImplementedError()
 
-    def get_train_examples(self, data_dir):
+    def get_train_examples(self, train_data_path):
         """Gets a collection of :class:`InputExample` for the train set."""
         raise NotImplementedError()
 
-    def get_dev_examples(self, data_dir):
+    def get_dev_examples(self, dev_data_path):
         """Gets a collection of :class:`InputExample` for the dev set."""
         raise NotImplementedError()
 
-    def get_test_examples(self, data_dir):
+    def get_test_examples(self, test_data_path):
         """Gets a collection of :class:`InputExample` for the test set."""
         raise NotImplementedError()
 

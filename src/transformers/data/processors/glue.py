@@ -564,17 +564,17 @@ class EsnliProcessor(DataProcessor):
         """See base class."""
         sys.exit("not implemented")
 
-    def get_train_examples(self, data_dir):
+    def get_train_examples(self, train_data_path):
         """See base class."""
-        return self._create_examples(os.path.join(data_dir, "esnli_train.csv"))
+        return self._create_examples(train_data_path)
 
-    def get_dev_examples(self, data_dir):
+    def get_dev_examples(self, dev_data_path):
         """See base class."""
-        return self._create_examples(os.path.join(data_dir, "esnli_dev.csv"))
+        return self._create_examples(dev_data_path)
 
-    def get_test_examples(self, data_dir):
+    def get_test_examples(self, test_data_path):
         """See base class."""
-        return self._create_examples(os.path.join(data_dir, "esnli_test.csv"))
+        return self._create_examples(test_data_path)
 
     def get_labels(self):
         """See base class."""
