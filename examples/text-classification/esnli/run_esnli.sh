@@ -1,4 +1,4 @@
-quality=high
+quality=ex_low
 seed=0
 training_size=240
 
