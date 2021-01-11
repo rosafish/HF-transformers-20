@@ -1,4 +1,8 @@
 pretrained_model = esnli # esnli or bert
+seed = 0
+train_size = 240
+quality = high
+server = ego # ego or uchi
 
 if [ $pretrained_model = esnli ]; then
 
@@ -10,12 +14,36 @@ elif [ $pretrained_model = bert ]; then
 
 fi
 
+if [ $server = ego ]; then
+
+    data_path_prefix = /data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
+    save_model_path_prefix = ./save_best_models/
+
+elif [ $server = uchi ]; then
+
+    data_path_prefix = ~/data/randomness_experiment/
+    save_model_path_prefix = /net/scratch/zhouy1/randomness_experiment/edm/
+
+fi
+
+if [ $train_size < 2000 ]; then
+
+    max_steps = 4000
+    eval_steps = 1000
+
+elif [ $train_size >= 2000 ]; then
+
+    max_steps = 10000
+    eval_steps = 2000
+
+fi
+
 python ./esnli_bert2bert_train.py\
     -model_dir $model_dir \
-    -train_data_path ~/data/randomness_experiment/seed1/train12000_high.csv \
-    -eval_data_path ~/data/randomness_experiment/seed1/dev2400_high.csv \
-    -cached_train_features_file ../cache/bert_hans_seed1_train12000_high \
-    -save_trained_model_dir /net/scratch/zhouy1/randomness_experiment/edm/bert_hans_seed1_train12000_high/ \
-    -max_steps 10000 \
+    -train_data_path ${data_path_prefix}seed${seed}/train${train_size}_${quality}.csv \
+    -eval_data_path ${data_path_prefix}seed${seed}/dev2400_${quality}.csv \
+    -cached_train_features_file ../cache/${pretrained_model}_hans_seed${seed}_train${train_size}_${quality} \
+    -save_trained_model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/ \
+    -max_steps $max_steps \
     -eval_method step \
-    -eval_steps 2000 
+    -eval_steps $eval_steps 
