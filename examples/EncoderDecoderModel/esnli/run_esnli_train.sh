@@ -1,8 +1,8 @@
 pretrained_model=esnli # esnli or bert
 seed=0
 train_size=240
-quality=high
-server=ego # ego or uchi
+quality=ex_low
+server=uchi # ego or uchi
 
 if [ $pretrained_model = esnli ]; then
 
