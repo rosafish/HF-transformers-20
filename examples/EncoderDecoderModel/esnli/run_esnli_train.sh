@@ -1,6 +1,6 @@
-pretrained_model=esnli # esnli or bert
+pretrained_model=bert # esnli or bert
 seed=0
-train_size=240
+train_size=3840
 quality=ex_low
 server=uchi # ego or uchi
 
@@ -26,17 +26,12 @@ elif [ $server = uchi ]; then
 
 fi
 
-if [ $train_size < 2000 ]; then
+if [ $train_size -lt 2000 ]; then
 
     max_steps=4000
     eval_steps=1000
 
-elif [ $train_size > 2000 ]; then
-
-    max_steps=10000
-    eval_steps=2000
-
-elif [ $train_size = 2000 ]; then
+else
 
     max_steps=10000
     eval_steps=2000
