@@ -26,7 +26,8 @@ def default_logdir() -> str:
     from datetime import datetime
 
     current_time = datetime.now().strftime("%b%d_%H-%M-%S")
-    return os.path.join("runs", current_time + "_" + socket.gethostname())
+    # return os.path.join("runs", current_time + "_" + socket.gethostname())
+    return "tmp"
 
 
 @dataclass
