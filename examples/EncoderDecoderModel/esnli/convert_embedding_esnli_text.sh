@@ -1,9 +1,10 @@
 # inputs
 data_type=dev
-input_file_name=epoch266*.csv
-quality=ex_low
+input_file_name=epoch666*.csv
+quality=low
+pretrained_model=esnli #bert or esnli
 
-dir=./save_best_models/bert_hans_seed0_train240_${quality}/
+dir=./save_best_models/${pretrained_model}_hans_seed0_train240_${quality}/
 
 if [ $data_type = dev ]; then
     # dev
