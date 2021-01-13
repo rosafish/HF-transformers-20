@@ -69,14 +69,14 @@ class HfArgumentParser(ArgumentParser):
                 if field.default is True:
                     field_name = f"--no-{field.name}"
                     kwargs["dest"] = field.name
-            elif hasattr(field.type, "__origin__"):# and issubclass(field.type.__origin__, List):
-                kwargs["nargs"] = "+"
-                kwargs["type"] = field.type.__args__[0]
-                assert all(
-                    x == kwargs["type"] for x in field.type.__args__
-                ), "{} cannot be a List of mixed types".format(field.name)
-                if field.default_factory is not dataclasses.MISSING:
-                    kwargs["default"] = field.default_factory()
+            # elif hasattr(field.type, "__origin__") and issubclass(field.type.__origin__, List):
+            #     kwargs["nargs"] = "+"
+            #     kwargs["type"] = field.type.__args__[0]
+            #     assert all(
+            #         x == kwargs["type"] for x in field.type.__args__
+            #     ), "{} cannot be a List of mixed types".format(field.name)
+            #     if field.default_factory is not dataclasses.MISSING:
+            #         kwargs["default"] = field.default_factory()
             else:
                 kwargs["type"] = field.type
                 if field.default is not dataclasses.MISSING:
