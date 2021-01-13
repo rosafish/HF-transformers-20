@@ -8,15 +8,15 @@ server=uchi # ego or uchi
 
 if [ $server = ego ]; then
 
-    data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
+	data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
+    bert2bert_gen_data_path_prefix=../../EncoderDecoderModel/esnli/save_best_models/
     model_path_prefix=./save_best_model/
-    hft_path=/data/rosa/HF-transformers-20/
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=~/data/randomness_experiment/
+	data_path_prefix=~/data/randomness_experiment/
+    bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/seqclas/
-    hft_path=~/HF-transformers-20/
 
 fi
 
@@ -36,8 +36,8 @@ python ../run_glue.py \
 	--do_train \
 	--do_eval \
 	--train_data_path ${data_path_prefix}seed${seed}/train${training_size}_${quality}.csv \
-	--dev_data_path ${hft_path}examples/EncoderDecoderModel/esnli/save_best_models/${bert2bert_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/dev_text_esnli_format.csv \
-	--test_data_path ${hft_path}examples/EncoderDecoderModel/esnli/save_best_models/${bert2bert_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/${test_type}_test_text_esnli_format.csv \
+	--dev_data_path ${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/dev_text_esnli_format.csv \
+	--test_data_path ${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/${test_type}_test_text_esnli_format.csv \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \
