@@ -26,8 +26,7 @@ def default_logdir() -> str:
     from datetime import datetime
 
     current_time = datetime.now().strftime("%b%d_%H-%M-%S")
-    # return os.path.join("runs", current_time + "_" + socket.gethostname())
-    return "tmp"
+    return os.path.join("runs", current_time + "_" + socket.gethostname())
 
 
 @dataclass
@@ -175,7 +174,7 @@ class TrainingArguments:
     )
     warmup_steps: int = field(default=0, metadata={"help": "Linear warmup over warmup_steps."})
 
-    logging_dir: Optional[str] = field(default_factory=default_logdir, metadata={"help": "Tensorboard log dir."})
+    logging_dir: str = field(default_factory=default_logdir, metadata={"help": "Tensorboard log dir."})
     logging_first_step: bool = field(default=False, metadata={"help": "Log and eval the first global_step"})
     logging_steps: int = field(default=500, metadata={"help": "Log every X updates steps."})
     save_steps: int = field(default=500, metadata={"help": "Save checkpoint every X updates steps."})
