@@ -1,10 +1,25 @@
 # inputs
 data_type=dev
-input_file_name=epoch666*.csv
+input_file_name=epoch266*.csv
 quality=low
 pretrained_model=esnli #bert or esnli
+server=uchi # ego or uchi
+seed=0
+train_size=240
 
-dir=./save_best_models/${pretrained_model}_hans_seed0_train240_${quality}/
+if [ $server = ego ]; then
+
+    data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
+    model_path_prefix=./save_best_models/
+
+elif [ $server = uchi ]; then
+
+    data_path_prefix=~/data/randomness_experiment/
+    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
+
+fi
+
+dir=${model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/
 
 if [ $data_type = dev ]; then
     # dev
@@ -13,7 +28,7 @@ if [ $data_type = dev ]; then
     -text_csv_path ${dir}dev_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path /data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/seed0/dev2400_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/dev2400_${quality}.csv \
     -output_csv_path ${dir}dev_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}dev_text.csv 
 
@@ -24,7 +39,7 @@ elif [ $data_type = matched_test ]; then
     -text_csv_path ${dir}matched_test_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path /data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/seed0/matched_test3000_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/matched_test3000_${quality}.csv \
     -output_csv_path ${dir}matched_test_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}matched_test_text.csv 
 
@@ -35,7 +50,7 @@ elif [ $data_type = mismatched_test ]; then
     -text_csv_path ${dir}mismatched_test_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path /data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/seed0/mismatched_test3000_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/mismatched_test3000_${quality}.csv \
     -output_csv_path ${dir}mismatched_test_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}mismatched_test_text.csv 
 
