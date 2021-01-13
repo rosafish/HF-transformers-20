@@ -3,6 +3,7 @@ test_type=mismatched
 seed=0
 train_size=240
 server=uchi # ego or uchi
+pretrained_model=bert # esnli or bert
 
 if [ $server = ego ]; then
 
@@ -17,6 +18,6 @@ elif [ $server = uchi ]; then
 fi
 
 python ./esnli_bert2bert_eval.py\
-    -model_dir ${save_model_path_prefix}bert_hans_seed${seed}_train${train_size}_${quality}/best_model/ \
+    -model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/best_model/ \
     -eval_data_path ${data_path_prefix}seed${seed}/${test_type}_test3000_${quality}.csv \
-    -eval_results_dir ${save_model_path_prefix}bert_hans_seed${seed}_train${train_size}_${quality}/eval_${test_type}_test/ 
+    -eval_results_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/eval_${test_type}_test/ 
