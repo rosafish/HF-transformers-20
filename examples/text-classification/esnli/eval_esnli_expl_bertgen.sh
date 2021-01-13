@@ -1,8 +1,8 @@
-quality=high
+quality=ex_low
 seed=0
 training_size=240
-test_type=mismatched
-seqclas_pretrained_model=bert #bert or esnli
+test_type=matched
+seqclas_pretrained_model=esnli #bert or esnli
 bert2bert_pretrained_model=esnli #bert or esnli
 
 python ../run_glue.py \

@@ -2,19 +2,19 @@ quality=ex_low
 seed=0
 training_size=240
 test_type=matched
-seqclas_pretrained_model=esnli #bert or esnli
+seqclas_pretrained_model=bert #bert or esnli
 bert2bert_pretrained_model=esnli #bert or esnli
 server=uchi # ego or uchi
 
 if [ $server = ego ]; then
 
-	data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
+    data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
     bert2bert_gen_data_path_prefix=../../EncoderDecoderModel/esnli/save_best_models/
     model_path_prefix=./save_best_model/
 
 elif [ $server = uchi ]; then
 
-	data_path_prefix=~/data/randomness_experiment/
+    data_path_prefix=~/data/randomness_experiment/
     bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/seqclas/
 
