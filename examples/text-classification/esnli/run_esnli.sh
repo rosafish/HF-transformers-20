@@ -2,9 +2,9 @@ quality=low
 seed=0
 training_size=240
 test_type=matched
-seqclas_pretrained_model=esnli #bert or esnli
+seqclas_pretrained_model=bert #bert or esnli
 bert2bert_pretrained_model=esnli #bert or esnli
-server=uchi # ego or uchi
+server=ego # ego or uchi
 
 if [ $server = ego ]; then
 
@@ -39,7 +39,7 @@ python ../run_glue.py \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \
-	--output_dir ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/ \
+	--output_dir ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/ \
 	--overwrite_output_dir \
 	--overwrite_cache \
 	--esnli_input_type p+h:a,expl1:b \
