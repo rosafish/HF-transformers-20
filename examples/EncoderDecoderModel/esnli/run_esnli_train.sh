@@ -1,8 +1,9 @@
 pretrained_model=bert # esnli or bert
 seed=0
-train_size=3840
+train_size=240
 quality=ex_low
 server=uchi # ego or uchi
+debug=false
 
 if [ $pretrained_model = esnli ]; then
 
@@ -35,6 +36,12 @@ else
 
     max_steps=10000
     eval_steps=2000
+
+fi
+
+if [ $debug = true ]; then
+
+    pretrained_model=debug
 
 fi
 
