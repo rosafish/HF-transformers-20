@@ -1,10 +1,10 @@
 pretrained_model=bert # esnli or bert
-seed=0
+seed=1
 train_size=240
 dev_size=$train_size*0.2
-quality=ex_low
+quality=high
 server=uchi # ego or uchi
-debug=false
+debug=true
 
 if [ $pretrained_model = esnli ]; then
 
