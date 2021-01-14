@@ -1,9 +1,9 @@
 # inputs
-data_type=dev
+data_type=matched
 input_file_name=epoch266*.csv
-quality=low
-pretrained_model=esnli #bert or esnli
-server=uchi # ego or uchi
+quality=high
+pretrained_model=bert #bert or esnli
+server=ego # ego or uchi
 seed=0
 train_size=240
 
@@ -39,7 +39,7 @@ elif [ $data_type = matched_test ]; then
     -text_csv_path ${dir}matched_test_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path ${data_path_prefix}seed${seed}/matched_test3000_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/matched_test12000_${quality}.csv \
     -output_csv_path ${dir}matched_test_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}matched_test_text.csv 
 
