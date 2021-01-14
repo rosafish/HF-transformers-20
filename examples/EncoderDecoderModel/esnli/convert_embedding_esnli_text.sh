@@ -1,8 +1,8 @@
 # inputs
-data_type=matched
+data_type=matched_test # matched_test, mismatched_test, or dev
 input_file_name=epoch266*.csv
-quality=high
-pretrained_model=bert #bert or esnli
+quality=low
+pretrained_model=esnli #bert or esnli
 server=ego # ego or uchi
 seed=0
 train_size=240
