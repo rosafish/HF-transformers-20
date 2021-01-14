@@ -1,7 +1,7 @@
 pretrained_model=bert # esnli or bert
 seed=0
 train_size=240
-dev_size=train_size*0.2
+dev_size=$train_size*0.2
 quality=ex_low
 server=uchi # ego or uchi
 debug=false
