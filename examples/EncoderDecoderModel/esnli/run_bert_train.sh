@@ -1,4 +1,4 @@
-pretrained_model=esnli # esnli or bert
+pretrained_model=bert # esnli or bert
 train_size=240
 dev_size=48
 quality=$1
