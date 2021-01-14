@@ -74,17 +74,18 @@ def compute_embedding_bleu(embedding_csv_path):
             cand_2.append(gold_expl_2)
             cand_3.append(gold_expl_3)
             cand_bert.append(pred_expl)
-    print('gold expl1 with respect to gold 2,3: ', corpus_bleu(ref_23, cand_1))
-    print('gold expl2 with respect to gold 1,3: ', corpus_bleu(ref_13, cand_2))
-    print('gold expl3 with respect to gold 1,2: ', corpus_bleu(ref_12, cand_3))
     
-    print('bert expl with respect to gold 2,3: ', corpus_bleu(ref_23, cand_bert))
-    print('bert expl with respect to gold 1,3: ', corpus_bleu(ref_13, cand_bert))
+    # print('gold expl1 with respect to gold 2,3: ', corpus_bleu(ref_23, cand_1))
+    # print('gold expl2 with respect to gold 1,3: ', corpus_bleu(ref_13, cand_2))
+    # print('gold expl3 with respect to gold 1,2: ', corpus_bleu(ref_12, cand_3))
+    
+    # print('bert expl with respect to gold 2,3: ', corpus_bleu(ref_23, cand_bert))
+    # print('bert expl with respect to gold 1,3: ', corpus_bleu(ref_13, cand_bert))
     print('bert expl with respect to gold 1,2: ', corpus_bleu(ref_12, cand_bert))
 
     print('bert expl with respect to gold 1: ', corpus_bleu(ref_1, cand_bert))
-    print('bert expl with respect to gold 2: ', corpus_bleu(ref_2, cand_bert))
-    print('bert expl with respect to gold 3: ', corpus_bleu(ref_3, cand_bert))
+    # print('bert expl with respect to gold 2: ', corpus_bleu(ref_2, cand_bert))
+    # print('bert expl with respect to gold 3: ', corpus_bleu(ref_3, cand_bert))
     
     gold_1_2_3_bleu = corpus_bleu(ref_123, cand_bert)
     print('bert expl with respect to gold 1,2,3: ', gold_1_2_3_bleu)
