@@ -1,4 +1,4 @@
-pretrained_model=esnli #bert or esnli
+pretrained_model=bert #bert or esnli
 
 # inputs
 quality=$1
