@@ -1,9 +1,12 @@
-quality=ex_low
-seed=0
-training_size=240
-test_type=matched
+bert2bert_pretrained_model=bert #bert or esnli
 seqclas_pretrained_model=bert #bert or esnli
-bert2bert_pretrained_model=esnli #bert or esnli
+
+#inputs
+quality=$1
+seed=$2
+test_type=$3 # matched or mismatched
+training_size=$4
+
 server=uchi # ego or uchi
 
 if [ $server = ego ]; then
