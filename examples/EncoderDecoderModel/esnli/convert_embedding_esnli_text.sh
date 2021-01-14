@@ -3,7 +3,7 @@ pretrained_model=esnli #bert or esnli
 # inputs
 quality=$1
 seed=$2
-data_type=$3 # matched_test, mismatched_test, or dev
+data_type=$3 # matched, mismatched, or dev
 train_size=$4
 dev_size=$5
 input_file_name=$6 # dev embedding file name
@@ -35,7 +35,7 @@ if [ $data_type = dev ]; then
     -output_csv_path ${dir}dev_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}dev_text.csv 
 
-elif [ $data_type = matched_test ]; then
+elif [ $data_type = matched ]; then
     # matched_test
     python convert_generated_embedding_text.py \
     -embedding_csv_path ${dir}eval_matched_test/epochNone*.csv \
@@ -46,7 +46,7 @@ elif [ $data_type = matched_test ]; then
     -output_csv_path ${dir}matched_test_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}matched_test_text.csv 
 
-elif [ $data_type = mismatched_test ]; then
+elif [ $data_type = mismatched ]; then
     # mismatched_test
     python convert_generated_embedding_text.py \
     -embedding_csv_path ${dir}eval_mismatched_test/epochNone*.csv \
