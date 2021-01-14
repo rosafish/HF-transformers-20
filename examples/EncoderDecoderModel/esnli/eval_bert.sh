@@ -1,4 +1,4 @@
-pretrained_model=esnli # esnli or bert
+pretrained_model=bert # esnli or bert
 
 quality=$1
 seed=$2
