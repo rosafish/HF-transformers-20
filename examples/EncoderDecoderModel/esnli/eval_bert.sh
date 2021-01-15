@@ -2,8 +2,9 @@ pretrained_model=bert # esnli or bert
 
 quality=$1
 seed=$2
-test_type=$3 # matched or mismatched
+data_type=$3 # matched or mismatched or dev
 train_size=$4
+dev_size=$5
 
 server=uchi # ego or uchi
 
@@ -19,17 +20,29 @@ elif [ $server = uchi ]; then
 
 fi
 
-if [ $test_type = matched ]; then
+if [ $data_type = matched ]; then
 
     test_size=12000
+    python ./esnli_bert2bert_eval.py\
+    -model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/best_model/ \
+    -eval_data_path ${data_path_prefix}seed${seed}/${data_type}_test${test_size}_${quality}.csv \
+    -eval_results_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/eval_${data_type}_test/
 
-elif [ $test_type = mismatched ]; then
+elif [ $data_type = mismatched ]; then
 
     test_size=3000
+    python ./esnli_bert2bert_eval.py\
+    -model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/best_model/ \
+    -eval_data_path ${data_path_prefix}seed${seed}/${data_type}_test${test_size}_${quality}.csv \
+    -eval_results_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/eval_${data_type}_test/
 
+elif [ $data_type = dev ]; then
+
+    python ./esnli_bert2bert_eval.py\
+    -model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/best_model/ \
+    -eval_data_path ${data_path_prefix}seed${seed}/${data_type}${dev_size}_${quality}.csv \
+    -eval_results_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/eval_${data_type}/
+    
 fi
 
-python ./esnli_bert2bert_eval.py\
-    -model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/best_model/ \
-    -eval_data_path ${data_path_prefix}seed${seed}/${test_type}_test${test_size}_${quality}.csv \
-    -eval_results_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/eval_${test_type}_test/ 
+ 

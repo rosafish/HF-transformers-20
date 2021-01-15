@@ -6,7 +6,6 @@ seed=$2
 data_type=$3 # matched, mismatched, or dev
 train_size=$4
 dev_size=$5
-input_file_name=$6 # dev embedding file name
 
 server=uchi # ego or uchi
 
@@ -27,7 +26,7 @@ dir=${model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_
 if [ $data_type = dev ]; then
     # dev
     python convert_generated_embedding_text.py \
-    -embedding_csv_path ${dir}${input_file_name} \
+    -embedding_csv_path ${dir}eval_dev/epochNone*.csv \
     -text_csv_path ${dir}dev_text.csv 
 
     python convert_bertgen_to_original_format.py \
