@@ -81,7 +81,7 @@ def compute_embedding_bleu(embedding_csv_path):
     
     # print('bert expl with respect to gold 2,3: ', corpus_bleu(ref_23, cand_bert))
     # print('bert expl with respect to gold 1,3: ', corpus_bleu(ref_13, cand_bert))
-    print('bert expl with respect to gold 1,2: ', corpus_bleu(ref_12, cand_bert))
+    # print('bert expl with respect to gold 1,2: ', corpus_bleu(ref_12, cand_bert))
 
     gold_1_bleu = corpus_bleu(ref_1, cand_bert)
     print('bert expl with respect to gold 1: ', gold_1_bleu)
@@ -89,7 +89,7 @@ def compute_embedding_bleu(embedding_csv_path):
     # print('bert expl with respect to gold 3: ', corpus_bleu(ref_3, cand_bert))
     
     gold_1_2_3_bleu = corpus_bleu(ref_123, cand_bert)
-    print('bert expl with respect to gold 1,2,3: ', gold_1_2_3_bleu)
+    # print('bert expl with respect to gold 1,2,3: ', gold_1_2_3_bleu)
     # return gold_1_2_3_bleu
     return gold_1_bleu # for hans randomness experiment - with my templated explanation
 
