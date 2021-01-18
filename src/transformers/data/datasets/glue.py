@@ -134,6 +134,7 @@ class GlueDataset(Dataset):
                 self.processor.esnli_input_type = args.esnli_input_type
                 if mode == Split.dev:
                     examples = self.processor.get_dev_examples(args.dev_data_path)
+                    print('args.dev_data_path: ', args.dev_data_path)
                 elif mode == Split.test:
                     examples = self.processor.get_test_examples(args.test_data_path)
                 else:
