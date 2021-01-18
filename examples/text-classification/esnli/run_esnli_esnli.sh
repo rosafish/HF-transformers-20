@@ -4,8 +4,7 @@ seqclas_pretrained_model=esnli #bert or esnli
 #inputs
 quality=$1
 seed=$2
-test_type=$3 # mvmt or misvmt or mvmist or misvmist
-training_size=$4
+training_size=$3
 
 server=uchi # ego or uchi
 
@@ -40,7 +39,6 @@ python ../run_glue.py \
 	--do_eval \
 	--train_data_path ${data_path_prefix}seed${seed}/train${training_size}_${quality}.csv \
 	--dev_data_path ${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/dev_text_esnli_format.csv \
-	--test_data_path ${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/${test_type}_test_text_esnli_format.csv \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \

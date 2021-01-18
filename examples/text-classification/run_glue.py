@@ -142,11 +142,11 @@ def main():
         if training_args.do_eval
         else None
     )
-    test_dataset = (
-        GlueDataset(data_args, tokenizer=tokenizer, mode="test", cache_dir=model_args.cache_dir)
-        if training_args.do_predict
-        else None
-    )
+    # test_dataset = (
+    #     GlueDataset(data_args, tokenizer=tokenizer, mode="test", cache_dir=model_args.cache_dir)
+    #     if training_args.do_predict
+    #     else None
+    # )
 
     def build_compute_metrics_fn(task_name: str) -> Callable[[EvalPrediction], Dict]:
         def compute_metrics_fn(p: EvalPrediction):
