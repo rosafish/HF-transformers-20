@@ -2,7 +2,7 @@ pretrained_model=bert # esnli or bert
 
 quality=$1
 seed=$2
-data_type=$3 # matched or mismatched or dev
+data_type=$3 # mvmt or mvmist or misvmt or misvmist or dev
 train_size=$4
 dev_size=$5
 
@@ -20,7 +20,7 @@ elif [ $server = uchi ]; then
 
 fi
 
-if [ $data_type = matched ]; then
+if [ $data_type = mvmt || $data_type = misvmt ]; then
 
     test_size=12000
     python ./esnli_bert2bert_eval.py\
@@ -28,7 +28,7 @@ if [ $data_type = matched ]; then
     -eval_data_path ${data_path_prefix}seed${seed}/${data_type}_test${test_size}_${quality}.csv \
     -eval_results_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/eval_${data_type}_test/
 
-elif [ $data_type = mismatched ]; then
+elif [ $data_type = mvmist || $data_type = misvmist ]; then
 
     test_size=3000
     python ./esnli_bert2bert_eval.py\
