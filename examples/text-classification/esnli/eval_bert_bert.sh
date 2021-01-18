@@ -19,6 +19,8 @@ elif [ $server = uchi ]; then
     bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/seqclas/
 
+	cp ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/vocab.txt ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/best_model/
+
 fi
 
 python ../run_glue.py \
