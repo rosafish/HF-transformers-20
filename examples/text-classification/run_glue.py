@@ -169,6 +169,8 @@ def main():
 
     # Training
     if training_args.do_train:
+        print('do_train')
+        print('model_args.model_name_or_path: ', model_args.model_name_or_path)
         trainer.train(
             model_path=model_args.model_name_or_path if os.path.isdir(model_args.model_name_or_path) else None
         )
@@ -182,6 +184,8 @@ def main():
     # Evaluation
     eval_results = {}
     if training_args.do_eval and not training_args.save_best_model:
+        print('do_eval')
+        print('model_args.model_name_or_path: ', model_args.model_name_or_path)
         logger.info("*** Evaluate ***")
 
         # Loop to handle MNLI double evaluation (matched, mis-matched)
@@ -203,6 +207,7 @@ def main():
                 with open(output_eval_file, "w") as writer:
                     logger.info("***** Eval results {} *****".format(eval_dataset.args.task_name))
                     for key, value in eval_result.items():
+                        print("  %s = %s", key, value)
                         logger.info("  %s = %s", key, value)
                         writer.write("%s = %s\n" % (key, value))
 

@@ -571,8 +571,8 @@ class Trainer:
                     elif self.args.eval_method == "step" and self.global_step % self.args.eval_steps == 0:
                         metrics = self.evaluate()
                         eval_acc = round(metrics['eval_acc'], 5)
-                        print("eval_acc: ", eval_acc)
-                        print("epoch: ", metrics['epoch'])
+                        # print("eval_acc: ", eval_acc)
+                        # print("epoch: ", metrics['epoch'])
                         log_accuracy.write(f"step: {self.global_step}, epoch: {metrics['epoch']}, eval_acc: {eval_acc}\n")
                         if eval_acc > best_acc:
                             best_acc = eval_acc
