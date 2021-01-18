@@ -4,7 +4,7 @@ seqclas_pretrained_model=esnli #bert or esnli
 #inputs
 quality=$1
 seed=$2
-test_type=$3 # matched or mismatched
+test_type=$3 # mvmt or misvmt or mvmist or misvmist
 training_size=$4
 
 server=uchi # ego or uchi

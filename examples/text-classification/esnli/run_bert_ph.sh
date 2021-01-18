@@ -6,7 +6,7 @@ training_size=$2
 dev_size=$3
 
 quality=empty_expl # fixed for p+h benchmark
-test_type=mismatched_test # does not affect anything
+test_type=mvmt # does not affect anything
 test_size=3000
 
 server=uchi # ego or uchi

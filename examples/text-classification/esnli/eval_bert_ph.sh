@@ -3,7 +3,7 @@ seqclas_pretrained_model=bert #bert or esnli
 # inputs
 seed=$1
 training_size=$2
-test_type=$3 # matched or mismatched
+test_type=$3 # mvmt or misvmt or mvmist or misvmist
 
 quality=empty_expl # fixed for p+h benchmark
 server=uchi # ego or uchi
@@ -20,11 +20,11 @@ elif [ $server = uchi ]; then
 
 fi
 
-if [ $test_type = matched ]; then
+if [ $test_type = mvmt ] || [ $test_type = misvmt ]; then
 
     test_size=12000
 
-elif [ $test_type = mismatched ]; then
+elif [ $test_type = mvmist ] || [ $test_type = misvmist ]; then
 
     test_size=3000
 
