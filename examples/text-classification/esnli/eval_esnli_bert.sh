@@ -1,5 +1,5 @@
-seqclas_pretrained_model=esnli #bert or esnli
-bert2bert_pretrained_model=bert #bert or esnli
+bert2bert_pretrained_model=esnli #bert or esnli
+seqclas_pretrained_model=bert #bert or esnli
 
 # inputs
 quality=$1
