@@ -9,7 +9,7 @@ quality=empty_expl # fixed for p+h benchmark
 test_type=mvmt # does not affect anything
 test_size=3000
 
-server=uchi # ego or uchi
+server=ego # ego or uchi
 
 if [ $server = ego ]; then
 

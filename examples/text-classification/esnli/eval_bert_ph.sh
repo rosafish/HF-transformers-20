@@ -6,15 +6,19 @@ training_size=$2
 test_type=$3 # mvmt or misvmt or mvmist or misvmist
 
 quality=empty_expl # fixed for p+h benchmark
-server=uchi # ego or uchi
+server=ego # ego or uchi
 
 if [ $server = ego ]; then
 
+	data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
     bert2bert_gen_data_path_prefix=../../EncoderDecoderModel/esnli/save_best_models/
     model_path_prefix=./save_best_model/
 
+	cp ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/vocab.txt ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/best_model/
+
 elif [ $server = uchi ]; then
 
+	data_path_prefix=~/data/randomness_experiment/
     bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/seqclas/
 
