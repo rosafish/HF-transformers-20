@@ -1,9 +1,9 @@
 cd ..
 
-train_size=480
-dev_size=96
+train_size=1920
+dev_size=384
 
-for seed in `seq 2 4`
+for seed in `seq 0 4`
 do
 	sh run_bert_ph.sh $seed $train_size $dev_size
 	sh run_esnli_ph.sh $seed $train_size $dev_size
