@@ -1,4 +1,4 @@
-cd ..
+cd ../..
 
 train_size=240
 dev_size=48
