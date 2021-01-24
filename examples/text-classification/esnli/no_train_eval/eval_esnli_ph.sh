@@ -5,7 +5,7 @@ seed=$1
 test_type=$2 # mvmt or misvmt or mvmist or misvmist
 
 quality=empty_expl # fixed for p+h benchmark
-server=ego # ego or uchi
+server=uchi # ego or uchi
 
 if [ $server = ego ]; then
 
@@ -29,7 +29,7 @@ fi
 
 if [ $seqclas_pretrained_model = esnli ]; then
 
-    model_dir=./save_best_model/esnli_phe_goldexpl_outputs/best_model/
+    model_dir=../save_best_model/esnli_phe_emptyexpl_outputs/best_model/
 
 elif [ $seqclas_pretrained_model = bert ]; then
 
