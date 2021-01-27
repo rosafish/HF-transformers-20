@@ -14,8 +14,6 @@ if [ $server = ego ]; then
     bert2bert_gen_data_path_prefix=../../EncoderDecoderModel/esnli/save_best_models/
     model_path_prefix=./save_best_model/
 
-	cp ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/vocab.txt ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/best_model/
-
 elif [ $server = uchi ]; then
 
     data_path_prefix=/home/zhouy1/data/randomness_experiment/
@@ -23,6 +21,8 @@ elif [ $server = uchi ]; then
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/label_only/
 
 fi
+
+cp ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/vocab.txt ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/best_model/
 
 if [ $test_type = mvmt ] || [ $test_type = misvmt ]; then
 
