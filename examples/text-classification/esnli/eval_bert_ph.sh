@@ -6,7 +6,7 @@ training_size=$2
 test_type=$3 # mvmt or misvmt or mvmist or misvmist
 
 quality=empty_expl # fixed for p+h benchmark
-server=ego # ego or uchi
+server=uchi # ego or uchi
 
 if [ $server = ego ]; then
 
@@ -18,9 +18,9 @@ if [ $server = ego ]; then
 
 elif [ $server = uchi ]; then
 
-	data_path_prefix=~/data/randomness_experiment/
+    data_path_prefix=/home/zhouy1/data/randomness_experiment/
     bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
-    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/seqclas/
+    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/label_only/
 
 fi
 
