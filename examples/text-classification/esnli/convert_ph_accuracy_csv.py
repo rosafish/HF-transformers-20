@@ -10,10 +10,10 @@ if __name__=="__main__":
               'esnli mvmt', 'esnli misvmt', 'esnli mvmist', 'esnli misvmist', \
               ]
 
-    train_size = 7680
+    train_size = 24
     output_csv = './randomness_exp_ph_train%s.csv' % train_size
 
-    for seed in range(5):
+    for seed in range(10):
         row = []
         for model in ['bert', 'esnli']:
             for test_type in ['mvmt', 'misvmt', 'mvmist', 'misvmist']:
