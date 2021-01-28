@@ -9,7 +9,7 @@ quality=empty_expl # fixed for p+h benchmark
 test_type=mvmt # does not affect anything
 test_size=3000
 
-server=ego # ego or uchi
+server=uchi # ego or uchi
 
 if [ $server = ego ]; then
 
@@ -19,9 +19,9 @@ if [ $server = ego ]; then
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=~/data/randomness_experiment/
+    data_path_prefix=/home/zhouy1/data/randomness_experiment/
     bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
-    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/seqclas/
+    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/label_only/
 
 fi
 
@@ -52,5 +52,5 @@ python ../run_glue.py \
 	--esnli_input_type p+h:a,expl1:b \
 	--save_best_model \
 	--eval_method step \
-	--max_steps 200 \
-	--eval_steps 4
+	--max_steps 1000 \
+	--eval_steps 50
