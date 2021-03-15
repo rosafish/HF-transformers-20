@@ -31,7 +31,7 @@ if [ $data_type = dev ]; then
     -text_csv_path ${dir}dev_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path ${data_path_prefix}seed${seed}/partition${partition}/dev${dev_size}_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/partition${partition}/dev_${dev_size}_${quality}.csv \
     -output_csv_path ${dir}dev_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}dev_text.csv 
 

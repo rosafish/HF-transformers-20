@@ -45,8 +45,8 @@ if [ $train_size -lt 2000 ]; then
 
     python ./esnli_bert2bert_train.py\
     -model_dir $model_dir \
-    -train_data_path ${data_path_prefix}seed${seed}/partition${partition}/train${train_size}_${quality}.csv \
-    -eval_data_path ${data_path_prefix}seed${seed}/partition${partition}/dev${dev_size}_${quality}.csv \
+    -train_data_path ${data_path_prefix}seed${seed}/partition${partition}/train_${train_size}_${quality}.csv \
+    -eval_data_path ${data_path_prefix}seed${seed}/partition${partition}/dev_${dev_size}_${quality}.csv \
     -cached_train_features_file ../cache/${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality} \
     -save_trained_model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality}/ \
     -max_steps $max_steps \
