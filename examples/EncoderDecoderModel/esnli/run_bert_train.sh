@@ -2,8 +2,9 @@ pretrained_model=bert # esnli or bert
 
 quality=$1
 seed=$2
-train_size=$3
-dev_size=$4
+partition=$3
+train_size=$4
+dev_size=$5
 
 server=uchi # ego or uchi
 debug=false
@@ -20,12 +21,12 @@ fi
 
 if [ $server = ego ]; then
 
-    data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
+    data_path_prefix=/data/rosa/hans-forked/auto/generated_data/
     save_model_path_prefix=./save_best_models/
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=~/data/randomness_experiment/
+    data_path_prefix=/net/scratch/zhouy1/data/generated_data/
     save_model_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
 
 fi
@@ -44,10 +45,10 @@ if [ $train_size -lt 2000 ]; then
 
     python ./esnli_bert2bert_train.py\
     -model_dir $model_dir \
-    -train_data_path ${data_path_prefix}seed${seed}/train${train_size}_${quality}.csv \
-    -eval_data_path ${data_path_prefix}seed${seed}/dev${dev_size}_${quality}.csv \
-    -cached_train_features_file ../cache/${pretrained_model}_hans_seed${seed}_train${train_size}_${quality} \
-    -save_trained_model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/ \
+    -train_data_path ${data_path_prefix}seed${seed}/partition${partition}/train${train_size}_${quality}.csv \
+    -eval_data_path ${data_path_prefix}seed${seed}/partition${partition}/dev${dev_size}_${quality}.csv \
+    -cached_train_features_file ../cache/${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality} \
+    -save_trained_model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality}/ \
     -max_steps $max_steps \
     -eval_method $eval_method \
     -eval_steps $eval_steps 
@@ -59,10 +60,10 @@ else
 
     python ./esnli_bert2bert_train.py\
     -model_dir $model_dir \
-    -train_data_path ${data_path_prefix}seed${seed}/train${train_size}_${quality}.csv \
-    -eval_data_path ${data_path_prefix}seed${seed}/dev${dev_size}_${quality}.csv \
-    -cached_train_features_file ../cache/${pretrained_model}_hans_seed${seed}_train${train_size}_${quality} \
-    -save_trained_model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/ \
+    -train_data_path ${data_path_prefix}seed${seed}/partition${partition}/train${train_size}_${quality}.csv \
+    -eval_data_path ${data_path_prefix}seed${seed}/partition${partition}/dev${dev_size}_${quality}.csv \
+    -cached_train_features_file ../cache/${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality} \
+    -save_trained_model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality}/ \
     -eval_method $eval_method \
     -train_epochs $train_epochs 
 

@@ -3,25 +3,26 @@ pretrained_model=esnli #bert or esnli
 # inputs
 quality=$1
 seed=$2
-data_type=$3 # mvmt or mvmist or misvmt or misvmist or dev
-train_size=$4
-dev_size=$5
+partition=$3
+data_type=$4 # mvmt or mvmist or misvmt or misvmist or dev
+train_size=$5
+dev_size=$6
 
 server=uchi # ego or uchi
 
 if [ $server = ego ]; then
 
-    data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
+    data_path_prefix=/data/rosa/hans-forked/auto/generated_data/
     model_path_prefix=./save_best_models/
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=~/data/randomness_experiment/
+    data_path_prefix=/net/scratch/zhouy1/data/generated_data/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
 
 fi
 
-dir=${model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/
+dir=${model_path_prefix}${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality}/
 
 if [ $data_type = dev ]; then
     # dev
@@ -30,7 +31,7 @@ if [ $data_type = dev ]; then
     -text_csv_path ${dir}dev_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path ${data_path_prefix}seed${seed}/dev${dev_size}_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/partition${partition}/dev${dev_size}_${quality}.csv \
     -output_csv_path ${dir}dev_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}dev_text.csv 
 
@@ -41,7 +42,7 @@ elif [ $data_type = mvmt ] || [ $data_type = misvmt ]; then
     -text_csv_path ${dir}${data_type}_test_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path ${data_path_prefix}seed${seed}/${data_type}_test12000_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/partition${partition}/test_${data_type}_300_${quality}.csv \
     -output_csv_path ${dir}${data_type}_test_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}${data_type}_test_text.csv 
 
@@ -52,7 +53,7 @@ elif [ $data_type = mvmist ] || [ $data_type = misvmist ]; then
     -text_csv_path ${dir}${data_type}_test_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path ${data_path_prefix}seed${seed}/${data_type}_test3000_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/partition${partition}/test_${data_type}_300_${quality}.csv \
     -output_csv_path ${dir}${data_type}_test_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}${data_type}_test_text.csv 
 
