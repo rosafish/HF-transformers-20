@@ -22,14 +22,14 @@ elif [ $server = uchi ]; then
 
 fi
 
-if [ $data_type = mvmt ] || [ $data_type = misvmt ]; then
+if [ $data_type = ivit ] || [ $data_type = ovit ]; then
 
     python ./esnli_bert2bert_eval.py\
     -model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality}/best_model/ \
     -eval_data_path ${data_path_prefix}seed${seed}/partition${partition}/test_${data_type}_${test_size}_${quality}.csv \
     -eval_results_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_train${train_size}_${quality}/eval_${data_type}_test/
 
-elif [ $data_type = mvmist ] || [ $data_type = misvmist ]; then
+elif [ $data_type = ivot ] || [ $data_type = ovot ]; then
 
     python ./esnli_bert2bert_eval.py\
     -model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality}/best_model/ \
