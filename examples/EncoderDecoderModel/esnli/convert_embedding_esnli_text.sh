@@ -35,7 +35,7 @@ if [ $data_type = dev ]; then
     -output_csv_path ${dir}dev_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}dev_text.csv 
 
-elif [ $data_type = mvmt ] || [ $data_type = misvmt ]; then
+elif [ $data_type = ivit ] || [ $data_type = ovit ]; then
     # matched templates
     python convert_generated_embedding_text.py \
     -embedding_csv_path ${dir}eval_${data_type}_test/epochNone*.csv \
@@ -46,7 +46,7 @@ elif [ $data_type = mvmt ] || [ $data_type = misvmt ]; then
     -output_csv_path ${dir}${data_type}_test_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}${data_type}_test_text.csv 
 
-elif [ $data_type = mvmist ] || [ $data_type = misvmist ]; then
+elif [ $data_type = ivot ] || [ $data_type = ovot ]; then
     # mismatched templates
     python convert_generated_embedding_text.py \
     -embedding_csv_path ${dir}eval_${data_type}_test/epochNone*.csv \
