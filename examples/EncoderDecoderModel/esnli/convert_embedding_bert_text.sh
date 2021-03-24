@@ -49,7 +49,7 @@ elif [ $data_type = ivit ] || [ $data_type = ovit ]; then
 elif [ $data_type = ivot ] || [ $data_type = ovot ]; then
     # mismatched templates
     python convert_generated_embedding_text.py \
-    -embedding_csv_path ${dir}eval_${data_type}_partition${partition}_test/epochNone*.csv \
+    -embedding_csv_path ${dir}eval_${data_type}_test/epochNone*.csv \
     -text_csv_path ${dir}${data_type}_test_text.csv 
 
     python convert_bertgen_to_original_format.py \
