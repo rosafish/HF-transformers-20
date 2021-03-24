@@ -4,7 +4,7 @@ pretrained_model=esnli #bert or esnli
 quality=$1
 seed=$2
 partition=$3
-data_type=$4 # mvmt or mvmist or misvmt or misvmist or dev
+data_type=$4 # ivit or ivot or ovit or ovot or dev
 train_size=$5
 dev_size=$6
 

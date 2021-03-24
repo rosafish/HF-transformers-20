@@ -17,7 +17,7 @@ if [ $server = ego ]; then
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=~/data/randomness_experiment/
+    data_path_prefix=/net/scratch/zhouy1/data/generated_data/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
 
 fi
@@ -31,7 +31,7 @@ if [ $data_type = dev ]; then
     -text_csv_path ${dir}dev_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path ${data_path_prefix}seed${seed}_partition${partition}/dev${dev_size}_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/partition${partition}/dev_${dev_size}_${quality}.csv \
     -output_csv_path ${dir}dev_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}dev_text.csv 
 
@@ -42,7 +42,7 @@ elif [ $data_type = ivit ] || [ $data_type = ovit ]; then
     -text_csv_path ${dir}${data_type}_test_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path ${data_path_prefix}seed${seed}_partition${partition}/${data_type}_test12000_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/partition${partition}/test_${data_type}_300_${quality}.csv \
     -output_csv_path ${dir}${data_type}_test_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}${data_type}_test_text.csv 
 
@@ -53,7 +53,7 @@ elif [ $data_type = ivot ] || [ $data_type = ovot ]; then
     -text_csv_path ${dir}${data_type}_test_text.csv 
 
     python convert_bertgen_to_original_format.py \
-    -gold_expl_csv_path ${data_path_prefix}seed${seed}_partition${partition}/${data_type}_test3000_${quality}.csv \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/partition${partition}/test_${data_type}_300_${quality}.csv \
     -output_csv_path ${dir}${data_type}_test_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}${data_type}_test_text.csv 
 
