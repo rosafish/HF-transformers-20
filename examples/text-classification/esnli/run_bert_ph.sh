@@ -19,7 +19,7 @@ if [ $server = ego ]; then
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=/net/scratch/zhouy1/data/randomness_experiment/
+    data_path_prefix=/net/scratch/zhouy1/data/generated_data/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/label_only/
 
 fi
