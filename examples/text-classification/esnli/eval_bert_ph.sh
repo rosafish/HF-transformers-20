@@ -13,12 +13,12 @@ test_size=300
 
 if [ $server = ego ]; then
 
-	data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
+	data_path_prefix=/data/rosa/hans-forked/auto/generated_data/
     model_path_prefix=./save_best_model/
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=/home/zhouy1/data/generated_data/
+    data_path_prefix=/net/scratch/data/generated_data/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/label_only/
 
 fi

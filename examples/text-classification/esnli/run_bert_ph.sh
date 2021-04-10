@@ -14,7 +14,7 @@ server=uchi # ego or uchi
 
 if [ $server = ego ]; then
 
-    data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
+    data_path_prefix=/data/rosa/hans-forked/auto/generated_data/
     model_path_prefix=./save_best_model/
 
 elif [ $server = uchi ]; then
