@@ -7,7 +7,7 @@ train_size=$4
 dev_size=$5
 
 server=uchi # ego or uchi
-debug=false
+debug=true
 
 if [ $pretrained_model = esnli ]; then
 
