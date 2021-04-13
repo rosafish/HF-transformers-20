@@ -38,7 +38,7 @@ python ../run_glue.py \
 	--task_name ESNLI \
 	--do_train \
 	--do_eval \
-	--train_data_path ${data_path_prefix}seed${seed}/partition${partition}/train${training_size}_${quality}.csv \
+	--train_data_path ${data_path_prefix}seed${seed}/partition${partition}/train_${training_size}_${quality}.csv \
 	--dev_data_path ${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}/dev_text_esnli_format.csv \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
