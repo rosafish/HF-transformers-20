@@ -4,7 +4,8 @@ seqclas_pretrained_model=bert #bert or esnli
 #inputs
 quality=$1
 seed=$2
-training_size=$3
+partition=$3
+training_size=$4
 
 server=uchi # ego or uchi
 
@@ -16,7 +17,7 @@ if [ $server = ego ]; then
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=~/data/randomness_experiment/
+    data_path_prefix=/net/scratch/zhouy1/data/generated_data/
     bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/seqclas/
 
@@ -37,12 +38,12 @@ python ../run_glue.py \
 	--task_name ESNLI \
 	--do_train \
 	--do_eval \
-	--train_data_path ${data_path_prefix}seed${seed}/train${training_size}_${quality}.csv \
-	--dev_data_path ${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}/dev_text_esnli_format.csv \
+	--train_data_path ${data_path_prefix}seed${seed}/partition${partition}/train${training_size}_${quality}.csv \
+	--dev_data_path ${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}/dev_text_esnli_format.csv \
 	--max_seq_length 128 \
 	--per_device_train_batch_size 32 \
 	--learning_rate 2e-5 \
-	--output_dir ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/ \
+	--output_dir ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/ \
 	--overwrite_output_dir \
 	--overwrite_cache \
 	--esnli_input_type p+h:a,expl1:b \
