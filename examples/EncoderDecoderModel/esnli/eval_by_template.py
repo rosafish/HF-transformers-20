@@ -4,9 +4,12 @@ from nltk.translate.bleu_score import corpus_bleu
 from nltk.tokenize import TweetTokenizer
 
 if __name__=='__main__':
-    input_csv = sys.argv[1] # model input file
+    input_dir = sys.argv[1] # model input file directory
     output_csv = sys.argv[2] # model generated explanations text file
     expl_type = sys.argv[3]
+
+    input_path = input_dir+expl_type+'_test_text.csv'
+    bleu_output_path = input_dir+expl_type+'_test_bleu_by_temp.txt'
 
     input_expls_by_template = {}
     template_ids_by_line = []
@@ -62,9 +65,14 @@ if __name__=='__main__':
 
     print(input_expls_by_template)
 
+    f = open(bleu_output_path, 'w+')
     for template_id in input_expls_by_template.keys():
         print('template id: ', template_id)
-        print('BLEU: ', round(corpus_bleu(input_expls_by_template[template_id][0], input_expls_by_template[template_id][1]), 5)*100)
+        bleu = corpus_bleu(input_expls_by_template[template_id][0], input_expls_by_template[template_id][1])
+        rounded_blue = round(bleu, 5)*100
+        print('BLEU: ', rounded_blue)
+        f.write(template_id, ', ', rounded_blue, '\n')
+    f.close()
             
 
             
