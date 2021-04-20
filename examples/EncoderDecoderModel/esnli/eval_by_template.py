@@ -9,7 +9,7 @@ if __name__=='__main__':
     expl_type = sys.argv[3]
     test_type = sys.argv[4]
 
-    input_path = input_dir+test_type+'_test_text.csv'
+    input_csv = input_dir+test_type+'_test_text.csv'
     bleu_output_path = input_dir+test_type+'_test_bleu_by_temp.txt'
 
     input_expls_by_template = {}
