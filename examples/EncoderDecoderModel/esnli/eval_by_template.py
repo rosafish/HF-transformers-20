@@ -20,8 +20,9 @@ if __name__=='__main__':
 
             if i == 0:
                 continue
-            print(i)
-            print(line)
+
+            if i > 5: 
+                break
             
             if expl_type == 'pt':
                 explanation_text = line[-1]
@@ -30,15 +31,33 @@ if __name__=='__main__':
             else:
                 print('invalid expl type: ', expl_type)
 
+            #TODO: do i need to tokenize explanations into tokens first?
+
             if template_id in input_expls_by_template:
-                input_expls_by_template[template_id].append(explanation_text)
+                input_expls_by_template[template_id][0].append(explanation_text)
             else:
-                input_expls_by_template[template_id]=[explanation_text]
+                input_expls_by_template[template_id]=[[explanation_text], []] # [[ref],[cand]]
+
+    print(input_expls_by_template)
+    
+    with open(output_csv, newline='') as f:
+        reader = csv.reader(f)
+
+        for (i, line) in enumerate(reader):
+            if i == 0:
+                continue
 
             if i > 5: 
-                print(input_expls_by_template)
                 break
+            
+            explanation_text = line[0]
+            template_id = template_ids_by_line[i]
 
+            #TODO: do i need to tokenize explanations into tokens first?
+            
+            input_expls_by_template[template_id][1].append(explanation_text)
+
+    print(input_expls_by_template)
             
 
             
