@@ -1,6 +1,7 @@
 import csv
 import sys
 from nltk.translate.bleu_score import corpus_bleu
+from nltk.tokenize import TweetTokenizer
 
 if __name__=='__main__':
     input_csv = sys.argv[1] # model input file
@@ -9,6 +10,8 @@ if __name__=='__main__':
 
     input_expls_by_template = {}
     template_ids_by_line = []
+
+    tknzr = TweetTokenizer()
 
     with open(input_csv, newline='') as f:
         reader = csv.reader(f)
@@ -31,12 +34,12 @@ if __name__=='__main__':
             else:
                 print('invalid expl type: ', expl_type)
 
-            #TODO: do i need to tokenize explanations into tokens first?
+            explanation_text = tknzr.tokenize(explanation_text)
 
             if template_id in input_expls_by_template:
-                input_expls_by_template[template_id][0].append(explanation_text)
+                input_expls_by_template[template_id][0].append([explanation_text])
             else:
-                input_expls_by_template[template_id]=[[explanation_text], []] # [[ref],[cand]]
+                input_expls_by_template[template_id]=[[[explanation_text]], []] # [[ref],[cand]]
 
     print(input_expls_by_template)
     
@@ -53,7 +56,7 @@ if __name__=='__main__':
             explanation_text = line[0]
             template_id = template_ids_by_line[i]
 
-            #TODO: do i need to tokenize explanations into tokens first?
+            explanation_text = tknzr.tokenize(explanation_text)
             
             input_expls_by_template[template_id][1].append(explanation_text)
 
