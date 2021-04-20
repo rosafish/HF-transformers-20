@@ -24,8 +24,8 @@ if __name__=='__main__':
             if i == 0:
                 continue
 
-            if i > 5: 
-                break
+            # if i > 5: 
+            #     break
             
             if expl_type == 'pt':
                 explanation_text = line[-1]
@@ -50,8 +50,8 @@ if __name__=='__main__':
             if i == 0:
                 continue
 
-            if i > 5: 
-                break
+            # if i > 5: 
+            #     break
             
             explanation_text = line[0]
             template_id = template_ids_by_line[i]
