@@ -4,13 +4,13 @@ from nltk.translate.bleu_score import corpus_bleu
 from nltk.tokenize import TweetTokenizer
 
 if __name__=='__main__':
-    input_dir = sys.argv[1] # model input file directory
-    output_csv = sys.argv[2] # model generated explanations text file
+    input_csv = sys.argv[1] # model input file directory
+    output_dir = sys.argv[2] # model generated explanations text file
     expl_type = sys.argv[3]
     test_type = sys.argv[4]
 
-    input_csv = input_dir+test_type+'_test_text.csv'
-    bleu_output_path = input_dir+test_type+'_test_bleu_by_temp.txt'
+    output_csv = output_dir+test_type+'_test_text.csv'
+    bleu_output_path = output_dir+test_type+'_test_bleu_by_temp.txt'
 
     input_expls_by_template = {}
     template_ids_by_line = []
@@ -28,8 +28,8 @@ if __name__=='__main__':
             if i == 0:
                 continue
 
-            if i > 5: 
-                break
+            # if i > 5: 
+            #     break
             
             if expl_type == 'pt':
                 explanation_text = line[-1]
@@ -45,7 +45,7 @@ if __name__=='__main__':
             else:
                 input_expls_by_template[template_id]=[[[explanation_text]], []] # [[ref],[cand]]
 
-    print(input_expls_by_template)
+    # print(input_expls_by_template)
     
     with open(output_csv, newline='') as f:
         reader = csv.reader(f)
@@ -54,8 +54,8 @@ if __name__=='__main__':
             if i == 0:
                 continue
 
-            if i > 5: 
-                break
+            # if i > 5: 
+            #     break
             
             explanation_text = line[0]
             template_id = template_ids_by_line[i]
@@ -64,7 +64,7 @@ if __name__=='__main__':
             
             input_expls_by_template[template_id][1].append(explanation_text)
 
-    print(input_expls_by_template)
+    # print(input_expls_by_template)
 
     f = open(bleu_output_path, 'w+')
     for template_id in input_expls_by_template.keys():
