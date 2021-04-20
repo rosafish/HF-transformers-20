@@ -41,7 +41,7 @@ if __name__=='__main__':
             else:
                 input_expls_by_template[template_id]=[[[explanation_text]], []] # [[ref],[cand]]
 
-    print(input_expls_by_template)
+    #print(input_expls_by_template)
     
     with open(output_csv, newline='') as f:
         reader = csv.reader(f)
@@ -60,7 +60,7 @@ if __name__=='__main__':
             
             input_expls_by_template[template_id][1].append(explanation_text)
 
-    print(input_expls_by_template)
+    #print(input_expls_by_template)
 
     for template_id in input_expls_by_template.keys():
         print('template id: ', template_id)
