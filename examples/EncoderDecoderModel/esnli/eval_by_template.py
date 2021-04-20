@@ -72,7 +72,7 @@ if __name__=='__main__':
         bleu = corpus_bleu(input_expls_by_template[template_id][0], input_expls_by_template[template_id][1])
         rounded_blue = round(bleu, 5)*100
         print('BLEU: ', rounded_blue)
-        row = template_id + ', ' + rounded_blue + '\n'
+        row = template_id + ', ' + str(rounded_blue) + '\n'
         f.write(row)
     f.close()
             
