@@ -35,6 +35,7 @@ if __name__=='__main__':
                 print('invalid expl type: ', expl_type)
 
             explanation_text = tknzr.tokenize(explanation_text)
+            print(explanation_text)
 
             if template_id in input_expls_by_template:
                 input_expls_by_template[template_id][0].append([explanation_text])
