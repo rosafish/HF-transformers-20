@@ -8,16 +8,21 @@ if __name__=='__main__':
     expl_type = sys.argv[3]
 
     input_expls_by_template = {}
+    template_ids_by_line = []
 
     with open(input_csv, newline='') as f:
         reader = csv.reader(f)
 
         for (i, line) in enumerate(reader):
+
+            template_id = line[1]
+            template_ids_by_line.append(template_id)
+
             if i == 0:
                 continue
             print(i)
             print(line)
-            template_id = line[1]
+            
             if expl_type == 'pt':
                 explanation_text = line[-1]
             elif expl_type == 'nl':
@@ -31,11 +36,9 @@ if __name__=='__main__':
                 input_expls_by_template[template_id]=[explanation_text]
 
             if i > 5: 
+                print(input_expls_by_template)
                 break
 
-            print(input_expls_by_template)
-        
-        print(reader[1])
-        print(reader[2])
+            
 
             
