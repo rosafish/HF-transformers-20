@@ -7,9 +7,10 @@ if __name__=='__main__':
     input_dir = sys.argv[1] # model input file directory
     output_csv = sys.argv[2] # model generated explanations text file
     expl_type = sys.argv[3]
+    test_type = sys.argv[4]
 
-    input_path = input_dir+expl_type+'_test_text.csv'
-    bleu_output_path = input_dir+expl_type+'_test_bleu_by_temp.txt'
+    input_path = input_dir+test_type+'_test_text.csv'
+    bleu_output_path = input_dir+test_type+'_test_bleu_by_temp.txt'
 
     input_expls_by_template = {}
     template_ids_by_line = []
