@@ -7,6 +7,7 @@ seed=$2
 partition=$3
 test_type=$4 # mvmt or misvmt or mvmist or misvmist
 training_size=$5
+data_dir_name=$6
 
 server=uchi # ego or uchi
 
