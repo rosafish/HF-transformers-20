@@ -23,9 +23,9 @@ def find_worst_templates_id(bleu_by_temp_path, num_worst_temp):
 
     bleu_list_sorted = sort_tuple(bleu_list)
 
-    result = bleu_list_sorted[:5]
-    print(result)
-    return result
+    worst_temp_info = bleu_list_sorted[:num_worst_temp]
+    print(worst_temp_info)
+    return [t[0] for t in worst_temp_info]
 
 def main():
     seed = sys.argv[1]
@@ -39,8 +39,9 @@ def main():
     bleu_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/edm/%s_hans_seed%s_partition%s_train%s_%s/%s_test_bleu_by_temp.txt' % \
                         (data_dir_name, model, seed, partition, train_size, expl_type, test_type)
 
-    # TODO: find worst five templates
+    # find worst five templates
     worst_templates_id = find_worst_templates_id(bleu_by_temp_path ,5)
+    print('worst 5 templates (id): ', worst_templates_id)
 
     # TODO: replace Ns and Np to N
     # TODO: find its closest train template (not itself) by jaccard distance
