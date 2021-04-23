@@ -10,7 +10,7 @@ def sort_tuple(tup):
 
 def find_worst_templates_id(bleu_by_temp_path, num_worst_temp):
     bleu_list = []
-    with open(bleu_by_temp_path, newline='', 'r') as f:
+    with open(bleu_by_temp_path, newline='') as f:
         reader = csv.reader(f)
         for (i, line) in enumerate(reader):
             print(line)
