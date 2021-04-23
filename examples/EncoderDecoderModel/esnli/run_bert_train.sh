@@ -5,6 +5,7 @@ seed=$2
 partition=$3
 train_size=$4
 dev_size=$5
+data_dir_name=$6
 
 server=uchi # ego or uchi
 debug=false
@@ -21,12 +22,12 @@ fi
 
 if [ $server = ego ]; then
 
-    data_path_prefix=/data/rosa/hans-forked/auto/generated_data/
+    data_path_prefix=/data/rosa/hans-forked/auto/${data_dir_name}/
     save_model_path_prefix=./save_best_models/
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=/net/scratch/zhouy1/data/generated_data/
+    data_path_prefix=/net/scratch/zhouy1/data/${data_dir_name}/
     save_model_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
 
 fi

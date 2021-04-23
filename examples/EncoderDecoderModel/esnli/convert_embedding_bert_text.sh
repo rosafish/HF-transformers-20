@@ -7,6 +7,7 @@ partition=$3
 data_type=$4 # ivit or ivot or ovit or ovot or dev
 train_size=$5
 dev_size=$6
+data_dir_name=$7
 
 server=uchi # ego or uchi
 
@@ -17,7 +18,7 @@ if [ $server = ego ]; then
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=/net/scratch/zhouy1/data/generated_data/
+    data_path_prefix=/net/scratch/zhouy1/data/${data_dir_name}/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
 
 fi
