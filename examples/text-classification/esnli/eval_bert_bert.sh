@@ -7,6 +7,7 @@ seed=$2
 partition=$3
 test_type=$4 # mvmt or misvmt or mvmist or misvmist
 training_size=$5
+data_dir_name=$6
 
 server=uchi # ego or uchi
 
@@ -17,8 +18,8 @@ if [ $server = ego ]; then
 
 elif [ $server = uchi ]; then
 
-    bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
-    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/seqclas/
+    bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/edm/
+    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/seqclas/
 
 	cp ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/vocab.txt ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/best_model/
 

@@ -6,6 +6,7 @@ quality=$1
 seed=$2
 partition=$3
 training_size=$4
+data_dir_name=$5
 
 server=uchi # ego or uchi
 
@@ -17,9 +18,9 @@ if [ $server = ego ]; then
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=/net/scratch/zhouy1/data/generated_data/
-    bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
-    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/seqclas/
+    data_path_prefix=/net/scratch/zhouy1/data/${data_dir_name}/
+    bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/edm/
+    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/seqclas/
 
 fi
 

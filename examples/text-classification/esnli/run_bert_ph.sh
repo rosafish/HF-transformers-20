@@ -5,6 +5,7 @@ seed=$1
 partition=$2
 training_size=$3
 dev_size=$4 
+data_dir_name=$5
 
 quality=empty_expl # fixed for p+h benchmark
 test_type=mvmt # does not affect anything
@@ -14,13 +15,13 @@ server=uchi # ego or uchi
 
 if [ $server = ego ]; then
 
-    data_path_prefix=/data/rosa/hans-forked/auto/generated_data/
+    data_path_prefix=/data/rosa/hans-forked/auto/${data_dir_name}/
     model_path_prefix=./save_best_model/
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=/net/scratch/zhouy1/data/generated_data/
-    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/label_only/
+    data_path_prefix=/net/scratch/zhouy1/data/${data_dir_name}/
+    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/label_only/
 
 fi
 

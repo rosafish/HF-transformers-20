@@ -6,20 +6,21 @@ quality=nl
 seed=0
 partition=0
 training_size=1
+data_dir_name=generated_data_new_setting
 
 server=ego # ego or uchi
 
 if [ $server = ego ]; then
 
-    data_path_prefix=/data/rosa/hans-forked/auto/generated_data/
+    data_path_prefix=/data/rosa/hans-forked/auto/${data_dir_name}/
     bert2bert_gen_data_path_prefix=../../EncoderDecoderModel/esnli/save_best_models/
     model_path_prefix=./save_best_model/
 
 elif [ $server = uchi ]; then
 
-    data_path_prefix=~/data/randomness_experiment/
-    bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/edm/
-    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/seqclas/
+    data_path_prefix=/net/scratch/zhouy1/data/${data_dir_name}/
+    bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/edm/
+    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/seqclas/
 
 fi
 
