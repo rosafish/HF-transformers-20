@@ -36,6 +36,8 @@ def load_templates(templates_path, expl_type):
     with open(templates_path, newline='') as f:
         reader = csv.reader(f)
         for (i, line) in enumerate(reader):
+            if i = 0:
+                continue
             p = line[5]
             p = p.replace('Ns', 'N')
             p = p.replace('Np', 'N')
