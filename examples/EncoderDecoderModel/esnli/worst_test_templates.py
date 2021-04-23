@@ -13,14 +13,11 @@ def find_worst_templates_id(bleu_by_temp_path, num_worst_temp):
     with open(bleu_by_temp_path, newline='') as f:
         reader = csv.reader(f)
         for (i, line) in enumerate(reader):
-            print(line)
+            # print(line)
             template_id = eval(line[0])
             bleu = round(eval(line[1]), 5)
-            print("template_id: ", template_id)
-            print("bleu: ", bleu)
-
-            if i > 2:
-                return
+            # print("template_id: ", template_id)
+            # print("bleu: ", bleu)
 
             bleu_list.append((template_id, bleu))
 
