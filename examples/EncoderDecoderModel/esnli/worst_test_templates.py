@@ -106,7 +106,7 @@ def main():
                 jaccard_dist_list.append((train_id, jaccard_dist))
 
         jaccard_dist_list_sorted = sort_tuple(jaccard_dist_list)
-        closest_template_info = jaccard_dist_list_sorted[:1][0]
+        # closest_template_info = jaccard_dist_list_sorted[:1][0]
         print('closest_template_info: ', closest_template_info)
         print('test template: %d, %s' % (test_id, templates[test_id]))
         print('closest train (dist %f): %d, %s' % (closest_template_info[1], closest_template_info[0], templates[closest_template_info[0]]))
