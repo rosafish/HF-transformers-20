@@ -8,7 +8,7 @@ dev_size=$5
 data_dir_name=$6
 
 server=uchi # ego or uchi
-debug=true
+debug=false
 
 if [ $pretrained_model = esnli ]; then
 
