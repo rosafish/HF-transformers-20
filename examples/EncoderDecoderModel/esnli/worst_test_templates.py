@@ -45,7 +45,7 @@ def find_worst_templates_id(bleu_by_temp_path, num_worst_temp):
 
 
 def replace_word_subtype2type(s):
-    for k,v in var_type_subtypes:
+    for k,v in var_type_subtypes.items():
         print("key: ", k)
         print("value: ", v)
         for subtype in v:
