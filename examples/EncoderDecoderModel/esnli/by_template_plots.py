@@ -40,6 +40,7 @@ def main():
     bleu_list_ascend = get_bleu_by_templates(bleu_by_temp_path) 
     id_orders = [item[0] for item in bleu_list_ascend]
     num_templates = len(id_orders)
+    print('num_templates: ', num_templates)
 
     # plot histogram
     # bleu_list_histogram = [item[1] for item in bleu_list_ascend]
