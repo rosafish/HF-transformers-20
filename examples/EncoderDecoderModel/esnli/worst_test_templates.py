@@ -123,13 +123,13 @@ def main():
                 print()
 
         jaccard_dist_list_sorted = sort_tuple(jaccard_dist_list)
-        closest_template_info = jaccard_dist_list_sorted[:1][0]
+        closest_template_info = jaccard_dist_list_sorted[-1:][0]
         # print('closest_template_info: ', closest_template_info)
         print('test template: %d, %s' % (test_id, templates[test_id]))
         print('closest 1 train (dist %f): %d, %s' % (closest_template_info[1], closest_template_info[0], templates[closest_template_info[0]]))
-        closest_template_info = jaccard_dist_list_sorted[1:2][0]
+        closest_template_info = jaccard_dist_list_sorted[-2:-1][0]
         print('closest 2 train (dist %f): %d, %s' % (closest_template_info[1], closest_template_info[0], templates[closest_template_info[0]]))
-        closest_template_info = jaccard_dist_list_sorted[2:3][0]
+        closest_template_info = jaccard_dist_list_sorted[-3:-2][0]
         print('closest 3 train (dist %f): %d, %s' % (closest_template_info[1], closest_template_info[0], templates[closest_template_info[0]]))
         print('')
 
