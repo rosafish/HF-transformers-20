@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from worst_test_templates import sort_tuple, get_jaccard_dist, load_templates
 import seaborn as sns
 import sys
+import numpy as np
 
 def get_bleu_by_templates(bleu_by_temp_path):
     bleu_list = []
@@ -53,7 +54,7 @@ def main():
         for j in range(118):
             jaccard_sim_matrix[i,j] = get_jaccard_dist(templates, i, j)
     ax = sns.heatmap(jaccard_sim_matrix, linewidth=0.5)
-    plt.savefig('jaccard_heatmap_%s_hans_seed%s_partition%s_train%s_%s_%s_%s.png' % (model, seed, partition, train_size, expl_type, test_type, data_dir_name))
+    plt.savefig('test_jaccard_heatmap_%s_hans_seed%s_partition%s_train%s_%s_%s_%s_%s.png' % (model, seed, partition, train_size, expl_type, test_type, input_type, data_dir_name))
 
 if __name__=='__main__':
     main()
