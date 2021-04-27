@@ -100,8 +100,8 @@ def main():
                         (data_dir_name, model, seed, partition, train_size, expl_type, test_type)
 
     # find worst five templates
-    worst_templates_id, all_test_templates_id = find_worst_templates_id(bleu_by_temp_path ,5)
-    print('worst 5 templates (id): ', worst_templates_id)
+    worst_templates_id, all_test_templates_id = find_worst_templates_id(bleu_by_temp_path ,3)
+    print('worst 3 templates (id): ', worst_templates_id)
 
     all_templates_id = set([i for i in range(118)])
     all_train_templates_id = all_templates_id - all_test_templates_id
