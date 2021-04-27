@@ -53,7 +53,7 @@ def main():
     # plot histogram
     bleu_list_histogram = [item[1] for item in bleu_list_ascend]
     plt.hist(bleu_list_histogram, bins=10)
-    plt.show()
+    plt.savefig('test_histogram_%s_hans_seed%s_partition%s_train%s_%s_%s_%s.pdf' % (model, seed, partition, train_size, expl_type, vocab_type, data_dir_name))
 
 
 if __name__=='__main__':
