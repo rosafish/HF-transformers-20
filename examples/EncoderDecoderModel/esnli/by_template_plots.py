@@ -38,8 +38,8 @@ def main():
 
     # list of tuples (temp_id, bleu)
     bleu_list_ascend = get_bleu_by_templates(bleu_by_temp_path) 
-    id_orders = [item[0] for item in bleu_list_ascend]
-    num_templates = len(id_orders)
+    ids_ascend = [item[0] for item in bleu_list_ascend]
+    num_templates = len(ids_ascend)
     print('num_templates: ', num_templates)
 
     # plot histogram
@@ -53,9 +53,11 @@ def main():
     templates_path = "/home/zhouy1/hans-forked/auto/templates_new.csv"
     templates = load_templates(templates_path, input_type)
     jaccard_sim_matrix = np.zeros((num_templates, num_templates))
-    for i in id_orders:
-        for j in id_orders:
-            jaccard_sim_matrix[i,j] = get_jaccard_dist(templates, i, j)
+    for i in range(num_templates):
+        for j in range(num_templates):
+            i_id = ids_ascend[i]
+            j_id = ids_ascend[j]
+            jaccard_sim_matrix[i,j] = get_jaccard_dist(templates, i_id, j_id)
     ax = sns.heatmap(jaccard_sim_matrix, linewidth=0.5)
     plt.savefig('test_jaccard_heatmap_%s_hans_seed%s_partition%s_train%s_%s_%s_%s_%s.png' % (model, seed, partition, train_size, expl_type, test_type, input_type, data_dir_name))
 
