@@ -30,7 +30,7 @@ def main():
     train_size = sys.argv[6]
     data_dir_name = 'before_new_setting'
 
-    it_bleu_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/edm/%s_hans_seed%s_partition%s_train%s_%s/%s_test_bleu_by_temp.txt' % \
+    bleu_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/edm/%s_hans_seed%s_partition%s_train%s_%s/%s_test_bleu_by_temp.txt' % \
                         (data_dir_name, model, seed, partition, train_size, expl_type, test_type)
 
     # list of tuples (temp_id, bleu)
