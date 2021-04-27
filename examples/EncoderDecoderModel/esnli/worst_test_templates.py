@@ -115,24 +115,22 @@ def main():
             if train_id != test_id:
                 jaccard_dist = get_jaccard_dist(templates, test_id, train_id)
                 jaccard_dist_list.append((train_id, jaccard_dist))
-        # for train_id in all_templates_id:
-        #     jaccard_dist = get_jaccard_dist(templates, test_id, train_id)
-        #     jaccard_dist_list.append((train_id, jaccard_dist))
-        #     if train_id == test_id:
-        #         print('train: %d, test: %s, jaccard: %f' % (train_id, test_id, jaccard_dist))
-        #         print()
 
         jaccard_dist_list_sorted = sort_tuple(jaccard_dist_list)
         closest_template_info = jaccard_dist_list_sorted[-1:][0]
-        # print('closest_template_info: ', closest_template_info)
         print('test template: %d, %s' % (test_id, templates[test_id]))
-        print('closest 1 train (dist %f): %d, %s' % (closest_template_info[1], closest_template_info[0], templates[closest_template_info[0]]))
-        # closest_template_info = jaccard_dist_list_sorted[-2:-1][0]
-        # print('closest 2 train (dist %f): %d, %s' % (closest_template_info[1], closest_template_info[0], templates[closest_template_info[0]]))
-        # closest_template_info = jaccard_dist_list_sorted[-3:-2][0]
-        # print('closest 3 train (dist %f): %d, %s' % (closest_template_info[1], closest_template_info[0], templates[closest_template_info[0]]))
+        closest_dist = closest_template_info[1]
+        print('closest 1 train (dist %f): %d, %s' % (closest_dist, closest_template_info[0], templates[closest_template_info[0]]))
         print('')
-
+        i = 1
+        while True:
+            template_info = jaccard_dist_list_sorted[-1-i:0-i][0]
+            dist = template_info[1]
+            if dist < closest_dist:
+                break
+            else:
+                print('closest %d train (dist %f): %d, %s' % ((i+1), dist, template_info[0], templates[template_info[0]]))
+                print('')
 
 if __name__=='__main__':
     main()
