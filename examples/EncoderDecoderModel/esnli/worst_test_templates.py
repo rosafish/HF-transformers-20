@@ -118,8 +118,8 @@ def main():
             
             jaccard_dist = get_jaccard_dist(templates, test_id, train_id)
             jaccard_dist_list.append((train_id, jaccard_dist))
-            if train_id == test_id:
-                print('train: %d, test: %d, jaccard: %f' % (train_id, test_id, jaccard_dist))
+            if train_id == eval(test_id):
+                print('train: %d, test: %s, jaccard: %f' % (train_id, test_id, jaccard_dist))
                 print()
 
         jaccard_dist_list_sorted = sort_tuple(jaccard_dist_list)
