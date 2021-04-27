@@ -1,6 +1,7 @@
 import csv
 import matplotlib.pyplot as plt
 from worst_test_templates import sort_tuple
+import sys
 
 def get_bleu_by_templates(it_bleu_by_temp_path, ot_bleu_by_temp_path):
     bleu_list = []
