@@ -49,7 +49,7 @@ def replace_word_subtype2type(s):
     return s
 
 
-def load_templates(templates_path, load_templates):
+def load_templates(templates_path, input_type):
     templates = []
     with open(templates_path, newline='') as f:
         reader = csv.reader(f)
