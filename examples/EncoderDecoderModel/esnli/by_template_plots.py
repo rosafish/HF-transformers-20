@@ -53,7 +53,7 @@ def main():
     # plot histogram
     bleu_list_histogram = [item[1] for item in bleu_list_ascend]
     plt.hist(bleu_list_histogram, bins=10)
-    plt.title('Distribution of Templates by BLEU Scores (%s)' % (vocab_type+'ot'))
+    plt.title('Distribution of Templates by BLEU Scores (%s)' % vocab_type)
     plt.xlabel('BLEU Scores')
     plt.ylabel('Number of Templates')
     plt.savefig('histogram_%s_hans_seed%s_partition%s_train%s_%s_%s_%s.png' % (model, seed, partition, train_size, expl_type, vocab_type, data_dir_name))
