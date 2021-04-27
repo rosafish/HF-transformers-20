@@ -60,11 +60,11 @@ def load_templates(templates_path, input_type):
             p = replace_word_subtype2type(line[5])
             h = replace_word_subtype2type(line[6])
             
-            if load_templates == 'p':
+            if input_type == 'p':
                 templates.append(p)
-            if load_templates == 'h':
+            if input_type == 'h':
                 templates.append(h)
-            if load_templates == 'p+h':
+            if input_type == 'p+h':
                 templates.append(p+h)
             else:
                 print('invalid input type: ', input_type)
