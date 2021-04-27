@@ -53,7 +53,7 @@ def replace_word_subtype2type(s):
     return s
 
 
-def load_templates(templates_path, expl_type):
+def load_templates(templates_path):
     templates = []
     with open(templates_path, newline='') as f:
         reader = csv.reader(f)
@@ -90,9 +90,10 @@ def get_jaccard_dist(templates, test_id, train_id):
 def main():
     seed = sys.argv[1]
     partition = sys.argv[2]
-    test_type = sys.argv[3]
-    model = sys.argv[4]
-    train_size = sys.argv[5]
+    expl_type = sys.argv[3]
+    test_type = sys.argv[4]
+    model = sys.argv[5]
+    train_size = sys.argv[6]
     data_dir_name = 'before_new_setting'
 
     bleu_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/edm/%s_hans_seed%s_partition%s_train%s_%s/%s_test_bleu_by_temp.txt' % \
@@ -106,7 +107,7 @@ def main():
     all_train_templates_id = all_templates_id - all_test_templates_id
 
     templates_path = "/home/zhouy1/hans-forked/auto/templates_new.csv"
-    templates = load_templates(templates_path, expl_type)
+    templates = load_templates(templates_path)
 
     for test_id in worst_templates_id:
         jaccard_dist_list = []
