@@ -62,9 +62,9 @@ def load_templates(templates_path, input_type):
             
             if input_type == 'p':
                 templates.append(p)
-            if input_type == 'h':
+            elif input_type == 'h':
                 templates.append(h)
-            if input_type == 'p+h':
+            elif input_type == 'p+h':
                 templates.append(p+h)
             else:
                 print('invalid input type: ', input_type)
