@@ -111,14 +111,14 @@ def main():
 
     for test_id in worst_templates_id:
         jaccard_dist_list = []
-        for train_id in all_train_templates_id:
+        # for train_id in all_train_templates_id:
             # if train_id != test_id:
             #     jaccard_dist = get_jaccard_dist(templates, test_id, train_id)
             #     jaccard_dist_list.append((train_id, jaccard_dist))
-            
+        for train_id in all_templates_id:
             jaccard_dist = get_jaccard_dist(templates, test_id, train_id)
             jaccard_dist_list.append((train_id, jaccard_dist))
-            if train_id == eval(test_id):
+            if train_id == test_id:
                 print('train: %d, test: %s, jaccard: %f' % (train_id, test_id, jaccard_dist))
                 print()
 
