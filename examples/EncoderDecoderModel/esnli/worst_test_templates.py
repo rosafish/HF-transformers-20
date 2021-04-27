@@ -3,6 +3,18 @@ import csv
 
 from nltk.tokenize import TweetTokenizer
 
+var_type_subtypes={
+    "N": ["Np", "Ns", "Nlocation"],
+    "V": ["Vt", "Vi", "Vunderstand", "Vpp", "Vnpz", "Vnps", "Vconstquotentailed", "Vnonentquote"],
+    "Adj": [],
+    "Adv": ['Advoutent', 'Advent', 'Advembent', 'Advoutnent', 'Advnonent', 'Advembnent'],
+    "Be": ['BePast'],
+    "P": [],
+    "Rels": [],
+    "O": [],
+    "Conj": [],
+}
+
 def sort_tuple(tup): 
     # reverse = None (Sorts in Ascending order) 
     # key is set to sort using second element of 
@@ -31,6 +43,16 @@ def find_worst_templates_id(bleu_by_temp_path, num_worst_temp):
     print(worst_temp_info)
     return [t[0] for t in worst_temp_info], all_test_templates_id
 
+
+def replace_word_subtype2type(s):
+    for k,v in var_type_subtypes:
+        print("key: ", k)
+        print("value: ", v)
+        for subtype in v:
+            s = s.replace(subtype, k)
+    return s
+
+
 def load_templates(templates_path, expl_type):
     templates = []
     with open(templates_path, newline='') as f:
@@ -38,18 +60,12 @@ def load_templates(templates_path, expl_type):
         for (i, line) in enumerate(reader):
             if i == 0:
                 continue
-            p = line[5]
-            p = p.replace('Ns', 'N')
-            p = p.replace('Np', 'N')
-            h = line[6]
-            h = h.replace('Ns', 'N')
-            h = h.replace('Np', 'N')
-            nl = line[7]
-            nl = nl.replace('Ns', 'N')
-            nl = nl.replace('Np', 'N')
-            pt = line[9]
-            pt = pt.replace('Ns', 'N')
-            pt = pt.replace('Np', 'N')
+
+            p = replace_word_subtype2type(line[5])
+            h = replace_word_subtype2type(line[6])
+            nl = replace_word_subtype2type(line[7])
+            pt = replace_word_subtype2type(line[9])
+            
             if expl_type == 'nl':
                 templates.append(p+h+nl)
             elif expl_type == 'pt':
