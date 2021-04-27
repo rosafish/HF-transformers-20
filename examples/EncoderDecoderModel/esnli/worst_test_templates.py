@@ -31,8 +31,6 @@ def find_worst_templates_id(bleu_by_temp_path, num_worst_temp):
             # print(line)
             template_id = eval(line[0])
             bleu = round(eval(line[1]), 5)
-            # print("template_id: ", template_id)
-            # print("bleu: ", bleu)
 
             bleu_list.append((template_id, bleu))
             all_test_templates_id.add(template_id)
@@ -46,14 +44,12 @@ def find_worst_templates_id(bleu_by_temp_path, num_worst_temp):
 
 def replace_word_subtype2type(s):
     for k,v in var_type_subtypes.items():
-        # print("key: ", k)
-        # print("value: ", v)
         for subtype in v:
             s = s.replace(subtype, k)
     return s
 
 
-def load_templates(templates_path):
+def load_templates(templates_path, load_templates):
     templates = []
     with open(templates_path, newline='') as f:
         reader = csv.reader(f)
@@ -64,7 +60,15 @@ def load_templates(templates_path):
             p = replace_word_subtype2type(line[5])
             h = replace_word_subtype2type(line[6])
             
-            templates.append(p+h)
+            if load_templates == 'p':
+                templates.append(p)
+            if load_templates == 'h':
+                templates.append(h)
+            if load_templates == 'p+h':
+                templates.append(p+h)
+            else:
+                print('invalid input type: ', input_type)
+                return
 
     return templates
 
@@ -94,12 +98,13 @@ def main():
     test_type = sys.argv[4]
     model = sys.argv[5]
     train_size = sys.argv[6]
+    input_type = sys.argv[7] # p, h, or p+h
     data_dir_name = 'before_new_setting'
 
     bleu_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/edm/%s_hans_seed%s_partition%s_train%s_%s/%s_test_bleu_by_temp.txt' % \
                         (data_dir_name, model, seed, partition, train_size, expl_type, test_type)
 
-    # find worst five templates
+    # find worst three templates
     worst_templates_id, all_test_templates_id = find_worst_templates_id(bleu_by_temp_path ,3)
     print('worst 3 templates (id): ', worst_templates_id)
 
@@ -107,7 +112,7 @@ def main():
     all_train_templates_id = all_templates_id - all_test_templates_id
 
     templates_path = "/home/zhouy1/hans-forked/auto/templates_new.csv"
-    templates = load_templates(templates_path)
+    templates = load_templates(templates_path, input_type)
 
     for test_id in worst_templates_id:
         jaccard_dist_list = []
