@@ -63,15 +63,8 @@ def load_templates(templates_path, expl_type):
 
             p = replace_word_subtype2type(line[5])
             h = replace_word_subtype2type(line[6])
-            nl = replace_word_subtype2type(line[7])
-            pt = replace_word_subtype2type(line[9])
             
-            if expl_type == 'nl':
-                templates.append(p+h+nl)
-            elif expl_type == 'pt':
-                templates.append(p+h+pt)
-            else:
-                print('invalid expl type')
+            templates.append(p+h)
 
     return templates
 
@@ -97,10 +90,9 @@ def get_jaccard_dist(templates, test_id, train_id):
 def main():
     seed = sys.argv[1]
     partition = sys.argv[2]
-    expl_type = sys.argv[3]
-    test_type = sys.argv[4]
-    model = sys.argv[5]
-    train_size = sys.argv[6]
+    test_type = sys.argv[3]
+    model = sys.argv[4]
+    train_size = sys.argv[5]
     data_dir_name = 'before_new_setting'
 
     bleu_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/edm/%s_hans_seed%s_partition%s_train%s_%s/%s_test_bleu_by_temp.txt' % \
