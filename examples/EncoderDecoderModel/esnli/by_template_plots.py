@@ -49,7 +49,7 @@ def main():
 
     templates_path = "/home/zhouy1/hans-forked/auto/templates_new.csv"
     templates = load_templates(templates_path, input_type)
-    jaccard_sim_matrix = np.zeros(118, 118)
+    jaccard_sim_matrix = np.zeros((118, 118))
     for i in range(118):
         for j in range(118):
             jaccard_sim_matrix[i,j] = get_jaccard_dist(templates, i, j)
