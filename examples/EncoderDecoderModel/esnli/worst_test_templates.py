@@ -131,6 +131,7 @@ def main():
             else:
                 print('closest %d train (dist %f): %d, %s' % ((i+1), dist, template_info[0], templates[template_info[0]]))
                 print('')
+                i += 1
 
 if __name__=='__main__':
     main()
