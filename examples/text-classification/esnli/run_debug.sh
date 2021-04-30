@@ -50,5 +50,6 @@ python ../run_glue.py \
 	--esnli_input_type p+h:a,expl1:b \
 	--save_best_model \
 	--eval_method step \
-	--max_steps 200 \
-	--eval_steps 4
+	--max_steps 20 \
+	--eval_steps 4 \
+	--test_data_info seed${seed}_partition${partition}_train${training_size}_${quality}_${test_type}
