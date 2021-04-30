@@ -591,7 +591,7 @@ class EsnliProcessor(DataProcessor):
             for (i, line) in enumerate(reader):
                 if i == 0:
                     continue
-                guid = "%s-%s" % ("train", i)
+                guid = "%s-%s" % ("train", line[0])
                 label = line[1]
                 premise = line[2]
                 hypothesis = line[3]
