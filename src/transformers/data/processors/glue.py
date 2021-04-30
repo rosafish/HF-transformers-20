@@ -128,6 +128,7 @@ def _glue_convert_examples_to_features(
         raise KeyError(output_mode)
 
     labels = [label_from_example(example) for example in examples]
+    guids = [(int(example.guid.split('-')[1])) for example in examples]
 
     batch_encoding = tokenizer(
         [(example.text_a, example.text_b) for example in examples],
@@ -139,8 +140,8 @@ def _glue_convert_examples_to_features(
     features = []
     for i in range(len(examples)):
         inputs = {k: batch_encoding[k][i] for k in batch_encoding}
-
-        feature = InputFeatures(**inputs, label=labels[i])
+        
+        feature = InputFeatures(**inputs, label=labels[i], guid=guids[i])
         features.append(feature)
 
     for i, example in enumerate(examples[:5]):

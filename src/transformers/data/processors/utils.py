@@ -67,12 +67,14 @@ class InputFeatures:
             portions of the inputs. Only some models use them.
         label: (Optional) Label corresponding to the input. Int for classification problems,
             float for regression problems.
+        guid: (Optional) guid corresponding to the input. Int.
     """
 
     input_ids: List[int]
     attention_mask: Optional[List[int]] = None
     token_type_ids: Optional[List[int]] = None
     label: Optional[Union[int, float]] = None
+    guid: Optional[int] = None
 
     def to_json_string(self):
         """Serializes this instance to a JSON string."""

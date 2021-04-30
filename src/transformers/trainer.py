@@ -32,6 +32,11 @@ from .trainer_utils import (
 )
 from .training_args import TrainingArguments
 
+import time
+import sys
+sys.path.append('/data/rosa/my_github/misinformation/code/')
+from myTools import write_csv
+
 
 if is_apex_available():
     from apex import amp
@@ -504,7 +509,9 @@ class Trainer:
                     steps_trained_in_current_epoch -= 1
                     continue
 
+                guid_val = inputs.pop('guid')
                 tr_loss += self._training_step(model, inputs, optimizer)
+                inputs['guid'] = guid_val
 
                 if (step + 1) % self.args.gradient_accumulation_steps == 0 or (
                     # last step in epoch but step is always smaller than gradient_accumulation_steps
@@ -894,6 +901,8 @@ class Trainer:
         error_file_header = ['true_label', 'predicted_label', 'input_embeddings']
         error_file_rows = []
         idx2text = ["contradiction", "entailment", "neutral"]
+        pred_results_header = ['guid', 'pred_result']
+        pred_results_rows = []
         for inputs in tqdm(dataloader, desc=description):
             has_labels = any(inputs.get(k) is not None for k in ["labels", "lm_labels", "masked_lm_labels"])
 
@@ -907,7 +916,9 @@ class Trainer:
                 inputs["return_tuple"] = True
 
             with torch.no_grad():
+                guid_val = inputs.pop('guid')
                 outputs = model(**inputs)
+                inputs['guid'] = guid_val
                 if has_labels:
                     step_eval_loss, logits = outputs[:2]
                     eval_losses += [step_eval_loss.mean().item()]
@@ -964,6 +975,19 @@ class Trainer:
         if label_ids is not None:
             label_ids = label_ids.cpu().numpy()
 
+        preds_label_tmp = np.argmax(preds, axis=1)   
+        # print('preds: ', preds_label_tmp.shape)   
+        # print('label_ids: ', label_ids.shape)      
+        preds_correctness_list = preds_label_tmp==label_ids
+        for i in range(len(inputs['guid'])):
+            pred_results_rows.append([inputs['guid'][i].item(), preds_correctness_list[i]])
+        print(pred_results_rows)
+
+        # TODO: change dir based on slurm paths
+        pred_results_file_name = os.path.join("/data/rosa/HF-transformers-20/examples/text-classification/esnli/debug/", 
+                                              "acc_by_example%s.csv" % self.args.test_data_info)
+        write_csv(pred_results_file_name, pred_results_rows, pred_results_header)
+
         if self.compute_metrics is not None and preds is not None and label_ids is not None:
             metrics = self.compute_metrics(EvalPrediction(predictions=preds, label_ids=label_ids))
         else:
@@ -994,11 +1018,6 @@ class Trainer:
         return output
 
     def write_error_file(self, error_file_header, error_file_rows, tokenizer=None):
-        import time
-        import sys
-        sys.path.append('/data/rosa/my_github/misinformation/code/')
-        from myTools import write_csv
-
         # convert embedding to text (include [sep] tokens)
         for row in error_file_rows:
             row[2] = tokenizer.decode(row[2])

@@ -228,6 +228,8 @@ class TrainingArguments:
 
     output_error_file: bool = field(default=False)
 
+    test_data_info: str = field(default='test_data_info')
+
     @property
     def train_batch_size(self) -> int:
         """
