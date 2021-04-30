@@ -99,14 +99,15 @@ def main():
     model = sys.argv[5]
     train_size = sys.argv[6]
     input_type = sys.argv[7] # p, h, or p+h
+    num_worst_temp = int(sys.argv[8])
     data_dir_name = 'before_new_setting'
 
     bleu_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/edm/%s_hans_seed%s_partition%s_train%s_%s/%s_test_bleu_by_temp.txt' % \
                         (data_dir_name, model, seed, partition, train_size, expl_type, test_type)
 
-    # find worst three templates
-    worst_templates_id, all_test_templates_id = find_worst_templates_id(bleu_by_temp_path ,3)
-    print('worst 3 templates (id): ', worst_templates_id)
+    # find worst `num_worst_temp` templates
+    worst_templates_id, all_test_templates_id = find_worst_templates_id(bleu_by_temp_path ,num_worst_temp)
+    print('worst %d templates (id): ', % (num_worst_temp, worst_templates_id))
 
     all_templates_id = set([i for i in range(118)])
     all_train_templates_id = all_templates_id - all_test_templates_id
@@ -125,7 +126,7 @@ def main():
         closest_template_info = jaccard_dist_list_sorted[-1:][0]
         print('test template: %d, %s' % (test_id, templates[test_id]))
         closest_dist = closest_template_info[1]
-        print('closest 1 train (dist %f): %d, %s' % (closest_dist, closest_template_info[0], templates[closest_template_info[0]]))
+        print('closest 1 train (similarity %f): %d, %s' % (closest_dist, closest_template_info[0], templates[closest_template_info[0]]))
         print('')
         i = 1
         while True:
