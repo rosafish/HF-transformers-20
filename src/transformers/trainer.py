@@ -946,7 +946,7 @@ class Trainer:
                         # because we need premise and hypothesis information (or id) to be in the input 
                         # in order to record them
 
-            preds_label_tmp = np.argmax(preds, axis=1)   
+            preds_label_tmp = np.argmax(logits.detach(), axis=1)   
             # print('preds: ', preds_label_tmp.shape)   
             # print('label_ids: ', label_ids.shape)      
             preds_correctness_list = preds_label_tmp==label_ids
