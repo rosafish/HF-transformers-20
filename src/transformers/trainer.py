@@ -952,7 +952,7 @@ class Trainer:
             preds_correctness_list = preds_label_tmp==inputs["labels"].detach().cpu().numpy()
             for i in range(len(inputs['guid'])):
                 pred_results_rows.append([inputs['guid'][i].item(), preds_correctness_list[i].item()])
-            print(pred_results_rows)
+            # print(pred_results_rows)
 
             if not prediction_loss_only:
                 if preds is None:
