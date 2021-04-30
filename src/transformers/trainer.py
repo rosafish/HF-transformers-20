@@ -957,6 +957,14 @@ class Trainer:
                     else:
                         label_ids = torch.cat((label_ids, inputs["labels"].detach()), dim=0)
 
+            preds_label_tmp = np.argmax(preds, axis=1)   
+            # print('preds: ', preds_label_tmp.shape)   
+            # print('label_ids: ', label_ids.shape)      
+            preds_correctness_list = preds_label_tmp==label_ids
+            for i in range(len(inputs['guid'])):
+                pred_results_rows.append([inputs['guid'][i].item(), preds_correctness_list[i]])
+            print(pred_results_rows)
+
         if self.args.local_rank != -1:
             # In distributed mode, concatenate all results from all nodes:
             if preds is not None:
@@ -976,15 +984,6 @@ class Trainer:
         if label_ids is not None:
             label_ids = label_ids.cpu().numpy()
 
-        preds_label_tmp = np.argmax(preds, axis=1)   
-        # print('preds: ', preds_label_tmp.shape)   
-        # print('label_ids: ', label_ids.shape)      
-        preds_correctness_list = preds_label_tmp==label_ids
-        for i in range(len(inputs['guid'])):
-            pred_results_rows.append([inputs['guid'][i].item(), preds_correctness_list[i]])
-        print(pred_results_rows)
-
-        # TODO: change dir based on slurm paths
         pred_results_file_name = os.path.join(self.args.test_data_info)
         write_csv(pred_results_file_name, pred_results_rows, pred_results_header)
 
