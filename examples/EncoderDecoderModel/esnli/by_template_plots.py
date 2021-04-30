@@ -43,7 +43,7 @@ def main():
     num_templates = len(ids_ascend)
     print('num_templates: ', num_templates)
 
-    plot histogram
+    # plot histogram
     bleu_list_histogram = [item[1] for item in bleu_list_ascend]
     plt.xlim(xmin=0, xmax = 100)
     plt.hist(bleu_list_histogram, bins=10)
