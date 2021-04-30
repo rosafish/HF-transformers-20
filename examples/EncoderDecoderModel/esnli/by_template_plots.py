@@ -46,7 +46,7 @@ def main():
     # plot histogram
     bleu_list_histogram = [item[1] for item in bleu_list_ascend]
     plt.xlim(xmin=0, xmax = 100)
-    plt.hist(bleu_list_histogram, bins=10)
+    plt.hist(bleu_list_histogram)
     plt.title('Distribution of Templates by BLEU Scores (%s)' % test_type)
     plt.xlabel('BLEU Scores')
     plt.ylabel('Number of Templates')
