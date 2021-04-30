@@ -53,4 +53,4 @@ python ../run_glue.py \
 	--eval_method step \
 	--max_steps 20 \
 	--eval_steps 4 \
-	--test_data_info /home/zhouy1/debug/seed${seed}_partition${partition}_${quality}_${test_type}_${training_size}_${data_dir_name}.csv
+	--test_data_info /home/zhouy1/seed${seed}_partition${partition}_${quality}_${test_type}_${training_size}_${data_dir_name}.csv
