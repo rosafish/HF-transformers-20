@@ -946,13 +946,15 @@ class Trainer:
                         # because we need premise and hypothesis information (or id) to be in the input 
                         # in order to record them
 
+            print(logits.detach())
+            print(type(logits.detach()))
             preds_label_tmp = np.argmax(logits.detach(), axis=1)   
-            # print('preds: ', preds_label_tmp.shape)   
-            # print('label_ids: ', label_ids.shape)      
+            print('preds: ', preds_label_tmp.shape)   
+            print('label_ids: ', label_ids.shape)      
             preds_correctness_list = preds_label_tmp==inputs["labels"].detach()
             for i in range(len(inputs['guid'])):
                 pred_results_rows.append([inputs['guid'][i].item(), preds_correctness_list[i].item()])
-            # print(pred_results_rows)
+            print(pred_results_rows)
 
             if not prediction_loss_only:
                 if preds is None:
