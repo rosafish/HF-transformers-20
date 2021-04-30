@@ -38,6 +38,7 @@ def main():
 
     # list of tuples (temp_id, bleu)
     bleu_list_ascend = get_bleu_by_templates(bleu_by_temp_path) 
+    print(bleu_list_ascend)
     ids_ascend = [item[0] for item in bleu_list_ascend]
     num_templates = len(ids_ascend)
     print('num_templates: ', num_templates)
