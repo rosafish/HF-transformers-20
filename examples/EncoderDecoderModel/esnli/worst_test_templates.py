@@ -22,7 +22,7 @@ def sort_tuple(tup):
     tup.sort(key = lambda x: x[1]) 
     return tup 
 
-def find_worst_templates_id(bleu_by_temp_path, num_worst_temp):
+def find_worst_templates_id_by_bleu(bleu_by_temp_path, num_worst_temp):
     bleu_list = []
     all_test_templates_id = set()
     with open(bleu_by_temp_path, newline='') as f:
@@ -40,6 +40,24 @@ def find_worst_templates_id(bleu_by_temp_path, num_worst_temp):
     worst_temp_info = bleu_list_sorted[:num_worst_temp]
     print(worst_temp_info)
     return [t[0] for t in worst_temp_info], all_test_templates_id
+
+def find_worst_templates_id_by_acc(pred_by_temp_path, num_worst_temp):
+    bleu_list = []
+    all_test_templates_id = set()
+    test_guid_templated_id_dict = get_test_guid_templated_id_dict() #use test.csv
+    with open(pred_by_temp_path, newline='') as f:
+        reader = csv.reader(f)
+        for (i, line) in enumerate(reader):
+            if i == 0:
+                continue
+
+            guid = line[0]
+            template_id = test_guid_templated_id_dict[guid]
+            pred_result = line[1]
+            
+            if pred_result == 'True':
+                pass
+                #TODO
 
 
 def replace_word_subtype2type(s):
@@ -91,6 +109,27 @@ def get_jaccard_dist(templates, test_id, train_id):
     # using length of intersection set divided by length of union set
     return float(len(intersection)) / len(union)
 
+def worst_test_templates_by_bleu(data_dir_name, model, seed, partition, train_size, expl_type, test_type, num_worst_temp, input_type):
+    bleu_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/edm/%s_hans_seed%s_partition%s_train%s_%s/%s_test_bleu_by_temp.txt' % \
+                        (data_dir_name, model, seed, partition, train_size, expl_type, test_type)
+
+    # find worst `num_worst_temp` templates
+    worst_templates_id, all_test_templates_id = find_worst_templates_id_by_bleu(bleu_by_temp_path ,num_worst_temp)
+    print('worst ', num_worst_temp, ' templates (id):', worst_templates_id)
+
+    return worst_templates_id, all_test_templates_id
+
+
+def worst_test_templates_by_acc(data_dir_name, model, seed, partition, train_size, expl_type, test_type, num_worst_temp, input_type):
+    pred_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/seqclas/%s_hans_seed%s_partition%s_train%s_%s_datafrom%s/eval_%s_test_by_templates.csv' % \
+                        (data_dir_name, model, seed, partition, train_size, expl_type, model, test_type)
+
+    # find worst `num_worst_temp` templates
+    worst_templates_id, all_test_templates_id = find_worst_templates_id_by_acc(pred_by_temp_path ,num_worst_temp)
+    print('worst ', num_worst_temp, ' templates (id):', worst_templates_id)
+
+    return worst_templates_id, all_test_templates_id
+
 def main():
     seed = sys.argv[1]
     partition = sys.argv[2]
@@ -100,14 +139,13 @@ def main():
     train_size = sys.argv[6]
     input_type = sys.argv[7] # p, h, or p+h
     num_worst_temp = int(sys.argv[8])
+    standard = sys.argv[9] # standard: bleu or acc
     data_dir_name = 'before_new_setting'
 
-    bleu_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/edm/%s_hans_seed%s_partition%s_train%s_%s/%s_test_bleu_by_temp.txt' % \
-                        (data_dir_name, model, seed, partition, train_size, expl_type, test_type)
-
-    # find worst `num_worst_temp` templates
-    worst_templates_id, all_test_templates_id = find_worst_templates_id(bleu_by_temp_path ,num_worst_temp)
-    print('worst ', num_worst_temp, ' templates (id):', worst_templates_id)
+    if standard == 'bleu':
+        worst_templates_id, all_test_templates_id = worst_test_templates_by_bleu(data_dir_name, model, seed, partition, train_size, expl_type, test_type, num_worst_temp, input_type)
+    elif standard == 'acc':
+        worst_templates_id, all_test_templates_id = worst_test_templates_by_acc(data_dir_name, model, seed, partition, train_size, expl_type, test_type, num_worst_temp, input_type)
 
     all_templates_id = set([i for i in range(118)])
     all_train_templates_id = all_templates_id - all_test_templates_id
@@ -138,6 +176,8 @@ def main():
                 print('closest %d train (dist %f): %d, %s' % ((i+1), dist, template_info[0], templates[template_info[0]]))
                 print('')
                 i += 1
+
+    
 
 if __name__=='__main__':
     main()
