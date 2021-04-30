@@ -43,24 +43,25 @@ def main():
     num_templates = len(ids_ascend)
     print('num_templates: ', num_templates)
 
-    # plot histogram
-    # bleu_list_histogram = [item[1] for item in bleu_list_ascend]
-    # plt.hist(bleu_list_histogram, bins=10)
-    # plt.title('Distribution of Templates by BLEU Scores (%s)' % test_type)
-    # plt.xlabel('BLEU Scores')
-    # plt.ylabel('Number of Templates')
-    # plt.savefig('histogram_%s_hans_seed%s_partition%s_train%s_%s_%s_%s.png' % (model, seed, partition, train_size, expl_type, test_type, data_dir_name))
+    plot histogram
+    bleu_list_histogram = [item[1] for item in bleu_list_ascend]
+    plt.xlim(xmin=0, xmax = 100)
+    plt.hist(bleu_list_histogram, bins=10)
+    plt.title('Distribution of Templates by BLEU Scores (%s)' % test_type)
+    plt.xlabel('BLEU Scores')
+    plt.ylabel('Number of Templates')
+    plt.savefig('histogram_%s_hans_seed%s_partition%s_train%s_%s_%s_%s.png' % (model, seed, partition, train_size, expl_type, test_type, data_dir_name))
 
-    templates_path = "/home/zhouy1/hans-forked/auto/templates_new.csv"
-    templates = load_templates(templates_path, input_type)
-    jaccard_sim_matrix = np.zeros((num_templates, num_templates))
-    for i in range(num_templates):
-        for j in range(num_templates):
-            i_id = ids_ascend[i]
-            j_id = ids_ascend[j]
-            jaccard_sim_matrix[i,j] = get_jaccard_dist(templates, i_id, j_id)
-    ax = sns.heatmap(jaccard_sim_matrix, linewidth=0.5)
-    plt.savefig('test_jaccard_heatmap_%s_hans_seed%s_partition%s_train%s_%s_%s_%s_%s.png' % (model, seed, partition, train_size, expl_type, test_type, input_type, data_dir_name))
+    # templates_path = "/home/zhouy1/hans-forked/auto/templates_new.csv"
+    # templates = load_templates(templates_path, input_type)
+    # jaccard_sim_matrix = np.zeros((num_templates, num_templates))
+    # for i in range(num_templates):
+    #     for j in range(num_templates):
+    #         i_id = ids_ascend[i]
+    #         j_id = ids_ascend[j]
+    #         jaccard_sim_matrix[i,j] = get_jaccard_dist(templates, i_id, j_id)
+    # ax = sns.heatmap(jaccard_sim_matrix, linewidth=0.5)
+    # plt.savefig('test_jaccard_heatmap_%s_hans_seed%s_partition%s_train%s_%s_%s_%s_%s.png' % (model, seed, partition, train_size, expl_type, test_type, input_type, data_dir_name))
 
 if __name__=='__main__':
     main()
