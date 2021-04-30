@@ -107,7 +107,7 @@ def main():
 
     # find worst `num_worst_temp` templates
     worst_templates_id, all_test_templates_id = find_worst_templates_id(bleu_by_temp_path ,num_worst_temp)
-    print('worst %d templates (id): ', % (num_worst_temp, worst_templates_id))
+    print('worst %d templates (id): ' % (num_worst_temp, worst_templates_id))
 
     all_templates_id = set([i for i in range(118)])
     all_train_templates_id = all_templates_id - all_test_templates_id
