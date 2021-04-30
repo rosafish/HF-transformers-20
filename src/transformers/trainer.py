@@ -35,6 +35,7 @@ from .training_args import TrainingArguments
 import time
 import sys
 sys.path.append('/data/rosa/my_github/misinformation/code/')
+sys.path.append('/home/zhouy1/misinformation/code/')
 from myTools import write_csv
 
 
