@@ -949,8 +949,8 @@ class Trainer:
             # print(logits.detach())
             # print(type(logits.detach()))
             preds_label_tmp = np.argmax(logits.detach().cpu().numpy(), axis=1)   
-            print('preds: ', preds_label_tmp.shape)   
-            print('label_ids: ', label_ids.shape)      
+            print('preds: ', preds_label_tmp)        
+            print('preds: ', type(preds_label_tmp))   
             preds_correctness_list = preds_label_tmp==inputs["labels"].detach().cpu().numpy()
             for i in range(len(inputs['guid'])):
                 pred_results_rows.append([inputs['guid'][i].item(), preds_correctness_list[i].item()])
