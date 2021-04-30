@@ -984,8 +984,7 @@ class Trainer:
         print(pred_results_rows)
 
         # TODO: change dir based on slurm paths
-        pred_results_file_name = os.path.join("/data/rosa/HF-transformers-20/examples/text-classification/esnli/debug/", 
-                                              "acc_by_example%s.csv" % self.args.test_data_info)
+        pred_results_file_name = os.path.join(self.args.test_data_info)
         write_csv(pred_results_file_name, pred_results_rows, pred_results_header)
 
         if self.compute_metrics is not None and preds is not None and label_ids is not None:

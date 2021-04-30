@@ -7,8 +7,9 @@ seed=0
 partition=0
 training_size=1
 data_dir_name=generated_data_new_setting
+test_type=ivit
 
-server=ego # ego or uchi
+server=uchi # ego or uchi
 
 if [ $server = ego ]; then
 
@@ -52,4 +53,4 @@ python ../run_glue.py \
 	--eval_method step \
 	--max_steps 20 \
 	--eval_steps 4 \
-	--test_data_info seed${seed}_partition${partition}_train${training_size}_${quality}_${test_type}
+	--test_data_info /home/zhouy1/debug/seed${seed}_partition${partition}_${quality}_${test_type}_${training_size}_${data_dir_name}.csv
