@@ -137,11 +137,11 @@ def main():
         cache_dir=model_args.cache_dir,
     )
 
-    # # TODO: add if conditional for pretrained model != bert-case-uncased
-    model.classifier = nn.Linear(config.hidden_size, num_labels)
-    config.num_labels = num_labels
-    model.config = config
-    model.num_labels = num_labels
+    if model_args.model_name_or_path != 'bert-base-uncased':
+        model.classifier = nn.Linear(config.hidden_size, num_labels)
+        config.num_labels = num_labels
+        model.config = config
+        model.num_labels = num_labels
 
     # Get datasets
     train_dataset = (
