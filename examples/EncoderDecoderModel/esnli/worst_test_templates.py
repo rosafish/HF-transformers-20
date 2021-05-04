@@ -149,7 +149,7 @@ def main():
     all_templates_id = set([i for i in range(118)])
     all_train_templates_id = all_templates_id - all_test_templates_id
 
-    templates_path = "/home/zhouy1/hans-forked/auto/templates_new.csv"
+    templates_path = "/net/scratch/zhouy1/hans-forked/auto/templates_new.csv"
     templates = load_templates(templates_path, input_type)
 
     for test_id in worst_templates_id:
