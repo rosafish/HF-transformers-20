@@ -123,6 +123,8 @@ def main():
         cache_dir=model_args.cache_dir,
     )
     
+    logging.info('config.finetuning_task: ', config.finetuning_task)
+    logging.info('data_args.task_name: ', data_args.task_name)
     if config.finetuning_task != data_args.task_name:
         config.num_labels = num_labels
         config.id2label = {i: "LABEL_{}".format(i) for i in range(num_labels)}
