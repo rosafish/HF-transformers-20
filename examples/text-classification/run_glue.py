@@ -135,6 +135,10 @@ def main():
         cache_dir=model_args.cache_dir,
     )
 
+    model.config = config
+    config.num_labels = num_labels
+    model.num_labels = config.num_labels
+
     # Get datasets
     train_dataset = (
         GlueDataset(data_args, tokenizer=tokenizer, cache_dir=model_args.cache_dir) if training_args.do_train else None
