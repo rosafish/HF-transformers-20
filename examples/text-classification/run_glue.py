@@ -127,18 +127,16 @@ def main():
         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
         cache_dir=model_args.cache_dir,
     )
-    
+
+    # TODO: add if conditional for pretrained model != bert-case-uncased
+    logging.info('num_labels: %s', str(num_labels))
+    config.num_labels = num_labels
     model = AutoModelForSequenceClassification.from_pretrained(
         model_args.model_name_or_path,
         from_tf=bool(".ckpt" in model_args.model_name_or_path),
-        # config=config,
+        config=config,
         cache_dir=model_args.cache_dir,
     )
-
-    logging.info('num_labels: %d', num_labels)
-    config.num_labels = num_labels
-    model.num_labels = config.num_labels
-    model.config = config
 
     # Get datasets
     train_dataset = (
