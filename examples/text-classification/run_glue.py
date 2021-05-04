@@ -124,11 +124,10 @@ def main():
     )
     
     if config.finetuning_task != data_args.task_name:
-        logging.info('config.finetuning_task %s', config.finetuning_task)
-        logging.info('data_args.task_name %s', data_args.task_name)
         config.num_labels = num_labels
         config.id2label = {i: "LABEL_{}".format(i) for i in range(num_labels)}
         config.label2id = dict(zip(config.id2label.values(), config.id2label.keys()))
+        logging.info('******* Updated model config: ', str(config))
 
     tokenizer = AutoTokenizer.from_pretrained(
         model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
