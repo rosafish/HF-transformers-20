@@ -28,7 +28,7 @@ cp ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${p
 
 python ../run_glue.py \
 	--model_name_or_path ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}/best_model/ \
-	--task_name ESNLI \
+	--task_name HANS \
 	--do_eval \
 	--dev_data_path ${data_path_prefix}seed${seed}/partition${partition}/test_${test_type}_${test_size}_${quality}.csv \
 	--max_seq_length 128 \

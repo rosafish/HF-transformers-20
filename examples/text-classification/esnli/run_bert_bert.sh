@@ -36,7 +36,7 @@ fi
 
 python ../run_glue.py \
 	--model_name_or_path $model_dir \
-	--task_name ESNLI \
+	--task_name HANS \
 	--do_train \
 	--do_eval \
 	--train_data_path ${data_path_prefix}seed${seed}/partition${partition}/train_${training_size}_${quality}.csv \

@@ -27,7 +27,7 @@ fi
 
 python ../run_glue.py \
 	--model_name_or_path ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/best_model/ \
-	--task_name ESNLI \
+	--task_name HANS \
 	--do_eval \
 	--dev_data_path ${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}/${test_type}_test_text_esnli_format.csv \
 	--max_seq_length 128 \
