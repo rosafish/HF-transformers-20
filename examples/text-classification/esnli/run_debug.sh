@@ -1,5 +1,4 @@
-bert2bert_pretrained_model=bert #bert or esnli
-seqclas_pretrained_model=bert #bert or esnli
+seqclas_pretrained_model=esnli #bert or esnli
 
 #inputs
 quality=nl
@@ -9,7 +8,7 @@ training_size=1
 data_dir_name=generated_data_new_setting
 test_type=ivit
 
-server=uchi # ego or uchi
+server=ego # ego or uchi
 
 if [ $server = ego ]; then
 

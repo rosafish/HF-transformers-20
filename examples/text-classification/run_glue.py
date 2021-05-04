@@ -129,7 +129,6 @@ def main():
         cache_dir=model_args.cache_dir,
     )
 
-    
     model = AutoModelForSequenceClassification.from_pretrained(
         model_args.model_name_or_path,
         from_tf=bool(".ckpt" in model_args.model_name_or_path),
@@ -140,8 +139,13 @@ def main():
     if model_args.model_name_or_path != 'bert-base-uncased':
         model.classifier = nn.Linear(config.hidden_size, num_labels)
         config.num_labels = num_labels
+        config.id2label = {i: "LABEL_{}".format(i) for i in range(num_labels)}
+        config.label2id = dict(zip(config.id2label.values(), config.id2label.keys()))
         model.config = config
         model.num_labels = num_labels
+    else:
+        model.config = config
+
 
     # Get datasets
     train_dataset = (
