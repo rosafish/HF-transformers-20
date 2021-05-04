@@ -629,57 +629,10 @@ class HansEsnliProcessor(EsnliProcessor):
     
     def __init__(self):
         super().__init__()
-    
-    def _create_examples(self, data_path):
-        """Creates examples for the training, dev and test sets."""
-        print('hans input type: ', self.esnli_input_type)
-        print('hans input data path: ', data_path)
-        examples = []
-        with open(data_path, newline='') as f:
-            import csv
-            reader = csv.reader(f)
-            for (i, line) in enumerate(reader):
-                if i == 0:
-                    continue
-                guid = "%s-%s" % ("train/dev", i)
-                label = line[1]
-                premise = line[2]
-                hypothesis = line[3]
-                expl = line[4] # generated expl
-                
-                if label == "non-entailment":
-                    label = "contradiction"
-                elif label != "entailment":
-                    raise ValueError('HANS with an unexpected type of label.')
-                
-                assert isinstance(premise, str) and \
-                isinstance(hypothesis, str) and \
-                isinstance(label, str) and \
-                isinstance(expl, str)
 
-                text_b = None
-                if self.esnli_input_type == 'p+h:a':
-                    text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
-                elif self.esnli_input_type == 'p:a,h:b':
-                    text_a = premise  
-                    text_b = hypothesis
-                elif self.esnli_input_type == 'expl1:a':
-                    text_a = expl
-                elif self.esnli_input_type == 'p+h:a,expl1:b':
-                    text_a = premise + " [SEP] " + hypothesis # p + [SEP] + h
-                    text_b = expl # see if add gold expl 1 helps the classification
-                elif self.esnli_input_type == None:
-                    sys.exit("esnli input type cannot be None for esnli seqclas task")
-                else:
-                    sys.exit("invalid esnli input type")
-                
-                if text_b != None:
-                    example = InputExample(guid=guid, text_a=text_a, text_b=text_b, label=label)
-                else:
-                    example = InputExample(guid=guid, text_a=text_a, label=label)
-                
-                examples.append(example)
-        return examples
+    def get_labels(self):
+        """See base class."""
+        return ["entailment", "neutral"]
 
 
 glue_tasks_num_labels = {
@@ -693,7 +646,7 @@ glue_tasks_num_labels = {
     "rte": 2,
     "wnli": 2,
     "esnli": 3,
-    "hans": 3,
+    "hans": 2,
 }
 
 glue_processors = {

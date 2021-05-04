@@ -1228,6 +1228,8 @@ class BertForSequenceClassification(BertPreTrainedModel):
     def __init__(self, config):
         super().__init__(config)
         self.num_labels = config.num_labels
+        print('BertForSequenceClassification: ')
+        print('config.num_labels: ', config.num_labels)
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)

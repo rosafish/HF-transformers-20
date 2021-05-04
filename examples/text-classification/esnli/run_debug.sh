@@ -14,14 +14,10 @@ server=uchi # ego or uchi
 if [ $server = ego ]; then
 
     data_path_prefix=/data/rosa/hans-forked/auto/${data_dir_name}/
-    bert2bert_gen_data_path_prefix=../../EncoderDecoderModel/esnli/save_best_models/
-    model_path_prefix=./save_best_model/
 
 elif [ $server = uchi ]; then
 
     data_path_prefix=/net/scratch/zhouy1/data/${data_dir_name}/
-    bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/edm/
-    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/seqclas/
 
 fi
 
@@ -37,7 +33,7 @@ fi
 
 python ../run_glue.py \
 	--model_name_or_path $model_dir \
-	--task_name ESNLI \
+	--task_name HANS \
 	--do_train \
 	--do_eval \
 	--train_data_path ${data_path_prefix}seed${seed}/partition${partition}/train_${training_size}_${quality}.csv \
