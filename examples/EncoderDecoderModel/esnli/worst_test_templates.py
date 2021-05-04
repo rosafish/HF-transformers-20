@@ -1,5 +1,6 @@
 import sys
 import csv
+import editdistance
 
 from nltk.tokenize import TweetTokenizer
 
@@ -90,10 +91,7 @@ def load_templates(templates_path, input_type):
 
     return templates
 
-def get_jaccard_dist(templates, test_id, train_id):
-    s1 = templates[test_id].lower()
-    s2 = templates[train_id].lower()
-
+def get_jaccard_dist(s1, s2):
     tknzr = TweetTokenizer()
 
     s1 = set(tknzr.tokenize(s1))
@@ -107,7 +105,7 @@ def get_jaccard_dist(templates, test_id, train_id):
         
     # Calculate Jaccard similarity score 
     # using length of intersection set divided by length of union set
-    return float(len(intersection)) / len(union)
+    return 1-float(len(intersection)) / len(union)
 
 def worst_test_templates_by_bleu(data_dir_name, model, seed, partition, train_size, expl_type, test_type, num_worst_temp, input_type):
     bleu_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/edm/%s_hans_seed%s_partition%s_train%s_%s/%s_test_bleu_by_temp.txt' % \
@@ -140,6 +138,7 @@ def main():
     input_type = sys.argv[7] # p, h, or p+h
     num_worst_temp = int(sys.argv[8])
     standard = sys.argv[9] # standard: bleu or acc
+    dist_measure = sys.argv[10]
     data_dir_name = 'before_new_setting'
 
     if standard == 'bleu':
@@ -154,21 +153,29 @@ def main():
     templates = load_templates(templates_path, input_type)
 
     for test_id in worst_templates_id:
-        jaccard_dist_list = []
+        dist_list = []
         for train_id in all_train_templates_id:
             if train_id != test_id:
-                jaccard_dist = get_jaccard_dist(templates, test_id, train_id)
-                jaccard_dist_list.append((train_id, jaccard_dist))
+                s1 = templates[test_id].lower()
+                s2 = templates[train_id].lower()
+                tmp_dist = -1
+                if dist_measure == 'jaccard':
+                    tmp_dist = get_jaccard_dist(s1, s2)
+                elif dist_measure == 'editdistance':
+                    tmp_dist = editdistance.eval(s1, s2)
+                else:
+                    print('invalid distance measure')
+                dist_list.append((train_id, tmp_dist))
 
-        jaccard_dist_list_sorted = sort_tuple(jaccard_dist_list)
-        closest_template_info = jaccard_dist_list_sorted[-1:][0]
+        dist_list_sorted = sort_tuple(dist_list)
+        closest_template_info = dist_list_sorted[:1][0]
         print('test template: %d, %s' % (test_id, templates[test_id]))
         closest_dist = closest_template_info[1]
         print('closest 1 train (similarity %f): %d, %s' % (closest_dist, closest_template_info[0], templates[closest_template_info[0]]))
         print('')
         i = 1
         while True:
-            template_info = jaccard_dist_list_sorted[-1-i:0-i][0]
+            template_info = dist_list_sorted[i:i+1][0]
             dist = template_info[1]
             if dist < closest_dist:
                 break
