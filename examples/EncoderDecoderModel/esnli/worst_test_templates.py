@@ -171,16 +171,16 @@ def main():
         closest_template_info = dist_list_sorted[:1][0]
         print('test template: %d, %s' % (test_id, templates[test_id]))
         closest_dist = closest_template_info[1]
-        print('closest 1 train (similarity %f): %d, %s' % (closest_dist, closest_template_info[0], templates[closest_template_info[0]]))
+        print('closest 1 train (dist %.3f): %d, %s' % (closest_dist, closest_template_info[0], templates[closest_template_info[0]]))
         print('')
         i = 1
         while True:
             template_info = dist_list_sorted[i:i+1][0]
             dist = template_info[1]
-            if dist < closest_dist:
+            if dist > closest_dist:
                 break
             else:
-                print('closest %d train (dist %f): %d, %s' % ((i+1), dist, template_info[0], templates[template_info[0]]))
+                print('closest %d train (dist %.3f): %d, %s' % ((i+1), dist, template_info[0], templates[template_info[0]]))
                 print('')
                 i += 1
 
