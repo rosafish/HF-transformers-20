@@ -141,6 +141,7 @@ def main():
     model.classifier = nn.Linear(config.hidden_size, num_labels)
     config.num_labels = num_labels
     model.config = config
+    model.num_labels = num_labels
 
     # Get datasets
     train_dataset = (
