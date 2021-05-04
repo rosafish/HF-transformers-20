@@ -139,7 +139,7 @@ def main():
     num_worst_temp = int(sys.argv[8])
     standard = sys.argv[9] # standard: bleu or acc
     dist_measure = sys.argv[10]
-    data_dir_name = 'before_new_setting'
+    data_dir_name = 'generated_data'
 
     if standard == 'bleu':
         worst_templates_id, all_test_templates_id = worst_test_templates_by_bleu(data_dir_name, model, seed, partition, train_size, expl_type, test_type, num_worst_temp, input_type)
