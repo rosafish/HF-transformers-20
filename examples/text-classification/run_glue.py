@@ -135,9 +135,9 @@ def main():
         cache_dir=model_args.cache_dir,
     )
 
-    model.config = config
     config.num_labels = num_labels
     model.num_labels = config.num_labels
+    model.config = config
 
     # Get datasets
     train_dataset = (
