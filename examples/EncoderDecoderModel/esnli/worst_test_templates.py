@@ -169,7 +169,7 @@ def main():
 
         dist_list_sorted = sort_tuple(dist_list)
         closest_template_info = dist_list_sorted[:1][0]
-        print(closest_template_info)
+        print(dist_list_sorted)
         print('test template: %d, %s' % (test_id, templates[test_id]))
         closest_dist = closest_template_info[1]
         print('closest 1 train (dist %.3f): %d, %s' % (closest_dist, closest_template_info[0], templates[closest_template_info[0]]))
