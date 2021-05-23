@@ -34,5 +34,5 @@ python ../run_glue.py \
 	--output_dir ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/eval_${test_type}_test/ \
 	--overwrite_cache \
 	--esnli_input_type p+h:a,expl1:b \
-	--test_data_info /net/scratch/zhouy1/randomness_experiment/${data_dir_name}/seqclas/${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/eval_${test_type}_test_by_templates.csv
+	--test_data_info ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/eval_${test_type}_test_by_templates.csv
 
