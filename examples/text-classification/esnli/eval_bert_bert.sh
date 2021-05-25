@@ -14,11 +14,13 @@ server=uchi # ego or uchi
 
 if [ $server = ego ]; then
 
+	data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
     bert2bert_gen_data_path_prefix=../../EncoderDecoderModel/esnli/save_best_models/
     model_path_prefix=./save_best_model/dev_${validation}/
 
 elif [ $server = uchi ]; then
 
+	data_path_prefix=/net/scratch/zhouy1/data/${data_dir_name}/
     bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/edm/
     model_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/seqclas_dev_${validation}/
 
