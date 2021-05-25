@@ -26,11 +26,21 @@ elif [ $server = uchi ]; then
 
 fi
 
+if [ $validation = gold ]; then
+
+    dev_data_path=${data_path_prefix}seed${seed}/partition${partition}/test_${test_type}_300_${quality}.csv
+
+elif [ $validation = generated ]; then
+
+    dev_data_path=${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}/${test_type}_test_text_esnli_format.csv
+
+fi
+
 python ../run_glue.py \
 	--model_name_or_path ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/best_model/ \
 	--task_name HANS \
 	--do_eval \
-	--dev_data_path ${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}/${test_type}_test_text_esnli_format.csv \
+	--dev_data_path $dev_data_path \
 	--max_seq_length 128 \
 	--output_dir ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/eval_${test_type}_test/ \
 	--overwrite_cache \
