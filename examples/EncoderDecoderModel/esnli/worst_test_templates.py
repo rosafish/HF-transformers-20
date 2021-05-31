@@ -42,24 +42,28 @@ def find_worst_templates_id_by_bleu(bleu_by_temp_path, num_worst_temp):
     print(worst_temp_info)
     return [t[0] for t in worst_temp_info], all_test_templates_id
 
+
 def find_worst_templates_id_by_acc(pred_by_temp_path, num_worst_temp):
-    bleu_list = []
+    acc_list = []
     all_test_templates_id = set()
-    test_guid_templated_id_dict = get_test_guid_templated_id_dict() #use test.csv
     with open(pred_by_temp_path, newline='') as f:
         reader = csv.reader(f)
         for (i, line) in enumerate(reader):
             if i == 0:
                 continue
 
-            guid = line[0]
-            template_id = test_guid_templated_id_dict[guid]
-            pred_result = line[1]
-            
-            if pred_result == 'True':
-                pass
-                #TODO
+            template_id = eval(line[0])
+            acc = round(eval(line[1]), 5)
 
+            acc_list.append((template_id, acc))
+            all_test_templates_id.add(template_id)
+
+    acc_list_sorted = sort_tuple(acc_list)
+
+    worst_temp_info = acc_list_sorted[:num_worst_temp]
+    print(worst_temp_info)
+    return [t[0] for t in worst_temp_info], all_test_templates_id
+            
 
 def replace_word_subtype2type(s):
     for k,v in var_type_subtypes.items():
@@ -119,7 +123,11 @@ def worst_test_templates_by_bleu(data_dir_name, model, seed, partition, train_si
 
 
 def worst_test_templates_by_acc(data_dir_name, model, seed, partition, train_size, expl_type, test_type, num_worst_temp, input_type):
-    pred_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/seqclas/%s_hans_seed%s_partition%s_train%s_%s_datafrom%s/eval_%s_test_by_templates.csv' % \
+    if expl_type == 'empty_expl':
+        pred_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/label_only/%s_hans_seed%s_partition%s_train%s_empty_expl/eval_%s_test_acc_by_temp.txt' % \
+                        (data_dir_name, model, seed, partition, train_size, test_type)
+    else:
+        pred_by_temp_path = '/net/scratch/zhouy1/randomness_experiment/%s/seqclas/%s_hans_seed%s_partition%s_train%s_%s_datafrom%s/eval_%s_test_acc_by_temp.txt' % \
                         (data_dir_name, model, seed, partition, train_size, expl_type, model, test_type)
 
     # find worst `num_worst_temp` templates
@@ -139,7 +147,7 @@ def main():
     num_worst_temp = int(sys.argv[8])
     standard = sys.argv[9] # standard: bleu or acc
     dist_measure = sys.argv[10]
-    data_dir_name = 'generated_data'
+    data_dir_name = sys.argv[11] # e.g. 'generated_data' or 'generated_data_new_setting'
 
     if standard == 'bleu':
         worst_templates_id, all_test_templates_id = worst_test_templates_by_bleu(data_dir_name, model, seed, partition, train_size, expl_type, test_type, num_worst_temp, input_type)
