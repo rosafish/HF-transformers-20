@@ -155,7 +155,10 @@ def main():
         worst_templates_id, all_test_templates_id = worst_test_templates_by_acc(data_dir_name, model, seed, partition, train_size, expl_type, test_type, num_worst_temp, input_type)
 
     all_templates_id = set([i for i in range(118)])
-    all_train_templates_id = all_templates_id - all_test_templates_id
+    if test_type == 'ivit' or test_type == 'ovit':
+        all_train_templates_id = all_templates_id
+    else:
+        all_train_templates_id = all_templates_id - all_test_templates_id
 
     templates_path = "/net/scratch/zhouy1/hans-forked/auto/templates_new.csv"
     templates = load_templates(templates_path, input_type)
