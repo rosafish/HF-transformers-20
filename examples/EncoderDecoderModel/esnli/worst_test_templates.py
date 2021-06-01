@@ -46,6 +46,8 @@ def find_worst_templates_id_by_bleu(bleu_by_temp_path, num_worst_temp):
 def find_worst_templates_id_by_acc(pred_by_temp_path, num_worst_temp):
     acc_list = []
     all_test_templates_id = set()
+    acc_sum = 0
+    count = 0
     with open(pred_by_temp_path, newline='') as f:
         reader = csv.reader(f)
         for (i, line) in enumerate(reader):
@@ -57,11 +59,16 @@ def find_worst_templates_id_by_acc(pred_by_temp_path, num_worst_temp):
 
             acc_list.append((template_id, acc))
             all_test_templates_id.add(template_id)
+            acc_sum += acc
+            count += 1
+
+    print('avg acc: ', acc_sum/count)
 
     acc_list_sorted = sort_tuple(acc_list)
 
     worst_temp_info = acc_list_sorted[:num_worst_temp]
     print(worst_temp_info)
+    
     return [t[0] for t in worst_temp_info], all_test_templates_id
             
 
