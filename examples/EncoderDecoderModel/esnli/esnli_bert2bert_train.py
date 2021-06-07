@@ -58,14 +58,10 @@ def main():
 
     # Convert train examples to features
     tokenizer = BertTokenizer.from_pretrained('bert-base-uncased')
-    # Cache training dataset features
-    if os.path.exists(cached_train_features_file):
-        logger.info("Loading features from cached file %s", cached_train_features_file)
-        train_features = torch.load(cached_train_features_file)
-    else:
-        train_features = esnli_examples_to_features(train_examples, max_seq_len, tokenizer)
-        logger.info("Saving training features into cached file %s", cached_train_features_file)
-        torch.save(train_features, cached_train_features_file)
+
+    train_features = esnli_examples_to_features(train_examples, max_seq_len, tokenizer)
+    logger.info("Saving training features into cached file %s", cached_train_features_file)
+    torch.save(train_features, cached_train_features_file)
 
     # get dev examples
     eval_examples = processor.get_dev_examples(eval_data_path) 
