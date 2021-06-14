@@ -44,6 +44,13 @@ elif [ $data_type = dev ]; then
     -eval_data_path ${data_path_prefix}seed${seed}/partition${partition}/${data_type}_${dev_size}_${quality}.csv \
     -eval_results_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality}/eval_${data_type}/
     
+elif [ $data_type = train ]; then
+
+    python ./esnli_bert2bert_eval.py\
+    -model_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality}/best_model/ \
+    -eval_data_path ${data_path_prefix}seed${seed}/partition${partition}/${data_type}_${train_size}_${quality}.csv \
+    -eval_results_dir ${save_model_path_prefix}${pretrained_model}_hans_seed${seed}_partition${partition}_train${train_size}_${quality}/eval_${data_type}/
+
 fi
 
  

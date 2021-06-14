@@ -36,6 +36,17 @@ if [ $data_type = dev ]; then
     -output_csv_path ${dir}dev_text_esnli_format.csv \
     -bert_expl_csv_path ${dir}dev_text.csv 
 
+elif [ $data_type = train ]; then
+    # train
+    python convert_generated_embedding_text.py \
+    -embedding_csv_path ${dir}eval_train/epochNone*.csv \
+    -text_csv_path ${dir}train_text.csv 
+
+    python convert_bertgen_to_original_format.py \
+    -gold_expl_csv_path ${data_path_prefix}seed${seed}/partition${partition}/train_${train_size}_${quality}.csv \
+    -output_csv_path ${dir}train_text_esnli_format.csv \
+    -bert_expl_csv_path ${dir}train_text.csv 
+    
 elif [ $data_type = ivit ] || [ $data_type = ovit ]; then
     # matched templates
     python convert_generated_embedding_text.py \
