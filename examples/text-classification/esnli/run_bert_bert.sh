@@ -49,11 +49,11 @@ fi
 
 if [ $train = gold ]; then
 
-    train_data_path=${data_path_prefix}seed${seed}/partition${partition}/dev_${dev_size}_${quality}.csv
+    train_data_path=${data_path_prefix}seed${seed}/partition${partition}/train_${training_size}_${quality}.csv
 
 elif [ $train = generated ]; then
 
-    train_data_path=${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}/dev_text_esnli_format.csv
+    train_data_path=${bert2bert_gen_data_path_prefix}${bert2bert_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}/train_text_esnli_format.csv
 
 fi
 
