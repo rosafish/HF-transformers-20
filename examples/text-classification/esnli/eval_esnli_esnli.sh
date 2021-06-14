@@ -9,6 +9,7 @@ test_type=$4 # mvmt or misvmt or mvmist or misvmist
 training_size=$5
 data_dir_name=$6
 validation=$7 # gold or generated
+train=$8 # gold or generated
 
 server=uchi # ego or uchi
 
@@ -16,13 +17,13 @@ if [ $server = ego ]; then
 
 	data_path_prefix=/data/rosa/data/hans/in_esnli_format/template_expls/randomness_experiment/
     bert2bert_gen_data_path_prefix=../../EncoderDecoderModel/esnli/save_best_models/
-    model_path_prefix=./save_best_model/dev_${validation}/
+    model_path_prefix=./save_best_model/${data_dir_name}_etp_train_${train}_dev_${validation}/
 
 elif [ $server = uchi ]; then
 
 	data_path_prefix=/net/scratch/zhouy1/data/${data_dir_name}/
     bert2bert_gen_data_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/edm/
-    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/seqclas_dev_${validation}/
+    model_path_prefix=/net/scratch/zhouy1/randomness_experiment/${data_dir_name}/seqclas_train_${train}_dev_${validation}/
 
 	cp ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/vocab.txt ${model_path_prefix}${seqclas_pretrained_model}_hans_seed${seed}_partition${partition}_train${training_size}_${quality}_datafrom${bert2bert_pretrained_model}/best_model/
 
